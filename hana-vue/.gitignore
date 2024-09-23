@@ -2,6 +2,6 @@
 
 .idea/
 
-node_modeles/
+node_modules/
 
 target/
