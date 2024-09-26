@@ -13,8 +13,8 @@ public class AuthService {
   @Autowired
   private AuthDao auth_dao;
 
-  public void get_all_auth(){
+  public String get_all_auth() {
     List<Auth> auths = auth_dao.get_all_auth();
-    System.out.println(auths);
+    return auths.toString();
   }
 }
