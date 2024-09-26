@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Auth {
+public class History {
   private int id;
-  private String name;
+  private int uid;
+  private int rid;
 }

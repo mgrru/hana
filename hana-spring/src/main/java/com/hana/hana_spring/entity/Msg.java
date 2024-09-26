@@ -1,5 +1,7 @@
 package com.hana.hana_spring.entity;
 
+import java.sql.Timestamp;
+
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
@@ -10,7 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Auth {
+public class Msg {
   private int id;
-  private String name;
+  private User sender;
+  private User recipient;
+  private String content;
+  private Timestamp time;
 }

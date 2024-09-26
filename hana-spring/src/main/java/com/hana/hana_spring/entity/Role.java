@@ -1,5 +1,7 @@
 package com.hana.hana_spring.entity;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
@@ -10,7 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Auth {
+public class Role {
   private int id;
   private String name;
+  private List<Auth> auths;
 }

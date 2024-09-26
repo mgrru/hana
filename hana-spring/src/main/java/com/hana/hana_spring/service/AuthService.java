@@ -16,5 +16,6 @@ public class AuthService {
   public String get_all_auth() {
     List<Auth> auths = auth_dao.get_all_auth();
     return auths.toString();
+
   }
 }

@@ -1,5 +1,7 @@
 package com.hana.hana_spring.entity;
 
+import java.sql.Date;
+
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
@@ -10,7 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Auth {
+public class Announcement {
   private int id;
-  private String name;
+  private String title;
+  private String content;
+  private Date time;
 }
