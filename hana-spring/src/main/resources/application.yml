@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: hana-spring
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://dpbjmy-dqk2c2evpaqekevd-pub.proxy.dms.aliyuncs.com:3306/hana?useUnicode=true&characterEncoding=utf-8
+    username: 4meXsXhJNLCtnuYXgX50wnA7
+    password: nonOGU0kWnWDUFQZYrZ1yV6RCiZJ2X
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 20
+server:
+  port: 9901
