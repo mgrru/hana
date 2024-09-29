@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class Announcement {
-  private int id;
-  private String title;
-  private String content;
-  private Date time;
+  private int id; // 公告id
+  private String title; // 公告标题
+  private String content; // 公告内容
+  private Date time; // 公告发布时间
 }

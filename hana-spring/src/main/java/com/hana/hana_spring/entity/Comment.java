@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class Comment {
-  private int id;
-  private int uid;
-  private int rid;
-  private String content;
-  private Date time;
+  private int id; // 评论id
+  private int uid; // 评论用户id
+  private int rid; // 动漫资源id
+  private String content; // 评论内容
+  private Date time; // 评论时间
 }
