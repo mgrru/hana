@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.hana.hana_spring.service.AuthService;
+import com.hana.hana_spring.service.RoleService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,12 +13,18 @@ import lombok.extern.slf4j.Slf4j;
 class HanaSpringApplicationTests {
 
 	@Autowired
-	private AuthService auth_service;
+	private RoleService auth_service;
 
 	@Test
 	void test_auth() {
 		String auths = auth_service.get_all_auth();
 		log.info(auths);
+	}
+
+	@Test
+	void test_role() {
+		String roles = auth_service.get_all_role();
+		log.info("roles=" + roles);
 	}
 
 }
