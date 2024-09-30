@@ -29,16 +29,23 @@ public class RoleService {
 
   public void add_role(Role role) {
     if (role != null && role.getName() != null && !role.getName().isBlank()) {
-      role_dao.insert_role(role);
+      role_dao.ins_role(role);
     }
 
     int rid = role.getId();
     if (role.getAuths() == null) {
       return;
     }
-    role.getAuths()
-        .forEach((auth) -> {
-          role_dao.insert_role_auth(rid, auth.getId());
-        });
+    role.getAuths().forEach((auth) -> {
+      role_dao.ins_role_auth(rid, auth.getId());
+    });
+  }
+
+  public void del_role(Role role) {
+    if (role == null) {
+      return;
+    }
+    role_dao.del_role_auth(role.getId());
+    role_dao.del_role(role.getId());
   }
 }

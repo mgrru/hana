@@ -2,6 +2,7 @@ package com.hana.hana_spring.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Mapper;
@@ -22,7 +23,22 @@ public interface RoleDao {
   List<Auth> sel_all_auth();
 
   @Insert("insert into role_auth(rid, aid) values(#{rid},#{aid})")
-  void insert_role_auth(int rid, int aid);
+  void ins_role_auth(int rid, int aid);
+
+  /**
+   * 删除角色的某一项权限
+   * @param rid 角色id
+   * @param aid 删除的权限id
+   */
+  @Delete("delete from role_auth where rid=#{rid} and aid=#{aid}")
+  void del_role_one_auth(int rid, int aid);
+
+  /**
+   * 直接删除角色及其拥有的权限
+   * @param rid 角色id
+   */
+  @Delete("delete from role_auth where rid=#{rid}")
+  void del_role_auth(int rid);
 
   @Select("select role.*, auth.id as a_id, auth.name as a_name from role left join role_auth rs on role.id=rs.rid left join auth on auth.id=rs.aid")
   @Results(id = "role", value = {
@@ -33,5 +49,8 @@ public interface RoleDao {
   List<Role> sel_all_role();
 
   @Insert("insert into role values(#{id}, #{name})")
-  void insert_role(Role role);
+  void ins_role(Role role);
+
+  @Delete("delete from role where id=#{id}")
+  void del_role(int id);
 }
