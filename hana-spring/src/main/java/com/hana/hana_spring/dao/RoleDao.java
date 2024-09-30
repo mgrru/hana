@@ -2,6 +2,7 @@ package com.hana.hana_spring.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Result;
@@ -13,6 +14,16 @@ import com.hana.hana_spring.entity.Role;
 
 @Mapper
 public interface RoleDao {
+  @Select("select * from auth")
+  @Results(id = "auth", value = {
+      @Result(property = "id", column = "id", id = true),
+      @Result(property = "name", column = "name")
+  })
+  List<Auth> sel_all_auth();
+
+  @Insert("insert into role_auth(rid, aid) values(#{rid},#{aid})")
+  void insert_role_auth(int rid, int aid);
+
   @Select("select role.*, auth.id as a_id, auth.name as a_name from role left join role_auth rs on role.id=rs.rid left join auth on auth.id=rs.aid")
   @Results(id = "role", value = {
       @Result(property = "id", column = "id", id = true),
@@ -21,10 +32,6 @@ public interface RoleDao {
   })
   List<Role> sel_all_role();
 
-  @Select("select * from auth")
-  @Results(id = "auth", value = {
-      @Result(property = "id", column = "id", id = true),
-      @Result(property = "name", column = "name")
-  })
-  List<Auth> sel_all_auth();
+  @Insert("insert into role values(#{id}, #{name})")
+  void insert_role(Role role);
 }
