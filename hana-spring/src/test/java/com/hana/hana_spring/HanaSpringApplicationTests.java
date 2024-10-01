@@ -131,4 +131,56 @@ class HanaSpringApplicationTests {
 		assertEquals(origin_roles, result_roles);
 	}
 
+	@Test
+	void test_upd_role() {
+		List<Auth> auths = role_service.get_all_auth();
+
+		List<Auth> auths1 = new ArrayList<>();
+		List<Auth> auths2 = new ArrayList<>();
+		List<Auth> empty_auths = new ArrayList<>();
+
+		auths1.add(auths.get(0));
+
+		auths2.add(auths.get(1));
+		auths2.add(auths.get(2));
+
+		Role role1 = new Role(3, "测试会员1", auths1);
+		Role role2 = new Role(3, "测试会员2", auths2);
+		Role role3 = new Role(3, "测试会员3", empty_auths);
+		Role role = new Role();
+
+		// 检查1
+		role_service.add_role(role1);
+		test_role();
+
+		role_service.upd_role(role1);
+		test_role();
+
+		role_service.del_role(role1);
+
+		// 检查2
+		role_service.add_role(role1);
+
+		role_service.upd_role(role2);
+		test_role();
+
+		role_service.del_role(role2);
+
+		// 检查3
+		role_service.add_role(role1);
+
+		role_service.upd_role(role3);
+		test_role();
+
+		role_service.del_role(role3);
+
+		// 检查4
+		role_service.add_role(role1);
+
+		role_service.upd_role(role);
+		test_role();
+
+		role_service.del_role(role);
+	}
+
 }
