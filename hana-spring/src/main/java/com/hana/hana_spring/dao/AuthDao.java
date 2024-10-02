@@ -9,12 +9,10 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-import org.springframework.stereotype.Repository;
 
 import com.hana.hana_spring.entity.Auth;
 
 @Mapper
-@Repository
 public interface AuthDao {
     @Select("select * from auth")
     @Results(id = "auth", value = {
