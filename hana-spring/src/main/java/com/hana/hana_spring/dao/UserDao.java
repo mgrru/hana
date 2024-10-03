@@ -2,6 +2,7 @@ package com.hana.hana_spring.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.One;
@@ -35,6 +36,7 @@ public interface UserDao {
             @Result(property = "id", column = "id", id = true),
             @Result(property = "account", column = "account"),
             @Result(property = "pass", column = "pass"),
+            @Result(property = "name", column = "name"),
             @Result(property = "isBan", column = "is_ban"),
             @Result(property = "age", column = "age"),
             @Result(property = "phone", column = "phone"),
@@ -43,4 +45,7 @@ public interface UserDao {
             @Result(property = "role.auths", many = @Many(resultMap = "com.hana.hana_spring.dao.AuthDao.auth", columnPrefix = "a_"))
     })
     List<User> sel_all();
+
+    @Insert("insert into user values(#{id},#{account},#{pass},#{name},#{isBan},#{age},#{phone},#{email},#{role.id})")
+    void ins(User user);
 }

@@ -18,4 +18,8 @@ public class UserService {
     public List<User> get_all_user() {
         return user_dao.sel_all();
     }
+
+    public void add_user(User user) {
+        user_dao.ins(user);
+    }
 }
