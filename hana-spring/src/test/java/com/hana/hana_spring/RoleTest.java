@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @SpringBootTest
 @Transactional
-class HanaSpringApplicationTests {
+class RoleTest {
 
 	@Autowired
 	private RoleService role_service;

@@ -16,20 +16,20 @@ import com.hana.hana_spring.entity.Role;
 @Mapper
 public interface RoleDao {
 
-  @Select("select role.*, auth.id as a_id, auth.name as a_name from role left join role_auth rs on role.id=rs.rid left join auth on auth.id=rs.aid")
-  @Results(id = "role", value = {
-      @Result(property = "id", column = "id", id = true),
-      @Result(property = "name", column = "name"),
-      @Result(property = "auths", many = @Many(resultMap = "com.hana.hana_spring.dao.AuthDao.auth", columnPrefix = "a_"))
-  })
-  List<Role> sel_all();
+    @Select("select role.*, auth.id as a_id, auth.name as a_name from role left join role_auth rs on role.id=rs.rid left join auth on auth.id=rs.aid")
+    @Results(id = "role", value = {
+            @Result(property = "id", column = "id", id = true),
+            @Result(property = "name", column = "name"),
+            @Result(property = "auths", many = @Many(resultMap = "com.hana.hana_spring.dao.AuthDao.auth", columnPrefix = "a_"))
+    })
+    List<Role> sel_all();
 
-  @Insert("insert into role values(#{id}, #{name})")
-  void ins(Role role);
+    @Insert("insert into role values(#{id}, #{name})")
+    void ins(Role role);
 
-  @Delete("delete from role where id=#{id}")
-  void del(int id);
+    @Delete("delete from role where id=#{id}")
+    void del(int id);
 
-  @Update("UPDATE role SET name=#{name} WHERE id=#{id}")
-  void upd(Role role);
+    @Update("UPDATE role SET name=#{name} WHERE id=#{id}")
+    void upd(Role role);
 }

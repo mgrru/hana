@@ -2,6 +2,7 @@ package com.hana.hana_spring.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Mapper;
@@ -9,6 +10,7 @@ import org.apache.ibatis.annotations.One;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import com.hana.hana_spring.entity.User;
 
@@ -48,4 +50,10 @@ public interface UserDao {
 
     @Insert("insert into user values(#{id},#{account},#{pass},#{name},#{isBan},#{age},#{phone},#{email},#{role.id})")
     void ins(User user);
+
+    @Delete("delete from user where id=#{id}")
+    void del(int id);
+
+    @Update("update user set account=#{account},pass=#{pass},name=#{name},is_ban=#{isBan},age=#{age},phone=#{phone},email=#{email},rid=#{role.id} where id=#{id}")
+    void upd(User user);
 }

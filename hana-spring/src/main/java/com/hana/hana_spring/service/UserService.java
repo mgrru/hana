@@ -20,6 +20,18 @@ public class UserService {
     }
 
     public void add_user(User user) {
-        user_dao.ins(user);
+        if (user != null) {
+            user_dao.ins(user);
+        }
+    }
+
+    public void del_user(int id) {
+        user_dao.del(id);
+    }
+
+    public void upd_user(User user) {
+        if (user != null) {
+            user_dao.upd(user);
+        }
     }
 }
