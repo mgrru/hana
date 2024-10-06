@@ -14,7 +14,7 @@ import org.apache.ibatis.annotations.Update;
 import com.hana.hana_spring.entity.Role;
 
 @Mapper
-public interface RoleDao {
+public interface RoleMapper {
 
     @Select("select role.*, auth.id as a_id, auth.name as a_name from role left join role_auth rs on role.id=rs.rid left join auth on auth.id=rs.aid")
     @Results(id = "role", value = {

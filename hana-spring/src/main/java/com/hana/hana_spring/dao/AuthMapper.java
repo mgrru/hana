@@ -13,7 +13,7 @@ import org.apache.ibatis.annotations.Update;
 import com.hana.hana_spring.entity.Auth;
 
 @Mapper
-public interface AuthDao {
+public interface AuthMapper {
     @Select("select * from auth")
     @Results(id = "auth", value = {
             @Result(property = "id", column = "id", id = true),

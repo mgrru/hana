@@ -15,7 +15,7 @@ import org.apache.ibatis.annotations.Update;
 import com.hana.hana_spring.entity.User;
 
 @Mapper
-public interface UserDao {
+public interface UserMapper {
     @Select("SELECT\r\n" + //
                 "    user.id,\r\n" + //
                 "    user.account,\r\n" + //
