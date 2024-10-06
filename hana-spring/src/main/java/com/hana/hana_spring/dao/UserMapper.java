@@ -43,8 +43,8 @@ public interface UserMapper {
             @Result(property = "age", column = "age"),
             @Result(property = "phone", column = "phone"),
             @Result(property = "email", column = "email"),
-            @Result(property = "role", one = @One(resultMap = "com.hana.hana_spring.dao.RoleDao.role", columnPrefix = "r_")),
-            @Result(property = "role.auths", many = @Many(resultMap = "com.hana.hana_spring.dao.AuthDao.auth", columnPrefix = "a_"))
+            @Result(property = "role", one = @One(resultMap = "com.hana.hana_spring.dao.RoleMapper.role", columnPrefix = "r_")),
+            @Result(property = "role.auths", many = @Many(resultMap = "com.hana.hana_spring.dao.AuthMapper.auth", columnPrefix = "a_"))
     })
     List<User> sel_all();
 

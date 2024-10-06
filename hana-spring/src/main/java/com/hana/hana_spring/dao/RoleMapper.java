@@ -20,7 +20,7 @@ public interface RoleMapper {
     @Results(id = "role", value = {
             @Result(property = "id", column = "id", id = true),
             @Result(property = "name", column = "name"),
-            @Result(property = "auths", many = @Many(resultMap = "com.hana.hana_spring.dao.AuthDao.auth", columnPrefix = "a_"))
+            @Result(property = "auths", many = @Many(resultMap = "com.hana.hana_spring.dao.AuthMapper.auth", columnPrefix = "a_"))
     })
     List<Role> sel_all();
 
