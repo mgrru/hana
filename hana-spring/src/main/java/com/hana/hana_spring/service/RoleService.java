@@ -45,12 +45,12 @@ public class RoleService {
         });
     }
 
-    public void del_role(Role role) {
-        if (role == null) {
+    public void del_role(Integer rid) {
+        if (rid == null) {
             return;
         }
-        auth_mapper.del_role_all_auth(role.getId());
-        role_mapper.del(role.getId());
+        auth_mapper.del_role_all_auth(rid);
+        role_mapper.del(rid);
     }
 
     public void upd_role(Role role) {

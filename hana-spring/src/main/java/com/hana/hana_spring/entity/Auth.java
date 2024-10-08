@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class Auth {
-  private int id; // 权限id
+  private Integer id; // 权限id
   private String name; // 权限名称
 }

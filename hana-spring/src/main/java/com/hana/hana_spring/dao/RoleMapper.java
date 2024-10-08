@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
@@ -25,6 +26,7 @@ public interface RoleMapper {
     List<Role> sel_all();
 
     @Insert("insert into role values(#{id}, #{name})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     void ins(Role role);
 
     @Delete("delete from role where id=#{id}")

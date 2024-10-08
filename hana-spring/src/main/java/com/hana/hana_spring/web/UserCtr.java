@@ -16,7 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hana.hana_spring.entity.User;
-import com.hana.hana_spring.entity.dto.RoleReq;
+import com.hana.hana_spring.entity.dto.RidReq;
 import com.hana.hana_spring.service.UserService;
 import com.hana.hana_spring.utils.Result;
 
@@ -55,7 +55,7 @@ public class UserCtr {
     public Result unban_user(@PathVariable Integer id, @RequestBody String entity)
             throws JsonMappingException, JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        Integer rid = mapper.readValue(entity, RoleReq.class).getRid();
+        Integer rid = mapper.readValue(entity, RidReq.class).getRid();
 
         user_service.upd_role(id, rid);
         return Result.success();

@@ -96,7 +96,7 @@ class RoleTest {
 		result_roles = role_service.get_all_role();
 		assertNotEquals(origin_roles, result_roles);
 
-		role_service.del_role(role1);
+		role_service.del_role(role1.getId());
 		result_roles = role_service.get_all_role();
 		assertEquals(origin_roles, result_roles);
 
@@ -106,7 +106,7 @@ class RoleTest {
 		result_roles = role_service.get_all_role();
 		assertNotEquals(origin_roles, result_roles);
 
-		role_service.del_role(role2);
+		role_service.del_role(role2.getId());
 		result_roles = role_service.get_all_role();
 		assertEquals(origin_roles, result_roles);
 
@@ -116,7 +116,7 @@ class RoleTest {
 		result_roles = role_service.get_all_role();
 		assertNotEquals(origin_roles, result_roles);
 
-		role_service.del_role(role3);
+		role_service.del_role(role3.getId());
 		result_roles = role_service.get_all_role();
 		assertEquals(origin_roles, result_roles);
 
@@ -126,7 +126,7 @@ class RoleTest {
 		result_roles = role_service.get_all_role();
 		assertEquals(origin_roles, result_roles);
 
-		role_service.del_role(role);
+		role_service.del_role(role.getId());
 		result_roles = role_service.get_all_role();
 		assertEquals(origin_roles, result_roles);
 	}
@@ -156,7 +156,7 @@ class RoleTest {
 		role_service.upd_role(role1);
 		test_role();
 
-		role_service.del_role(role1);
+		role_service.del_role(role1.getId());
 
 		// 检查2
 		role_service.add_role(role1);
@@ -164,7 +164,7 @@ class RoleTest {
 		role_service.upd_role(role2);
 		test_role();
 
-		role_service.del_role(role2);
+		role_service.del_role(role2.getId());
 
 		// 检查3
 		role_service.add_role(role1);
@@ -172,7 +172,7 @@ class RoleTest {
 		role_service.upd_role(role3);
 		test_role();
 
-		role_service.del_role(role3);
+		role_service.del_role(role3.getId());
 
 		// 检查4
 		role_service.add_role(role1);
@@ -180,7 +180,7 @@ class RoleTest {
 		role_service.upd_role(role);
 		test_role();
 
-		role_service.del_role(role);
+		role_service.del_role(role.getId());
 	}
 
 }

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class Role {
-  private int id; // 角色id
+  private Integer id; // 角色id
   private String name; // 角色名
   private List<Auth> auths; // 权限
 }
