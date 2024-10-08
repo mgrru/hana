@@ -45,14 +45,4 @@ public class UserTest {
         user_service.del_user(2);
         test_get_user();
     }
-
-    @Test
-    void test_upd_user() {
-        test_add_user();
-
-        List<Role> roles = role_service.get_all_role();
-        User user = new User(2, "upd_test", "upd_test", "upd_user", true, 19, "1234", "uf@fufu.moe", roles.get(1));
-        user_service.upd_user(user);
-        test_get_user();
-    }
 }

@@ -56,4 +56,10 @@ public interface UserMapper {
 
     @Update("update user set account=#{account},pass=#{pass},name=#{name},is_ban=#{isBan},age=#{age},phone=#{phone},email=#{email},rid=#{role.id} where id=#{id}")
     void upd(User user);
+
+    @Update("update user set is_ban=#{isBan} where id=#{id}")
+    void ban(User user);
+
+    @Update("update user set rid=#{rid} where id=#{id}")
+    void upd_role(int id, int rid);
 }

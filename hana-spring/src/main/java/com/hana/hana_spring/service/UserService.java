@@ -29,9 +29,27 @@ public class UserService {
         user_mapper.del(id);
     }
 
-    public void upd_user(User user) {
-        if (user != null) {
-            user_mapper.upd(user);
+    public void ban_user(Integer id) {
+        if (id != null) {
+            User user = new User();
+            user.setId(id);
+            user.setBan(true);
+            user_mapper.ban(user);
+        }
+    }
+
+    public void unban_user(Integer id) {
+        if (id != null) {
+            User user = new User();
+            user.setId(id);
+            user.setBan(false);
+            user_mapper.ban(user);
+        }
+    }
+
+    public void upd_role(Integer id, Integer rid) {
+        if (id != null && rid != null) {
+            user_mapper.upd_role(id, rid);
         }
     }
 }
