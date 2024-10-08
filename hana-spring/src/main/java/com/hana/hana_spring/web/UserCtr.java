@@ -5,6 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,12 +16,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hana.hana_spring.entity.User;
+import com.hana.hana_spring.entity.dto.RoleReq;
 import com.hana.hana_spring.service.UserService;
 import com.hana.hana_spring.utils.Result;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("users")
@@ -54,14 +55,11 @@ public class UserCtr {
     public Result unban_user(@PathVariable Integer id, @RequestBody String entity)
             throws JsonMappingException, JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        Integer rid = mapper.readValue(entity, Integer.class);
+        Integer rid = mapper.readValue(entity, RoleReq.class).getRid();
 
         user_service.upd_role(id, rid);
         return Result.success();
     }
-
-
-
 
     @PostMapping
     public Result add_user(@RequestBody String entity) throws JsonMappingException, JsonProcessingException {
