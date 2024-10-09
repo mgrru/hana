@@ -6,11 +6,7 @@ import { defineStore } from 'pinia';
 export const useUserInfoStore = defineStore('userInfo', {
   // 定义 store 的状态（state）
   state: () => ({
-    // `userInfo` 是一个对象，包含用户的 ID 和用户名。
-    userInfo: {
-      id: 1,          // 用户的 ID，默认为 1
-      username: 'zhangsan'  // 用户名，默认为 'zhangsan'
-    },
+
     // 存储点赞状态
     likedComments: {}
   }),

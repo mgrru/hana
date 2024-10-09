@@ -15,15 +15,21 @@
             </div>
             <div class="right-entry">
                 <ul>
+                    <!-- 登录成功显示用户的头像 -->
+                    <!-- <li v-if="userStore.isLoggedIn">
+                        <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+                    </li> -->
+                    <!-- 没有登录显示登录按钮 -->
                     <li class="login-avatar">
                         <Login></Login>
                     </li>
                     <li class="icon-above-text">
-                        <a href="#">收藏</a>
+                        <router-link to="/favorite">收藏</router-link>
                     </li>
                     <li>
-                        <a href="#">历史</a>
+                        <router-link to="/history">历史</router-link>
                     </li>
+                    <li><router-link to="/">用户</router-link></li>
                 </ul>
             </div>
         </div>
@@ -31,10 +37,13 @@
 </template>
 
 <script setup lang="ts">
-import Login from '../components/Login.vue';
-import Search from '../components/Search.vue';
+import Login from "../components/Login.vue";
+import Search from "../components/Search.vue";
+import { useUserStore } from '../store/userStore';
 
-defineProps({ showLoginAvatar: Boolean })
+
+const userStore = useUserStore(); // 访问登录状态
+
 </script>
 
 <style scoped>
@@ -43,7 +52,6 @@ defineProps({ showLoginAvatar: Boolean })
     background: #ffffff;
     z-index: 1;
     align-items: center;
-
 }
 
 .header-bar {
@@ -55,9 +63,8 @@ defineProps({ showLoginAvatar: Boolean })
     border-bottom: 1px solid #ebebeb;
     position: -webkit-sticky;
     position: sticky;
-    top: 5px;
+    top: 0px;
 }
-
 
 .left-entry ul,
 .right-entry ul {

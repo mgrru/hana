@@ -1,98 +1,130 @@
 import { defineStore } from "pinia";
+import { ref } from "vue";
 import axios from "axios";
+import { ElMessage } from "element-plus";
+import { useFavoriteStore } from "../store/favorite";
 
-export const useLikeStore = defineStore('like',{
-    state:()=>({
-        likes:0,//点赞数
-        isLiked: false,//是否点赞点赞就不能再点赞
-        favorites: 0,       // 收藏数
-        isFavorited: false, // 是否收藏
-        shares: 0,          // 分享数
-        isShared:false,      //是否分享
-    }),
+export const useLikeStore = defineStore("like", () => {
+  const likes = ref(0); // 点赞数
+  const isLiked = ref(false); // 是否点赞
+  const favorites = ref(0); // 收藏数
+  const favoriteStore = useFavoriteStore();
+  const isFavorited = ref(false); // 是否收藏
+  const shares = ref(0); // 分享数
+  const isShared = ref(false); // 是否分享
+  const rid = 123; // 假设这是视频ID
 
-    actions: {
-        // 点赞切换
-        async toggleLike(rid) {
-            try {
-                if (this.isLiked) {
-                    await axios.delete(`/likes/${rid}`);
-                    this.likes--;
-                } else {
-                    await axios.post(`/likes`, { rid });
-                    this.likes++;
-                }
-                this.isLiked = !this.isLiked;
-            } catch (error) {
-                console.error("点赞操作失败：", error);
-            }
-        },
-
-        // 收藏切换
-        async toggleFavorite(rid) {
-            try {
-                if (this.isFavorited) {
-                    await axios.delete(`/favorites/${rid}`);
-                    this.favorites--;
-                } else {
-                    await axios.post(`/favorites`, { rid });
-                    this.favorites++;
-                }
-                this.isFavorited = !this.isFavorited;
-            } catch (error) {
-                console.error("收藏操作失败：", error);
-            }
-        },
-
-        
-        // 分享切换
-        async toggleShare(rid) {
-            try {
-                if (this.isShared) {
-                    await axios.delete(`/shares/${rid}`);
-                    this.shares--;
-                } else {
-                    await axios.post(`/shares`, { rid });
-                    this.shares++;
-                }
-                this.isShared = !this.isShared;
-            } catch (error) {
-                console.error("分享操作失败：", error);
-            }
-        },
-
-
-        // 获取点赞数
-        async fetchLikes(rid) {
-            try {
-                const response = await axios.get(`/likes/${rid}`);
-                this.likes = response.data.likes;
-                this.isLiked = response.data.isLiked;
-            } catch (error) {
-                console.error("获取点赞数失败：", error);
-            }
-        },
-
-        // 获取收藏数
-        async fetchFavorites(rid) {
-            try {
-                const response = await axios.get(`/favorites/${rid}`);
-                this.favorites = response.data.favorites;
-                this.isFavorited = response.data.isFavorited;
-            } catch (error) {
-                console.error("获取收藏数失败：", error);
-            }
-        },
-
-        // 获取分享数
-        async fetchShares(rid) {
-            try {
-                const response = await axios.get(`/shares/${rid}`);
-                this.shares = response.data.shares;
-                this.isShared = response.data.isShared;
-            } catch (error) {
-                console.error("获取分享数失败：", error);
-            }
-        },
+  // 点赞切换
+  const toggleLike = async (rid) => {
+    try {
+      if (isLiked.value) {
+        await axios.delete(`/likes/${rid}`);
+        likes.value--;
+      } else {
+        await axios.post(`/likes`, { rid });
+        likes.value++;
+        ElMessage({
+          message: "点赞成功！",
+          type: "success",
+        });
+      }
+      isLiked.value = !isLiked.value;
+    } catch (error) {
+      console.error("点赞操作失败：", error);
     }
-})
+  };
+
+  // 收藏切换
+  const toggleFavorite = async (rid) => {
+    try {
+      //取消收藏
+      if (isFavorited.value) {
+        await axios.delete(`/favorites/${rid}`);
+        favorites.value--;
+        ElMessage({
+          message: "取消收藏成功！",
+          type: "success",
+        });
+      } else {
+        //添加收藏
+        await axios.post(`/favorites`, { rid });
+        favorites.value++;
+        ElMessage({
+          message: "收藏成功！",
+          type: "success",
+        });
+      }
+      isFavorited.value = !isFavorited.value;
+    } catch (error) {
+      console.error("收藏操作失败：", error);
+    }
+  };
+
+  // 分享切换
+  const toggleShare = async (rid) => {
+    try {
+      if (isShared.value) {
+        await axios.delete(`/shares/${rid}`);
+        shares.value--;
+      } else {
+        await axios.post(`/shares`, { rid });
+        shares.value++;
+        ElMessage({
+          message: "分享成功！",
+          type: "success",
+        });
+      }
+      isShared.value = !isShared.value;
+    } catch (error) {
+      console.error("分享操作失败：", error);
+    }
+  };
+
+  // 获取点赞数
+  const fetchLikes = async (rid) => {
+    try {
+      const response = await axios.get(`/likes/${rid}`);
+      likes.value = response.data.likes;
+      isLiked.value = response.data.isLiked;
+    } catch (error) {
+      console.error("获取点赞数失败：", error);
+    }
+  };
+
+  // 获取收藏数
+  const fetchFavorites = async (rid) => {
+    try {
+      const response = await axios.get(`/favorites/${rid}`);
+      favorites.value = response.data.favorites;
+      isFavorited.value = response.data.isFavorited;
+    } catch (error) {
+      console.error("获取收藏数失败：", error);
+    }
+  };
+
+  // 获取分享数
+  const fetchShares = async (rid) => {
+    try {
+      const response = await axios.get(`/shares/${rid}`);
+      shares.value = response.data.shares;
+      isShared.value = response.data.isShared;
+    } catch (error) {
+      console.error("获取分享数失败：", error);
+    }
+  };
+
+  return {
+    likes,
+    isLiked,
+    favorites,
+    isFavorited,
+    shares,
+    isShared,
+    toggleLike,
+    toggleFavorite,
+    toggleShare,
+    fetchLikes,
+    fetchFavorites,
+    fetchShares,
+  };
+});

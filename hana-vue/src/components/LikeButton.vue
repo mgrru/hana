@@ -17,7 +17,6 @@
 import { onMounted } from 'vue';
 import { useLikeStore } from '../store/like.js';
 import { storeToRefs } from 'pinia';
-import { Star } from '@element-plus/icons-vue'
 
 const likeStore = useLikeStore();
 const { likes, isLiked, favorites, isFavorited, shares, isShared } = storeToRefs(likeStore);

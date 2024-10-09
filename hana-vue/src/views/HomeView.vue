@@ -5,7 +5,7 @@
         </el-header>
         <el-container class="main-container">
             <el-main>
-                <Recommend></Recommend>
+                <!-- <Recommend></Recommend> -->
                 <VideoList></VideoList>
             </el-main>
             <el-aside width="70px">
@@ -13,17 +13,19 @@
             </el-aside>
         </el-container>
     </el-container>
-
-
-
 </template>
 
 
-<script setup lang="ts">
+<script setup>
 import Recommend from '../components/Recommend.vue';
 import VideoList from './VideoList.vue';
 import HeaderView from './HeaderView.vue';
 import Aside from '../components/Aside.vue';
+import { onMounted } from 'vue';
+
+onMounted(() => {
+
+})
 </script>
 
 <style scoped>
