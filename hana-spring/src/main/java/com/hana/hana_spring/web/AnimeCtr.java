@@ -6,6 +6,7 @@ import java.io.RandomAccessFile;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,11 +34,13 @@ public class AnimeCtr {
     @Autowired
     private AnimeService anime_service;
 
+    @Value("${save-path}")
+    private String save_path;
+
     @GetMapping("animes/{name}")
     public void display_anime(@PathVariable String name, HttpServletRequest req, HttpServletResponse rep)
             throws IOException {
-        String user_home = System.getProperty("user.home");
-        File file = new File(user_home + "/Videos/animes/" + name + ".mp4");
+        File file = new File(save_path + name + ".mp4");
         if (!file.exists()) {
             rep.getOutputStream().close();
             return;
@@ -81,8 +84,7 @@ public class AnimeCtr {
             Integer episodes,
             String episode_name, Integer sid, HttpServletRequest req) throws IOException {
         // 获取保存目录
-        String user_home = System.getProperty("user.home");
-        File dir = new File(user_home + "/Videos/animes");
+        File dir = new File(save_path);
         if (!dir.exists()) {
             dir.mkdirs();
         }

@@ -15,3 +15,5 @@ spring:
       maximum-pool-size: 20
 server:
   port: 9901
+
+save-path: C:/Users/ru/Videos/animes

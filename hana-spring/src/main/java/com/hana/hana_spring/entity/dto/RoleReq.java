@@ -13,9 +13,9 @@ import lombok.Data;
 @Data
 @Component
 public class RoleReq {
-    private Integer id;
-    private String name;
-    private List<Integer> permissions;
+    private Integer id; // 角色id
+    private String name; // 角色名
+    private List<Integer> permissions; // 权限
 
     public Role toRole() {
         List<Auth> auths = new ArrayList<>();
