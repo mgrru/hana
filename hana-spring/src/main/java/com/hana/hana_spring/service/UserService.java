@@ -52,4 +52,43 @@ public class UserService {
             user_mapper.upd_role(id, rid);
         }
     }
+
+    public User get_user_by_id(Integer id) {
+        if (id != null) {
+            return user_mapper.sel_by_id(id);
+        } else {
+            return null;
+        }
+    }
+
+    public User get_user_by_account(String account) {
+        if (account != null) {
+            return user_mapper.sel_by_account(account);
+        } else {
+            return null;
+        }
+    }
+
+    public void upd_user(User user) {
+        if (user == null) {
+            return;
+        }
+
+        if (user.getPass() != null) {
+            user_mapper.upd_pass(user);
+        }
+        if (user.getName() != null) {
+            user_mapper.upd_name(user);
+        }
+        if (user.getAge() != null) {
+            user_mapper.upd_age(user);
+        }
+        if (user.getPhone() != null) {
+            user_mapper.upd_phone(user);
+        }
+        if (user.getEmail() != null) {
+            user_mapper.upd_email(user);
+        }
+
+    }
 }
