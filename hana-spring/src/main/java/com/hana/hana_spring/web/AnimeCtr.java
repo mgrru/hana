@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,9 +26,8 @@ import com.hana.hana_spring.utils.Result;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+
 @RestController
 @CrossOrigin("*")
 public class AnimeCtr {
@@ -82,7 +83,7 @@ public class AnimeCtr {
     @PostMapping("upload")
     public Result add_anime(@RequestParam MultipartFile resources, MultipartFile cover, String type, String name,
             Integer episodes,
-            String episode_name, Integer sid, HttpServletRequest req) throws IOException {
+            String episode_name, Integer uid, Integer sid, HttpServletRequest req) throws IOException {
         // 获取保存目录
         File dir = new File(save_path);
         if (!dir.exists()) {
@@ -139,11 +140,30 @@ public class AnimeCtr {
         save_resource.setUrl(url + "/animes/" + name);
         save_resource.setProcess(false);
 
-        save_resource.setUid(1);
+        save_resource.setUid(uid);
 
         // 保存到数据库
         anime_service.add_anime(save_resource);
         return Result.success();
     }
 
+    @DeleteMapping("deactivate/{rid}")
+    public Result del_anime(@PathVariable Integer id) {
+        anime_service.del_anime(id);
+        return Result.success();
+    }
+
+    @PutMapping("approve/{rid}")
+    public Result approve_anime(@PathVariable Integer rid) {
+        anime_service.process_anime(rid);
+
+        return Result.success();
+    }
+
+    @PutMapping("reject/{rid}")
+    public Result reject_anime(@PathVariable Integer rid) {
+        anime_service.del_anime(rid);
+
+        return Result.success();
+    }
 }
