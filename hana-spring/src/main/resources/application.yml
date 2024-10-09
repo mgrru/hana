@@ -16,4 +16,5 @@ spring:
 server:
   port: 9901
 
+# 动画保存路径
 save-path: C:/Users/ru/Videos/animes
