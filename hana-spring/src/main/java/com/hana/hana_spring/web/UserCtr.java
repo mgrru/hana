@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,11 +56,19 @@ public class UserCtr {
         return Result.success();
     }
 
-    @PostMapping
-    public Result add_user(@RequestBody String entity) throws JsonMappingException, JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        User user = mapper.readValue(entity, User.class);
-        user_service.add_user(user);
+    @GetMapping("{id}")
+    public Result get_user_by_id(@PathVariable Integer id) throws JsonProcessingException {
+        User user = user_service.get_user_by_id(id);
+        String data = new ObjectMapper().writeValueAsString(user);
+        return Result.success(data);
+    }
+
+    @PutMapping("{id}")
+    public Result upd_user(@PathVariable Integer id, @RequestBody String entity)
+            throws JsonMappingException, JsonProcessingException {
+        User user = new ObjectMapper().readValue(entity, User.class);
+        user_service.upd_user(user);
         return Result.success();
     }
+
 }
