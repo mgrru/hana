@@ -1,0 +1,19 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+  application:
+    name: hana-spring
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://dpbjmy-jtvfnqjwwssjmxoa-pub.proxy.dms.aliyuncs.com:3306/hana?useUnicode=true&characterEncoding=utf-8
+    username: X27FRhUKDgonckaKRKAs7115
+    password: jI6f7vxp9uAxNlNfauEnBu1OtU5Mhg
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 20
+server:
+  port: 9901
+
+save-path: C:/Users/ru/Videos/animes

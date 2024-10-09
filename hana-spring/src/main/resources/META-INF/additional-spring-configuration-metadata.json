@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "save-path",
+  "type": "java.lang.String",
+  "description": "动画保存路径"
+}]}
