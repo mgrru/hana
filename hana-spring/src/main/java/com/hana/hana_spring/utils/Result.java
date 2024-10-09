@@ -29,4 +29,9 @@ public class Result {
         Code c = Code.ERROR;
         return new Result(c.code(), c.msg(), null);
     }
+
+    public static Result exception() {
+        Code c = Code.EXCEPTION;
+        return new Result(c.code(), c.msg(), null);
+    }
 }
