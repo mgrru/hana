@@ -2,9 +2,9 @@
     <div id="app">
         <div class="main-content">
             <!-- 模拟生成视频项 -->
-            <div class="video-item" v-for="video in videoList" :key="video.id">
+            <div class="video-item" v-for="video in videoList" :key="video.id" @click="recordHistory(video)">
                 <router-link :to="'/video/' + video.id">
-                    <img :src="video.thumbnail" alt="Video thumbnail">
+                    <img :src="video.thumbnail" alt="thumbnail">
                     <p>{{ video.title }}</p>
                 </router-link>
             </div>
@@ -12,18 +12,27 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { onMounted } from 'vue';
 import { useVideoStore } from '../store/videoStore';
+import { useHistoryStore } from '../store/historyStore';
 import { storeToRefs } from 'pinia';
-const videoStore = useVideoStore();
 
-onMounted(async () => {
-    await videoStore.fetchVideoList();
+const videoStore = useVideoStore();
+// 获取视频列表
+const { videoList } = storeToRefs(videoStore);  // 使用 storeToRefs 保持响应式
+// 历史仓库
+const historyStore = useHistoryStore();
+
+onMounted(() => {
+    videoStore.fetchVideoList();
 });
 
-// const { videoList } = videoStore;
-const { videoList } = storeToRefs(videoStore);  // 使用 storeToRefs 保持响应式
+
+// 记录点击历史
+const recordHistory = (video) => {
+    historyStore.addHistory(video); // 将视频信息添加到历史记录中
+};
 
 </script>
 

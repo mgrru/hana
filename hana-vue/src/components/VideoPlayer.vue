@@ -8,9 +8,6 @@
             <span>发布时间: {{ publishDate }}</span>
         </div>
 
-        <!-- <video ref="video" controls class="video-player">
-            <source :src="videoSrc" type="video/mp4" />
-        </video> -->
 
         <div style="position: relative; width: 100%;">
             <!-- 视频播放器 -->
@@ -112,6 +109,7 @@ const toggleDanmakuVisibility = () => {
     }
 };
 
+//发送弹幕
 const sendDanmaku = () => {
     if (input.value.trim()) {
         const newDanmaku = {
@@ -156,8 +154,9 @@ watch(isPlaying, (newVal) => {
 
 onMounted(async () => {
     if (videoId.value) {
-        await videoStore.fetchVideoData(videoId.value); // 根据视频 ID 加载数据
-        console.log('Video data loaded for ID:', videoId.value);
+        videoStore.fetchVideoData(videoId.value); // 根据视频 ID 加载数据
+        console.log('加载视频的Id为：', videoId.value);
+        console.log('获取的视频数据:', videoStore.title); // 检查标题是否已更新
     }
     // 初始化弹幕列表
     const initialDanmakuList = generateRandomDanmaku(10);

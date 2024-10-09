@@ -2,7 +2,7 @@
     <!-- 侧边工具栏 -->
     <div class="aside-right">
         <div class="buttons-container">
-            <el-button icon="Refresh" class="refresh-button">换一换</el-button>
+            <el-button icon="Refresh" class="refresh-button" @click="refreshVideoList">换一换</el-button>
 
             <el-dropdown placement="top-start" class="more-button">
                 <el-button>
@@ -27,18 +27,32 @@
                 </template>
             </el-dropdown>
 
-            <el-button icon="ArrowUp" class="back-to-top-button">回到顶部</el-button>
+            <el-button icon="ArrowUp" class="back-to-top-button" @click="scrollToTop">回到顶部</el-button>
         </div>
     </div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
+import { useVideoStore } from '../store/videoStore';
+const videoStore = useVideoStore();
+
+const refreshVideoList = async () => {
+    await videoStore.fetchVideoList();
+};
+
+const scrollToTop = () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth', // 平滑滚动
+    });
+};
+
 </script>
 
 <style lang="scss" scoped>
 .aside-right {
     width: 70px;
-    background-color: #ffffff;
+    background-color: #c2df80;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -68,9 +82,11 @@
 .refresh-button,
 .back-to-top-button,
 .more-button {
-    width: 50px;
-    height: 50px;
+    width: 68px;
+    height: 68px;
     display: flex;
+    flex-direction: column;
+    gap: 5px;
     justify-content: center;
     align-items: center;
     border-radius: 50%;
@@ -96,6 +112,11 @@
 }
 
 .el-icon {
-    font-size: 20px;
+    font-size: 24px; // 调整图标的大小
+}
+
+.refresh-button span,
+.back-to-top-button span {
+    font-size: 12px; // 调整文字的大小
 }
 </style>

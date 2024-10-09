@@ -11,26 +11,25 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, watch, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
 import { useVideoStore } from '../store/videoStore';
 import HeaderView from './HeaderView.vue';
 import VideoContainer from './VideoContainerView.vue';
-
+import { useRoute } from 'vue-router';
 const videoStore = useVideoStore();
 const route = useRoute();
 const videoId = ref(route.params.id);
-
-// 初始加载数据
+console.log("通过 route 获取的 ID:", videoId.value);
+// 初始加载视频数据
 onMounted(async () => {
     await videoStore.fetchVideoData(videoId.value);
 });
 
-// 监听路由变化，动态加载新视频数据
+// 监听 videoId 变化
 watch(() => route.params.id, async (newId) => {
     videoId.value = newId;
-    await videoStore.fetchVideoData(videoId.value);
+    await videoStore.fetchVideoData(newId);
 });
 </script>
 

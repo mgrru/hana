@@ -1,57 +1,66 @@
 import { defineStore } from "pinia";
+import { ref } from "vue";
 import Mock from "mockjs";
+import axios from "axios";
 
-export const useVideoStore = defineStore("videoStore", {
-  state: () => ({
-    videoList: [], // 用于保存视频列表数据
-    videoSrc: "",
-    title: "",
-    description: "",
-    views: 0,
-    likes: 0,
-    stars: 0,
-    danmaku: 0,
-    publishDate: "",
-    shares: 0,
-  }),
-  actions: {
-    async fetchVideoList() {
-      // 模拟生成 48 个视频项
-      const data = Mock.mock({
-        "list|48": [
-          {
-            "id|+1": 1,
-            thumbnail: '@image("200x100", "#50B347", "#FFF", "Video")', // 随机生成缩略图
-            title: "@ctitle(10, 20)", // 随机生成标题
-          },
-        ],
-      });
-      console.log("Fetched video list: ", data.list); // 打印出数据
-      this.videoList = data.list;
-    },
-    async fetchVideoData(videoId) {
-      // 根据视频 ID 模拟生成视频数据
-      const data = Mock.mock({
-        videoSrc: new URL("@/assets/videos/barca1.mp4", import.meta.url).href, // 使用静态资源路径
-        title: "@ctitle(10, 20)",
-        description: "@cparagraph(1, 3)",
-        "views|1000-100000": 1,
-        "likes|100-10000": 1,
-        "stars|100-5000": 1,
-        "danmaku|100-5000": 1,
-        publishDate: '@date("yyyy-MM-dd")',
-        "shares|10-500": 1,
-      });
+export const useVideoStore = defineStore("videoStore", () => {
+  const videoList = ref([]);
+  const videoSrc = ref("");
+  const title = ref("");
+  const description = ref("");
+  const views = ref(0);
+  const likes = ref(0);
+  const stars = ref(0);
+  const danmaku = ref(0);
+  const publishDate = ref("");
+  const shares = ref(0);
 
-      this.videoSrc = data.videoSrc;
-      this.title = data.title;
-      this.description = data.description;
-      this.views = data.views;
-      this.likes = data.likes;
-      this.stars = data.stars;
-      this.danmaku = data.danmaku;
-      this.publishDate = data.publishDate;
-      this.shares = data.shares;
-    },
-  },
+  // 获取视频列表
+  const fetchVideoList = async () => {
+    try {
+        const response = await axios.get('/videoList');
+        console.log("获取的视频列表响应:", response.data); // 检查返回的数据结构
+        if (response.data && response.data.list) {
+            videoList.value = response.data.list; // 确保赋值给 videoList
+        } else {
+            console.error("获取视频列表失败，数据格式不正确:", response.data);
+        }
+    } catch (error) {
+        console.error("获取视频列表失败：", error);
+    }
+};
+
+
+  // 获取视频数据
+  const fetchVideoData = async (videoId) => {
+    try {
+      const response = await axios.get(`/videos/${videoId}`);
+      videoSrc.value = response.data.videoSrc;
+      title.value = response.data.title;
+      description.value = response.data.description;
+      views.value = response.data.views;
+      likes.value = response.data.likes;
+      stars.value = response.data.stars;
+      danmaku.value = response.data.danmaku;
+      publishDate.value = response.data.publishDate;
+      shares.value = response.data.shares;
+    } catch (error) {
+      console.error("获取视频数据失败：",error);
+    }
+  };
+
+  return {
+    videoList,
+    videoSrc,
+    title,
+    description,
+    views,
+    likes,
+    stars,
+    danmaku,
+    publishDate,
+    shares,
+    fetchVideoList,
+    fetchVideoData,
+  };
 });

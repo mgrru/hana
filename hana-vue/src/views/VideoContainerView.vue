@@ -6,17 +6,26 @@
             </div>
             <!-- 评论组件 -->
             <div class="comment-section">
-                <Comment v-for="comment in comments" :key="comment.id" :comment="comment" />
+                <div v-if="visibleComments.length">
+                    <Comment v-for="comment in visibleComments" :key="comment.id" :comment="comment" />
+                </div>
+                <p v-if="!userStore.isLoggedIn && comments.length > maxVisibleComments">
+                    还有更多评论，<a @click="showLoginDialog">登录以查看全部</a>
+                </p>
+                <p v-if="comments.length === 0">还没有评论，快来抢沙发吧！</p>
+
+                <!-- 遮罩层 -->
+                <div v-if="!userStore.isLoggedIn && comments.length > maxVisibleComments" class="mask">
+                    <button class="login-btn" @click="showLoginDialog">登录以查看更多评论</button>
+                </div>
             </div>
         </div>
         <div class="right-container">
             <div class="user-info-container">
                 <!-- 用户信息内容 -->
+                <p>视频发布人信息</p>
             </div>
-
-
             <!-- 用户组件 -->
-
             <!-- 弹幕组件 -->
             <div class="danmaku-list">
                 <h3>弹幕列表</h3>
@@ -36,13 +45,13 @@
 
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';  // 引入 useRoute 用来获取路由参数
+import { ref, onMounted, computed } from 'vue';
+import { useRoute } from 'vue-router';
+import VideoPlayer from '../components/VideoPlayer.vue';
 import Comment from '../components/Comment.vue';
 import { useCommentStore } from '../store/comment.js';
-import { computed } from 'vue';
-import VideoPlayer from '../components/VideoPlayer.vue';
-import { useDanmakuStore } from '../store/danmaku.js'
+import { useUserStore } from '../store/userStore'; // 引入用户状态存储
+import { useDanmakuStore } from '../store/danmaku.js';
 
 // 获取路由中的视频 ID 参数
 const route = useRoute();
@@ -50,13 +59,32 @@ const videoId = ref(route.params.id);
 const commentStore = useCommentStore();
 const danmakuStore = useDanmakuStore();
 const danmakuList = computed(() => danmakuStore.danmakuList);
+const userStore = useUserStore(); // 用户状态
+
+const props = defineProps({
+    videoId: String,
+});
+console.log("通过 props 获取的 ID:", props.videoId);
 
 onMounted(() => {
-    console.log(`Loaded video ID: ${videoId.value}`);
-    commentStore.loadComments();
+    // console.log(`Loaded video ID: ${videoId.value}`);
+    if (videoId.value) {
+        commentStore.loadComments(videoId.value); // 传递 videoId
+    } else {
+        console.error('视频 ID 缺失');
+    }
 });
 
 const comments = computed(() => commentStore.comments);
+const maxVisibleComments = 3; // 未登录时最多显示的评论数量
+const visibleComments = computed(() => {
+    return userStore.isLoggedIn ? comments.value : comments.value.slice(0, maxVisibleComments);
+});
+// 显示登录对话框
+const showLoginDialog = () => {
+    userStore.showLoginDialog();
+};
+
 </script>
 
 <style lang="scss">
@@ -95,6 +123,21 @@ const comments = computed(() => commentStore.comments);
     border-radius: 15px;
     padding: 20px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    position: relative;
+    /* 为遮罩层提供相对定位 */
+}
+
+.mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    /* 半透明背景 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .right-container {

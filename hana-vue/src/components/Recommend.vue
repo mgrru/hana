@@ -1,52 +1,53 @@
 <template>
-    <!-- 轮播图 -->
-    <el-carousel :interval="5000" arrow="always" class="carousel">
-        <el-carousel-item v-for="(video, index) in carouselVideos" :key="index">
-            <div class="carousel-item">
-                <img :src="video.cover" :alt="video.title" class="carousel-image" />
-                <div class="carousel-info">
-                    <h3>{{ video.title }}</h3>
-                    <p>{{ video.description }}</p>
-                    <p>Views: {{ video.views }}</p>
-                </div>
-            </div>
-        </el-carousel-item>
-    </el-carousel>
+    <div>
+        <el-carousel v-if="!loading && !error" :interval="5000" arrow="always">
+            <el-carousel-item v-for="video in carouselVideos" :key="video.id">
+                <img :src="video.cover" :alt="video.title" />
+            </el-carousel-item>
+        </el-carousel>
+        <div v-if="loading">加载中...</div>
+        <div v-if="error" class="error-message">{{ error }}</div>
+    </div>
 </template>
 
 <script setup>
 import { onMounted } from 'vue';
 import { useCarouselStore } from '../store/carouselStore';
-import { ElCarousel, ElCarouselItem } from 'element-plus';
+import { ref } from 'vue'
 
+const loading = ref(true);
+const error = ref(null); // 用于存储错误信息
 const carouselStore = useCarouselStore();
 const { carouselVideos, fetchCarouselVideos } = carouselStore;
 
-onMounted(() => {
-    fetchCarouselVideos();
+onMounted(async () => {
+    loading.value = true; // 开始加载
+    error.value = null; // 清除之前的错误信息
+    try {
+        await fetchCarouselVideos(); // 等待获取数据
+    } catch (err) {
+        error.value = '获取轮播图信息失败！'; // 设置错误信息
+        console.error(err); // 打印错误
+    } finally {
+        loading.value = false; // 加载结束
+    }
 });
 </script>
 
 <style scoped>
-.carousel-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: #f5f5f5;
-}
-
-.carousel-image {
-    width: 100%;
-    height: auto;
-}
-
-.carousel-info {
+.el-carousel__item h3 {
+    color: #475669;
+    opacity: 0.75;
+    line-height: 300px;
+    margin: 0;
     text-align: center;
-    padding: 10px;
 }
 
-h3 {
-    margin: 10px 0;
+.el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n + 1) {
+    background-color: #d3dce6;
 }
 </style>
