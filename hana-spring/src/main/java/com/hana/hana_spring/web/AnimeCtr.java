@@ -33,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @CrossOrigin("*")
+@LoginValidate
 public class AnimeCtr {
 
     @Autowired
@@ -51,6 +52,7 @@ public class AnimeCtr {
      * @param episode_name 集名
      * @throws IOException
      */
+    @LoginValidate(value = false)
     @GetMapping("animes/{name}/{episode_name}")
     public void display_anime(@PathVariable String name, @PathVariable String episode_name, HttpServletRequest req,
             HttpServletResponse rep)
@@ -91,6 +93,7 @@ public class AnimeCtr {
      * 
      * @throws JsonProcessingException
      */
+    @LoginValidate(value = false)
     @GetMapping("animes")
     public Result get_all_anime() throws JsonProcessingException {
         List<Resource> resources = anime_service.get_all_anime();
@@ -110,7 +113,6 @@ public class AnimeCtr {
      * @param sid          板块id
      * @throws IOException
      */
-    @LoginValidate
     @PostMapping("upload")
     public Result add_anime(@RequestParam MultipartFile resources, MultipartFile cover, String type, String name,
             String episode_name, Integer sid, HttpServletRequest req) throws IOException {
@@ -192,7 +194,6 @@ public class AnimeCtr {
      * @param rid 动漫id
      * @return
      */
-    @LoginValidate
     @DeleteMapping("deactivate/{rid}")
     public Result del_anime(@PathVariable Integer rid) {
         anime_service.del_anime(rid);
@@ -204,11 +205,9 @@ public class AnimeCtr {
      * 
      * @param rid 动漫id
      */
-    @LoginValidate
     @PutMapping("approve/{rid}")
     public Result approve_anime(@PathVariable Integer rid) {
         anime_service.process_anime(rid);
-
         return Result.success();
     }
 
@@ -217,11 +216,36 @@ public class AnimeCtr {
      * 
      * @param rid 动漫id
      */
-    @LoginValidate
     @PutMapping("reject/{rid}")
     public Result reject_anime(@PathVariable Integer rid) {
         anime_service.del_anime(rid);
-
         return Result.success();
     }
+
+    /**
+     * 用户获取自己上传动漫的接口
+     * 
+     * @throws JsonProcessingException
+     */
+    @GetMapping("users/animes")
+    public Result get_user_anime(HttpServletRequest req) throws JsonProcessingException {
+        String token = req.getHeader("Authorization");
+        Integer uid = jwt_util.getLoginUserId(token);
+        List<Resource> resources = anime_service.get_by_user(uid);
+        String data = new ObjectMapper().writeValueAsString(resources);
+        return Result.success(data);
+    }
+
+    /**
+     * 删除动漫
+     * 
+     * @param rid 动漫id
+     * @return
+     */
+    @DeleteMapping("resource/{rid}")
+    public Result del_user_anime(@PathVariable Integer rid) {
+        anime_service.del_anime(rid);
+        return Result.success();
+    }
+
 }

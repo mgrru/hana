@@ -42,4 +42,12 @@ public class AnimeService {
             resource.setProcess(true);
         }
     }
+
+    public List<Resource> get_by_user(Integer uid) {
+        if (uid != null) {
+            return anime_mapper.sel_by_user(uid);
+        } else {
+            return null;
+        }
+    }
 }
