@@ -15,6 +15,7 @@ public class SectionService {
     @Autowired
     private SectionMapper section_mapper;
 
+    @Transactional(readOnly = true)
     public List<Section> get_all_section() {
         return section_mapper.sel_all();
     }

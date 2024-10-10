@@ -15,6 +15,7 @@ public class UserService {
     @Autowired
     private UserMapper user_mapper;
 
+    @Transactional(readOnly = true)
     public List<User> get_all_user() {
         return user_mapper.sel_all();
     }
@@ -53,6 +54,7 @@ public class UserService {
         }
     }
 
+    @Transactional(readOnly = true)
     public User get_user_by_id(Integer id) {
         if (id != null) {
             return user_mapper.sel_by_id(id);
@@ -61,6 +63,7 @@ public class UserService {
         }
     }
 
+    @Transactional(readOnly = true)
     public User get_user_by_account(String account) {
         if (account != null) {
             return user_mapper.sel_by_account(account);
