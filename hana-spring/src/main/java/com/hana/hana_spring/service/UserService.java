@@ -69,14 +69,19 @@ public class UserService {
         }
     }
 
+    public void upd_pass(Integer uid, String pass, String new_pass) {
+        User user = user_mapper.sel_by_id(uid);
+        if (user.getPass().equals(pass) && pass != new_pass) {
+            user.setPass(new_pass);
+            user_mapper.upd_pass(user);
+        }
+    }
+
     public void upd_user(User user) {
         if (user == null) {
             return;
         }
 
-        if (user.getPass() != null) {
-            user_mapper.upd_pass(user);
-        }
         if (user.getName() != null) {
             user_mapper.upd_name(user);
         }

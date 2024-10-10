@@ -32,6 +32,12 @@ public class FavoriteCtr {
     @Autowired
     private JwtUtil jwt_util;
 
+    /**
+     * 获取收藏
+     * 
+     * @return [{id, type, cover, name, episodeName, url, process, uid, sid}]
+     * @throws JsonProcessingException
+     */
     @GetMapping
     public Result get_favorites(HttpServletRequest req) throws JsonProcessingException {
         String token = req.getHeader("Authorization");
@@ -41,6 +47,12 @@ public class FavoriteCtr {
         return Result.success(data);
     }
 
+    /**
+     * 添加收藏
+     * 
+     * @param rid 收藏的动漫id
+     * @return
+     */
     @PostMapping("{rid}")
     public Result add_favorite(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");
@@ -49,6 +61,12 @@ public class FavoriteCtr {
         return Result.success();
     }
 
+    /**
+     * 删除收藏
+     * 
+     * @param rid 收藏的动漫id
+     * @return
+     */
     @DeleteMapping("{rid}")
     public Result del_favorite(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");

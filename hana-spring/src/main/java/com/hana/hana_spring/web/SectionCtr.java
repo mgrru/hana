@@ -29,6 +29,12 @@ public class SectionCtr {
     @Autowired
     private SectionService section_service;
 
+    /**
+     * 获取所有板块的接口
+     * 
+     * @return [{id, name}]
+     * @throws JsonProcessingException
+     */
     @GetMapping
     public Result get_all_section() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
@@ -40,6 +46,13 @@ public class SectionCtr {
         return Result.success(data);
     }
 
+    /**
+     * 添加板块的接口
+     * 
+     * @param entity {name} | {id, name}
+     * @throws JsonMappingException
+     * @throws JsonProcessingException
+     */
     @PostMapping
     public Result add_section(@RequestBody String entity) throws JsonMappingException, JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
@@ -48,6 +61,14 @@ public class SectionCtr {
         return Result.success();
     }
 
+    /**
+     * 修改板块的接口
+     * 
+     * @param id     要修改的板块id
+     * @param entity {name} | {id, name}
+     * @throws JsonMappingException
+     * @throws JsonProcessingException
+     */
     @PutMapping("{id}")
     public Result upd_section(@PathVariable Integer id, @RequestBody String entity)
             throws JsonMappingException, JsonProcessingException {
@@ -58,6 +79,12 @@ public class SectionCtr {
         return Result.success();
     }
 
+    /**
+     * 删除板块
+     * 
+     * @param id 要删除的板块id
+     * @return
+     */
     @DeleteMapping("{id}")
     public Result del_section(@PathVariable Integer id) {
         section_service.del_section(id);

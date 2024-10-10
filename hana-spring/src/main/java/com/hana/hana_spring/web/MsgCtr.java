@@ -33,6 +33,12 @@ public class MsgCtr {
     @Autowired
     private JwtUtil jwt_util;
 
+    /**
+     * 获取消息的接口
+     * 
+     * @return [{id, sender, recipient, content, time}]
+     * @throws JsonProcessingException
+     */
     @GetMapping
     public Result get_msg(HttpServletRequest req) throws JsonProcessingException {
         String token = req.getHeader("Authorization");
@@ -42,6 +48,13 @@ public class MsgCtr {
         return Result.success(data);
     }
 
+    /**
+     * 发送消息的接口
+     * 
+     * @param entity {recipient, content}
+     * @throws JsonMappingException
+     * @throws JsonProcessingException
+     */
     @PostMapping
     public Result send_msg(@RequestBody String entity, HttpServletRequest req)
             throws JsonMappingException, JsonProcessingException {

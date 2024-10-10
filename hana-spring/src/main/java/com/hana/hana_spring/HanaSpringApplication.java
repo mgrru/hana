@@ -9,5 +9,4 @@ public class HanaSpringApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HanaSpringApplication.class, args);
 	}
-
 }

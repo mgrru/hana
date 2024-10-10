@@ -32,6 +32,12 @@ public class HistoryCtr {
     @Autowired
     private JwtUtil jwt_util;
 
+    /**
+     * 获取观看历史
+     * 
+     * @return [{id, type, cover, name, episodeName, url, process, uid, sid}]
+     * @throws JsonProcessingException
+     */
     @GetMapping
     public Result get_history(HttpServletRequest req) throws JsonProcessingException {
         String token = req.getHeader("Authorization");
@@ -41,6 +47,12 @@ public class HistoryCtr {
         return Result.success(data);
     }
 
+    /**
+     * 添加观看历史
+     * 
+     * @param rid 观看的动漫id
+     * @return
+     */
     @PostMapping("{rid}")
     public Result add_history(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");
@@ -49,6 +61,12 @@ public class HistoryCtr {
         return Result.success();
     }
 
+    /**
+     * 删除观看历史
+     * 
+     * @param rid 要删除的动漫id
+     * @return
+     */
     @DeleteMapping("{rid}")
     public Result del_history(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");

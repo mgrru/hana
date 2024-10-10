@@ -25,3 +25,9 @@ jwt:
   token-prefix: "Bearer "
   secret: "hana-secret"
   exp: 10800000 # 3小时
+
+
+# api文档访问接口
+springdoc:
+  swagger-ui:
+    path: /v3/api
