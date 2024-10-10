@@ -23,11 +23,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hana.hana_spring.anno.LoginValidate;
 import com.hana.hana_spring.entity.Resource;
 import com.hana.hana_spring.service.AnimeService;
+import com.hana.hana_spring.utils.JwtUtil;
 import com.hana.hana_spring.utils.Result;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @CrossOrigin("*")
 public class AnimeCtr {
@@ -35,11 +38,15 @@ public class AnimeCtr {
     @Autowired
     private AnimeService anime_service;
 
+    @Autowired
+    private JwtUtil jwt_util;
+
     @Value("${save-path}")
     private String save_path;
 
     /**
      * 视频播放链接请求
+     * 
      * @param name 视频名称
      * @throws IOException
      */
@@ -79,6 +86,7 @@ public class AnimeCtr {
 
     /**
      * 获取所有动漫信息
+     * 
      * @throws JsonProcessingException
      */
     @GetMapping("animes")
@@ -97,14 +105,13 @@ public class AnimeCtr {
      * @param type         类型 '动画' | '漫画'
      * @param name         动漫名
      * @param episode_name 集名 第一集 | 第二集
-     * @param uid          上传用户id
      * @param sid          板块id
      * @throws IOException
      */
     @LoginValidate
     @PostMapping("upload")
     public Result add_anime(@RequestParam MultipartFile resources, MultipartFile cover, String type, String name,
-            String episode_name, Integer uid, Integer sid, HttpServletRequest req) throws IOException {
+            String episode_name, Integer sid, HttpServletRequest req) throws IOException {
         // 获取保存目录
         File dir = new File(save_path);
         if (!dir.exists()) {
@@ -120,6 +127,7 @@ public class AnimeCtr {
         // 检查上传动画格式
         String suffix = original_name.substring(original_name.lastIndexOf("."));
         if (!suffix.equalsIgnoreCase(".mp4")) {
+            log.error("上传视频有问题");
             return Result.error();
         } else {
             anime.createNewFile();
@@ -134,6 +142,7 @@ public class AnimeCtr {
             if (anime.exists()) {
                 anime.delete();
             }
+            log.error("上传图片有问题");
             return Result.error();
         }
 
@@ -160,7 +169,9 @@ public class AnimeCtr {
         save_resource.setUrl(url + "/animes/" + name);
         save_resource.setProcess(false);
 
-        save_resource.setUid(uid);
+        String token = req.getHeader("Authorization");
+        Integer id = jwt_util.getLoginUserId(token);
+        save_resource.setUid(id);
 
         // 保存到数据库
         anime_service.add_anime(save_resource);

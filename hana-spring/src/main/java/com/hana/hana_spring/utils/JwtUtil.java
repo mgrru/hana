@@ -37,7 +37,7 @@ public class JwtUtil {
         }
     }
 
-    public Integer getLoginMasterId(String token) {
+    public Integer getLoginUserId(String token) {
         try {
             String id = JWT.require(Algorithm.HMAC512(secret))
                     .build()

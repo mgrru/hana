@@ -7,6 +7,7 @@ public enum Code {
     SUCCESS(200, "成功"),
     ERROR(444, "错误"),
     EXCEPTION(555, "异常"),
+    NOAUTH(666, "无权限")
     ;
 
     private final int code;

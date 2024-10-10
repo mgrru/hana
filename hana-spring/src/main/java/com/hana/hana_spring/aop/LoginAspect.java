@@ -41,7 +41,7 @@ public class LoginAspect {
         if (jwt_util.validateToken(token)) {
             return join_point.proceed(join_point.getArgs());
         } else {
-            return Result.error();
+            return Result.noauth();
         }
     }
 }
