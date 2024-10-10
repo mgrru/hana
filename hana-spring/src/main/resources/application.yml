@@ -18,3 +18,10 @@ server:
 
 # 动画保存路径
 save-path: C:/Users/ru/Videos/animes
+
+# 登录验证
+jwt:
+  header: "Authorization"
+  token-prefix: "Bearer "
+  secret: "hana-secret"
+  exp: 10800000 # 3小时

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hana.hana_spring.anno.LoginValidate;
 import com.hana.hana_spring.entity.Section;
 import com.hana.hana_spring.service.SectionService;
 import com.hana.hana_spring.utils.Result;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+@LoginValidate
 @RestController
 @RequestMapping("sections")
 @CrossOrigin("*")

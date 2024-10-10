@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hana.hana_spring.anno.LoginValidate;
 import com.hana.hana_spring.entity.Announcement;
 import com.hana.hana_spring.service.AnnouncementService;
 import com.hana.hana_spring.utils.Result;
@@ -23,10 +24,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 @RequestMapping("announcements")
 @CrossOrigin("*")
+@LoginValidate
 public class AnnouncementCtr {
     @Autowired
     private AnnouncementService announcement_service;
 
+    @LoginValidate(value = false)
     @GetMapping
     public Result get_all_announcement() throws JsonProcessingException {
         List<Announcement> announcements = announcement_service.get_all_announcement();

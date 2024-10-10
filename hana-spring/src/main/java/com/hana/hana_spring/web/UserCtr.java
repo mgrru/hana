@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hana.hana_spring.anno.LoginValidate;
 import com.hana.hana_spring.entity.User;
 import com.hana.hana_spring.service.UserService;
 import com.hana.hana_spring.utils.Result;
 
+@LoginValidate
 @RestController
 @RequestMapping("users")
 @CrossOrigin("*")

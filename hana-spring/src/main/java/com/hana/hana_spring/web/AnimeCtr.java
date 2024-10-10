@@ -20,13 +20,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hana.hana_spring.anno.LoginValidate;
 import com.hana.hana_spring.entity.Resource;
 import com.hana.hana_spring.service.AnimeService;
 import com.hana.hana_spring.utils.Result;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 
 @RestController
 @CrossOrigin("*")
@@ -38,6 +38,11 @@ public class AnimeCtr {
     @Value("${save-path}")
     private String save_path;
 
+    /**
+     * 视频播放链接请求
+     * @param name 视频名称
+     * @throws IOException
+     */
     @GetMapping("animes/{name}")
     public void display_anime(@PathVariable String name, HttpServletRequest req, HttpServletResponse rep)
             throws IOException {
@@ -72,6 +77,10 @@ public class AnimeCtr {
         rep.getOutputStream().close();
     }
 
+    /**
+     * 获取所有动漫信息
+     * @throws JsonProcessingException
+     */
     @GetMapping("animes")
     public Result get_all_anime() throws JsonProcessingException {
         List<Resource> resources = anime_service.get_all_anime();
@@ -80,9 +89,21 @@ public class AnimeCtr {
         return Result.success(data);
     }
 
+    /**
+     * 上传动漫
+     * 
+     * @param resources    动漫文件
+     * @param cover        封面图
+     * @param type         类型 '动画' | '漫画'
+     * @param name         动漫名
+     * @param episode_name 集名 第一集 | 第二集
+     * @param uid          上传用户id
+     * @param sid          板块id
+     * @throws IOException
+     */
+    @LoginValidate
     @PostMapping("upload")
     public Result add_anime(@RequestParam MultipartFile resources, MultipartFile cover, String type, String name,
-            Integer episodes,
             String episode_name, Integer uid, Integer sid, HttpServletRequest req) throws IOException {
         // 获取保存目录
         File dir = new File(save_path);
@@ -132,7 +153,6 @@ public class AnimeCtr {
         save_resource.setType(type);
         save_resource.setCover(cover.getBytes());
         save_resource.setName(name);
-        save_resource.setEpisodes(episodes);
         save_resource.setEpisodeName(episode_name);
         save_resource.setSid(sid);
         save_resource.setPath(anime.getPath());
@@ -147,12 +167,25 @@ public class AnimeCtr {
         return Result.success();
     }
 
+    /**
+     * 下架动漫
+     * 
+     * @param rid 动漫id
+     * @return
+     */
+    @LoginValidate
     @DeleteMapping("deactivate/{rid}")
-    public Result del_anime(@PathVariable Integer id) {
-        anime_service.del_anime(id);
+    public Result del_anime(@PathVariable Integer rid) {
+        anime_service.del_anime(rid);
         return Result.success();
     }
 
+    /**
+     * 通过审核
+     * 
+     * @param rid 动漫id
+     */
+    @LoginValidate
     @PutMapping("approve/{rid}")
     public Result approve_anime(@PathVariable Integer rid) {
         anime_service.process_anime(rid);
@@ -160,6 +193,12 @@ public class AnimeCtr {
         return Result.success();
     }
 
+    /**
+     * 不通过审核
+     * 
+     * @param rid 动漫id
+     */
+    @LoginValidate
     @PutMapping("reject/{rid}")
     public Result reject_anime(@PathVariable Integer rid) {
         anime_service.del_anime(rid);

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hana.hana_spring.anno.LoginValidate;
 import com.hana.hana_spring.entity.Auth;
 import com.hana.hana_spring.entity.Role;
 import com.hana.hana_spring.entity.dto.RoleReq;
@@ -23,6 +24,7 @@ import com.hana.hana_spring.utils.Result;
 
 @RestController
 @CrossOrigin("*")
+@LoginValidate
 public class RoleCtr {
     @Autowired
     private RoleService role_service;

@@ -15,7 +15,6 @@ public class Resource {
   private String type; // 动漫类型  动画 | 漫画
   private byte[] cover; // 动漫封面
   private String name; // 动漫名
-  private Integer episodes; // 集数
   private String episodeName; // 集名
   private String path; // 存储路径
   private String url; // 资源访问url
