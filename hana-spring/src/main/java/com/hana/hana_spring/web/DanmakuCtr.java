@@ -41,6 +41,7 @@ public class DanmakuCtr {
      * @param rid 动漫id
      * @throws JsonProcessingException
      */
+    @LoginValidate(value = false)
     @GetMapping("{rid}")
     public Result get_danmaku(@PathVariable Integer rid) throws JsonProcessingException {
         List<Danmaku> danmus = danmaku_service.get_danmaku(rid);
@@ -48,6 +49,12 @@ public class DanmakuCtr {
         return Result.success(data);
     }
 
+    /**
+     * 发送弹幕
+     * @param entity {content, rid}
+     * @throws JsonMappingException
+     * @throws JsonProcessingException
+     */
     @PostMapping
     public Result add_danmaku(@RequestBody String entity, HttpServletRequest req)
             throws JsonMappingException, JsonProcessingException {
@@ -59,6 +66,11 @@ public class DanmakuCtr {
         return Result.success();
     }
 
+    /**
+     * 删除弹幕
+     * @param id 要删除的弹幕id
+     * @return
+     */
     @DeleteMapping("{id}")
     public Result del_danmaku(@PathVariable Integer id) {
         danmaku_service.del_danmaku(id);

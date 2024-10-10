@@ -13,10 +13,10 @@ import lombok.Data;
 public class CommentReq {
     private String content; // 评论内容
     private Integer rid; // 动漫id
-    private Date time; // 评论日期
 
     public Comment toComment(Integer uid) {
-        return new Comment(null, uid, rid, content, time);
+        Date now = new Date(System.currentTimeMillis());
+        return new Comment(null, uid, rid, content, now);
     }
 
 }

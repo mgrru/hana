@@ -36,6 +36,7 @@ public class SectionCtr {
      * @throws JsonProcessingException
      */
     @GetMapping
+    @LoginValidate(value = false)
     public Result get_all_section() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
 

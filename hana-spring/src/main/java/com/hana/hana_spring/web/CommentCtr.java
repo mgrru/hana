@@ -41,6 +41,7 @@ public class CommentCtr {
      * @param rid 动漫id
      * @throws JsonProcessingException
      */
+    @LoginValidate(value = false)
     @GetMapping("{rid}")
     public Result get_comment(@PathVariable Integer rid) throws JsonProcessingException {
         List<Comment> comments = comment_service.get_comment(rid);
@@ -48,6 +49,12 @@ public class CommentCtr {
         return Result.success(data);
     }
 
+    /**
+     * 添加评论
+     * @param entity {content, rid}
+     * @throws JsonMappingException
+     * @throws JsonProcessingException
+     */
     @PostMapping
     public Result add_comment(@RequestBody String entity, HttpServletRequest req)
             throws JsonMappingException, JsonProcessingException {
@@ -59,6 +66,12 @@ public class CommentCtr {
         return Result.success();
     }
 
+
+    /**
+     * 删除评论
+     * @param id 要删除的评论id
+     * @return
+     */
     @DeleteMapping("{id}")
     public Result del_comment(@PathVariable Integer id) {
         comment_service.del_comment(id);

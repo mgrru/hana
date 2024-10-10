@@ -91,6 +91,7 @@ public class AnimeCtr {
     /**
      * 获取所有动漫信息
      * 
+     * @return [{id, type, cover, name, episodeName, url, process, uid, sid}]
      * @throws JsonProcessingException
      */
     @LoginValidate(value = false)
@@ -191,7 +192,7 @@ public class AnimeCtr {
     /**
      * 下架动漫
      * 
-     * @param rid 动漫id
+     * @param rid 要下架的动漫id
      * @return
      */
     @DeleteMapping("deactivate/{rid}")
@@ -203,7 +204,7 @@ public class AnimeCtr {
     /**
      * 通过审核
      * 
-     * @param rid 动漫id
+     * @param rid 要审核的动漫id
      */
     @PutMapping("approve/{rid}")
     public Result approve_anime(@PathVariable Integer rid) {
@@ -214,7 +215,7 @@ public class AnimeCtr {
     /**
      * 不通过审核
      * 
-     * @param rid 动漫id
+     * @param rid 要审核的动漫id
      */
     @PutMapping("reject/{rid}")
     public Result reject_anime(@PathVariable Integer rid) {
@@ -239,7 +240,7 @@ public class AnimeCtr {
     /**
      * 删除动漫
      * 
-     * @param rid 动漫id
+     * @param rid 要删除的动漫id
      * @return
      */
     @DeleteMapping("resource/{rid}")
