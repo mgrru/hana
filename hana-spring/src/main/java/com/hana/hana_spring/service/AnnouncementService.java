@@ -15,7 +15,6 @@ public class AnnouncementService {
     @Autowired
     private AnnouncementMapper announcement_mapper;
 
-    @Transactional(readOnly = true)
     public List<Announcement> get_all_announcement() {
         return announcement_mapper.sel_all();
     }

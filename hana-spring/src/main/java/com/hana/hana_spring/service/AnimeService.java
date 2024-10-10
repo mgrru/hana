@@ -15,12 +15,10 @@ public class AnimeService {
     @Autowired
     private AnimeMapper anime_mapper;
 
-    @Transactional(readOnly = true)
     public List<Resource> get_all_anime() {
         return anime_mapper.sel_all();
     }
 
-    @Transactional(readOnly = true)
     public Resource get_by_name(String name, String episode_name) {
         return anime_mapper.sel_by_name(name, episode_name);
     }

@@ -21,13 +21,11 @@ public class RoleService {
     @Autowired
     private RoleMapper role_mapper;
 
-    @Transactional(readOnly = true)
     public List<Auth> get_all_auth() {
         List<Auth> auths = auth_mapper.sel_all();
         return auths;
     }
 
-    @Transactional(readOnly = true)
     public List<Role> get_all_role() {
         List<Role> roles = role_mapper.sel_all();
         return roles;
