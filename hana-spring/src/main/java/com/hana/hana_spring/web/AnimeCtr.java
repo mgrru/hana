@@ -47,13 +47,15 @@ public class AnimeCtr {
     /**
      * 视频播放链接请求
      * 
-     * @param name 视频名称
+     * @param name         视频名称
+     * @param episode_name 集名
      * @throws IOException
      */
-    @GetMapping("animes/{name}")
-    public void display_anime(@PathVariable String name, HttpServletRequest req, HttpServletResponse rep)
+    @GetMapping("animes/{name}/{episode_name}")
+    public void display_anime(@PathVariable String name, @PathVariable String episode_name, HttpServletRequest req,
+            HttpServletResponse rep)
             throws IOException {
-        File file = new File(save_path + name + ".mp4");
+        File file = new File(save_path + name + episode_name + ".mp4");
         if (!file.exists()) {
             rep.getOutputStream().close();
             return;
@@ -112,6 +114,12 @@ public class AnimeCtr {
     @PostMapping("upload")
     public Result add_anime(@RequestParam MultipartFile resources, MultipartFile cover, String type, String name,
             String episode_name, Integer sid, HttpServletRequest req) throws IOException {
+
+        // 检查动漫名称是否冲突
+        if (anime_service.get_by_name(name, episode_name) != null) {
+            return Result.error();
+        }
+
         // 获取保存目录
         File dir = new File(save_path);
         if (!dir.exists()) {
@@ -121,7 +129,7 @@ public class AnimeCtr {
         // 获取原始动画名
         String original_name = resources.getOriginalFilename();
         // 设置新动画名（带路径）
-        File anime = new File(dir, name + ".mp4");
+        File anime = new File(dir, name + episode_name + ".mp4");
         Resource save_resource = new Resource();
 
         // 检查上传动画格式
@@ -166,7 +174,7 @@ public class AnimeCtr {
         save_resource.setSid(sid);
         save_resource.setPath(anime.getPath());
 
-        save_resource.setUrl(url + "/animes/" + name);
+        save_resource.setUrl(url + "/animes/" + name + "/" + episode_name);
         save_resource.setProcess(false);
 
         String token = req.getHeader("Authorization");
