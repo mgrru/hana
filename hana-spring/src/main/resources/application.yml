@@ -17,7 +17,7 @@ server:
   port: 9901
 
 # 动画保存路径
-save-path: C:/Users/ru/Videos/animes
+save-path: C:/Users/ru/Videos/test
 
 # 登录验证
 jwt:
