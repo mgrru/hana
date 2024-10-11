@@ -2,6 +2,7 @@ package com.hana.hana_spring.web;
 
 import java.util.List;
 
+import org.apache.commons.mail.EmailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,7 @@ import com.hana.hana_spring.utils.JwtUtil;
 import com.hana.hana_spring.utils.Result;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Validate
 @RestController
@@ -130,7 +132,7 @@ public class UserCtr {
     /**
      * 用户修改账号密码的接口
      * 
-     * @param entity {pass, new_pass}
+     * @param entity {pass, new_pass, code}
      * @throws JsonMappingException
      * @throws JsonProcessingException
      */
@@ -141,7 +143,30 @@ public class UserCtr {
         Integer uid = jwt_util.getLoginUserId(token);
         UpdPassReq passReq = new ObjectMapper().readValue(entity, UpdPassReq.class);
 
-        user_service.upd_pass(uid, passReq.getPass(), passReq.getNewPass());
+        String email = user_service.get_user_by_id(uid).getEmail();
+        if (user_service.verify_code(email, passReq.getCode())) {
+            user_service.upd_pass(uid, passReq.getPass(), passReq.getNewPass());
+            return Result.success();
+        } else {
+            return Result.error();
+        }
+    }
+
+    /**
+     * 修改密码验证邮箱
+     * @throws EmailException
+     */
+    @PostMapping("verify/email")
+    public Result postMethodName(HttpServletRequest req) throws EmailException {
+        String token = req.getHeader("Authorization");
+        Integer uid = jwt_util.getLoginUserId(token);
+        String email = user_service.get_user_by_id(uid).getEmail();
+
+        if (email == null || email.isBlank() || email.isEmpty()) {
+            return Result.noemail();
+        }
+        user_service.send_email(email);
+
         return Result.success();
     }
 

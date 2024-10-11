@@ -39,4 +39,9 @@ public class Result {
         Code c = Code.NOAUTH;
         return new Result(c.code(), c.msg(), null);
     }
+
+    public static Result noemail() {
+        Code c = Code.NOEMAIL;
+        return new Result(c.code(), c.msg(), null);
+    }
 }

@@ -49,11 +49,12 @@ public interface UserMapper {
 
         // 用户功能
 
-        @Select("select user.*, role.id r_id, role.name r_name from user left join role on rid=role.id where id=#{id}")
+        @Select("select user.*, role.id r_id, role.name r_name from user left join role on rid=role.id where user.id=#{id}")
         @ResultMap("user")
         User sel_by_id(int id);
 
         @Select("select user.*, role.id r_id, role.name r_name from user left join role on rid=role.id where account=#{account}")
+        @ResultMap("user")
         User sel_by_account(String account);
 
         @Update("update user set pass=#{pass} where id=#{id}")

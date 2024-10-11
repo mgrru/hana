@@ -15,7 +15,7 @@ spring:
       maximum-pool-size: 20
   data:
     redis:
-      host: vpc-2zebz7f6y5ey8rohxmdxl
+      host: r-2zez9n165xtgwpcr6npd.redis.rds.aliyuncs.com
       port: 6379
       username: hana
       password: Hana1234
