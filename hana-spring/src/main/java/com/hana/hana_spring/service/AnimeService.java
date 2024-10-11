@@ -50,4 +50,12 @@ public class AnimeService {
             return null;
         }
     }
+
+    public List<Resource> search(String name) {
+        if (name != null) {
+            return anime_mapper.search(name);
+        } else {
+            return null;
+        }
+    }
 }

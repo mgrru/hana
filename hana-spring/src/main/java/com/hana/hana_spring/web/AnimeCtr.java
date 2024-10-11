@@ -249,4 +249,15 @@ public class AnimeCtr {
         return Result.success();
     }
 
+    
+    @LoginValidate(value = false)
+    @GetMapping("search")
+    public Result search(@RequestParam String name) throws JsonProcessingException {
+
+        List<Resource> resources = anime_service.search(name);
+        String data = new ObjectMapper().writeValueAsString(resources);
+
+        return Result.success(data);
+    }
+
 }

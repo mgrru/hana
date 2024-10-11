@@ -31,4 +31,7 @@ public interface AnimeMapper {
 
     @Update("update resource set process=#{process} where id=#{id}")
     void process(Resource resource);
+
+    @Select("SELECT * FROM resource WHERE name LIKE CONCAT('%', #{name}, '%')")
+    List<Resource> search(String name);
 }
