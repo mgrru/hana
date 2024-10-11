@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hana.hana_spring.anno.LoginValidate;
+import com.hana.hana_spring.anno.Validate;
 import com.hana.hana_spring.entity.Section;
 import com.hana.hana_spring.service.SectionService;
 import com.hana.hana_spring.utils.Result;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@LoginValidate
+@Validate(auth = true)
 @RestController
 @RequestMapping("sections")
 @CrossOrigin("*")
@@ -36,7 +36,7 @@ public class SectionCtr {
      * @throws JsonProcessingException
      */
     @GetMapping
-    @LoginValidate(value = false)
+    @Validate(login = false, auth = false)
     public Result get_all_section() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
 

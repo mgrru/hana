@@ -29,6 +29,9 @@ public interface AnimeMapper {
     @Delete("delete from resource where id=#{id}")
     void del(int id);
 
+    @Delete("delete from resource where id=#{rid} and uid=#{uid}")
+    void del_user_ainme(int uid, int rid);
+
     @Update("update resource set process=#{process} where id=#{id}")
     void process(Resource resource);
 

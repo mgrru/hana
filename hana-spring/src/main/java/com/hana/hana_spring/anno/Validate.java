@@ -9,11 +9,14 @@ import java.lang.annotation.Target;
 /**
  * 登录验证
  * 
- * @param value 默认 true 开启验证
+ * @param login 默认 true 开启验证
+ * @param auth 默认 false 不开启验证
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface LoginValidate {
-    boolean value() default true;
+public @interface Validate {
+    boolean login() default true;
+
+    boolean auth() default false;
 }

@@ -59,8 +59,13 @@ public class SysCtr {
     public Result login(@RequestBody String entity) throws JsonMappingException, JsonProcessingException {
         LoginReq login = new ObjectMapper().readValue(entity, LoginReq.class);
         User user = user_service.get_user_by_account(login.getAccount());
+        Role role = user.getRole();
         if (user != null && user.getPass().equals(login.getPass())) {
-            return Result.success(jwt_util.generateToken(user.getId().toString()));
+            if (role.getName().equals("管理员")) {
+                return Result.success(jwt_util.generateToken(user.getId().toString(), true));
+            } else {
+                return Result.success(jwt_util.generateToken(user.getId().toString(), false));
+            }
         } else {
             return Result.noauth();
         }

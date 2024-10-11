@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hana.hana_spring.anno.LoginValidate;
+import com.hana.hana_spring.anno.Validate;
 import com.hana.hana_spring.entity.User;
 import com.hana.hana_spring.entity.dto.UpdPassReq;
 import com.hana.hana_spring.entity.dto.UpdUserReq;
@@ -24,7 +24,7 @@ import com.hana.hana_spring.utils.Result;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-@LoginValidate
+@Validate
 @RestController
 @RequestMapping("users")
 @CrossOrigin("*")
@@ -41,6 +41,7 @@ public class UserCtr {
      * @return [{id, account, name, isBan, age, phone, email, role}]
      * @throws JsonProcessingException
      */
+    @Validate(auth = true)
     @GetMapping("admin")
     public Result get_all_user() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
@@ -56,6 +57,7 @@ public class UserCtr {
      * 
      * @param id 要封禁的用户id
      */
+    @Validate(auth = true)
     @PutMapping("{id}/ban")
     public Result ban_user(@PathVariable Integer id) {
         user_service.ban_user(id);
@@ -68,6 +70,7 @@ public class UserCtr {
      * 
      * @param id 要解封的用户id
      */
+    @Validate(auth = true)
     @PutMapping("{id}/unban")
     public Result unban_user(@PathVariable Integer id) {
         user_service.unban_user(id);
@@ -83,6 +86,7 @@ public class UserCtr {
      * @throws JsonMappingException
      * @throws JsonProcessingException
      */
+    @Validate(auth = true)
     @PutMapping("{id}/role/{rid}")
     public Result upd_user_role(@PathVariable Integer id, @PathVariable Integer rid)
             throws JsonMappingException, JsonProcessingException {

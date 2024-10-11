@@ -35,6 +35,12 @@ public class AnimeService {
         }
     }
 
+    public void del_user_anime(Integer uid, Integer rid) {
+        if (uid != null && rid != null) {
+            anime_mapper.del_user_ainme(uid, rid);
+        }
+    }
+
     public void process_anime(Integer id) {
         if (id != null) {
             Resource resource = new Resource();
