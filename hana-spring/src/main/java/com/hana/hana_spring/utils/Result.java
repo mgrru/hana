@@ -34,4 +34,9 @@ public class Result {
         Code c = Code.EXCEPTION;
         return new Result(c.code(), c.msg(), null);
     }
+
+    public static Result noauth() {
+        Code c = Code.NOAUTH;
+        return new Result(c.code(), c.msg(), null);
+    }
 }

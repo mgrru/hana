@@ -19,6 +19,10 @@ public class AnimeService {
         return anime_mapper.sel_all();
     }
 
+    public Resource get_by_name(String name, String episode_name) {
+        return anime_mapper.sel_by_name(name, episode_name);
+    }
+
     public void add_anime(Resource resource) {
         if (resource != null) {
             anime_mapper.ins(resource);
@@ -36,6 +40,14 @@ public class AnimeService {
             Resource resource = new Resource();
             resource.setId(id);
             resource.setProcess(true);
+        }
+    }
+
+    public List<Resource> get_by_user(Integer uid) {
+        if (uid != null) {
+            return anime_mapper.sel_by_user(uid);
+        } else {
+            return null;
         }
     }
 }

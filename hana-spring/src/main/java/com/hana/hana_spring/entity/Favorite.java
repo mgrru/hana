@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class Favorite {
-  private int id; // 收藏id
+  private Integer id; // 收藏id
   private int uid; // 用户id
   private int rid; // 收藏动漫id
 }

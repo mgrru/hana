@@ -14,10 +14,17 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hana.hana_spring.anno.LoginValidate;
 import com.hana.hana_spring.entity.User;
+import com.hana.hana_spring.entity.dto.UpdPassReq;
+import com.hana.hana_spring.entity.dto.UpdUserReq;
 import com.hana.hana_spring.service.UserService;
+import com.hana.hana_spring.utils.JwtUtil;
 import com.hana.hana_spring.utils.Result;
 
+import jakarta.servlet.http.HttpServletRequest;
+
+@LoginValidate
 @RestController
 @RequestMapping("users")
 @CrossOrigin("*")
@@ -25,7 +32,16 @@ public class UserCtr {
     @Autowired
     private UserService user_service;
 
-    @GetMapping
+    @Autowired
+    private JwtUtil jwt_util;
+
+    /**
+     * 管理员获取所有用户的接口
+     * 
+     * @return [{id, account, name, isBan, age, phone, email, role}]
+     * @throws JsonProcessingException
+     */
+    @GetMapping("admin")
     public Result get_all_user() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -35,6 +51,11 @@ public class UserCtr {
         return Result.success(data);
     }
 
+    /**
+     * 管理员封禁用户的接口
+     * 
+     * @param id 要封禁的用户id
+     */
     @PutMapping("{id}/ban")
     public Result ban_user(@PathVariable Integer id) {
         user_service.ban_user(id);
@@ -42,6 +63,11 @@ public class UserCtr {
         return Result.success();
     }
 
+    /**
+     * 管理员解封用户的接口
+     * 
+     * @param id 要解封的用户id
+     */
     @PutMapping("{id}/unban")
     public Result unban_user(@PathVariable Integer id) {
         user_service.unban_user(id);
@@ -49,25 +75,69 @@ public class UserCtr {
         return Result.success();
     }
 
+    /**
+     * 管理员修改用户角色的接口
+     * 
+     * @param id  要修改的用户id
+     * @param rid 要修改的角色id
+     * @throws JsonMappingException
+     * @throws JsonProcessingException
+     */
     @PutMapping("{id}/role/{rid}")
-    public Result unban_user(@PathVariable Integer id, @PathVariable Integer rid)
+    public Result upd_user_role(@PathVariable Integer id, @PathVariable Integer rid)
             throws JsonMappingException, JsonProcessingException {
         user_service.upd_role(id, rid);
         return Result.success();
     }
 
-    @GetMapping("{id}")
-    public Result get_user_by_id(@PathVariable Integer id) throws JsonProcessingException {
-        User user = user_service.get_user_by_id(id);
+    /**
+     * 用户获取账号信息的接口
+     * 
+     * @return {id, account, name, isBan, age, phone, email, role}
+     * @throws JsonProcessingException
+     */
+    @GetMapping
+    public Result get_user_by_id(HttpServletRequest req) throws JsonProcessingException {
+        String token = req.getHeader("Authorization");
+        Integer uid = jwt_util.getLoginUserId(token);
+        User user = user_service.get_user_by_id(uid);
         String data = new ObjectMapper().writeValueAsString(user);
         return Result.success(data);
     }
 
-    @PutMapping("{id}")
-    public Result upd_user(@PathVariable Integer id, @RequestBody String entity)
+    /**
+     * 用户修改账号信息的接口
+     * 
+     * @param entity {name, age, phone, email} 只能修改这4个属性
+     * @throws JsonMappingException
+     * @throws JsonProcessingException
+     */
+    @PutMapping
+    public Result upd_user(@RequestBody String entity, HttpServletRequest req)
             throws JsonMappingException, JsonProcessingException {
-        User user = new ObjectMapper().readValue(entity, User.class);
+        String token = req.getHeader("Authorization");
+        Integer uid = jwt_util.getLoginUserId(token);
+        UpdUserReq userReq = new ObjectMapper().readValue(entity, UpdUserReq.class);
+        User user = userReq.toUser(uid);
         user_service.upd_user(user);
+        return Result.success();
+    }
+
+    /**
+     * 用户修改账号密码的接口
+     * 
+     * @param entity {pass, new_pass}
+     * @throws JsonMappingException
+     * @throws JsonProcessingException
+     */
+    @PutMapping("pass")
+    public Result upd_user_pass(@RequestBody String entity, HttpServletRequest req)
+            throws JsonMappingException, JsonProcessingException {
+        String token = req.getHeader("Authorization");
+        Integer uid = jwt_util.getLoginUserId(token);
+        UpdPassReq passReq = new ObjectMapper().readValue(entity, UpdPassReq.class);
+
+        user_service.upd_pass(uid, passReq.getPass(), passReq.getNewPass());
         return Result.success();
     }
 

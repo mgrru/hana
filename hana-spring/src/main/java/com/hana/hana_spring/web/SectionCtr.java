@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hana.hana_spring.anno.LoginValidate;
 import com.hana.hana_spring.entity.Section;
 import com.hana.hana_spring.service.SectionService;
 import com.hana.hana_spring.utils.Result;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+@LoginValidate
 @RestController
 @RequestMapping("sections")
 @CrossOrigin("*")
@@ -27,7 +29,14 @@ public class SectionCtr {
     @Autowired
     private SectionService section_service;
 
+    /**
+     * 获取所有板块的接口
+     * 
+     * @return [{id, name}]
+     * @throws JsonProcessingException
+     */
     @GetMapping
+    @LoginValidate(value = false)
     public Result get_all_section() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -38,6 +47,13 @@ public class SectionCtr {
         return Result.success(data);
     }
 
+    /**
+     * 添加板块的接口
+     * 
+     * @param entity {name} | {id, name}
+     * @throws JsonMappingException
+     * @throws JsonProcessingException
+     */
     @PostMapping
     public Result add_section(@RequestBody String entity) throws JsonMappingException, JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
@@ -46,6 +62,14 @@ public class SectionCtr {
         return Result.success();
     }
 
+    /**
+     * 修改板块的接口
+     * 
+     * @param id     要修改的板块id
+     * @param entity {name} | {id, name}
+     * @throws JsonMappingException
+     * @throws JsonProcessingException
+     */
     @PutMapping("{id}")
     public Result upd_section(@PathVariable Integer id, @RequestBody String entity)
             throws JsonMappingException, JsonProcessingException {
@@ -56,6 +80,12 @@ public class SectionCtr {
         return Result.success();
     }
 
+    /**
+     * 删除板块
+     * 
+     * @param id 要删除的板块id
+     * @return
+     */
     @DeleteMapping("{id}")
     public Result del_section(@PathVariable Integer id) {
         section_service.del_section(id);
