@@ -16,7 +16,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hana.hana_spring.anno.Validate;
-import com.hana.hana_spring.entity.Auth;
 import com.hana.hana_spring.entity.Role;
 import com.hana.hana_spring.service.RoleService;
 import com.hana.hana_spring.utils.Result;
@@ -31,7 +30,7 @@ public class RoleCtr {
     /**
      * 查询所有角色的接口
      * 
-     * @return {id, name, [auths]}
+     * @return {id, name}
      * @throws JsonProcessingException
      */
     @GetMapping("roles")
@@ -48,7 +47,7 @@ public class RoleCtr {
     /**
      * 创建角色
      * 
-     * @param entity {name, auths:[]}
+     * @param entity {name}
      * @throws JsonMappingException
      * @throws JsonProcessingException
      */
@@ -63,7 +62,7 @@ public class RoleCtr {
     /**
      * 修改角色的接口
      * @param id 要修改的角色id
-     * @param entity {name, auths:[]}
+     * @param entity {name}
      * @throws JsonMappingException
      * @throws JsonProcessingException
      */
@@ -86,18 +85,6 @@ public class RoleCtr {
     public Result del_role(@PathVariable Integer id) {
         role_service.del_role(id);
         return Result.success();
-    }
-
-    /**
-     * 获取可用的权限
-     * @return [{auth}]
-     * @throws JsonProcessingException
-     */
-    @GetMapping("permissions")
-    public Result get_all_permissions() throws JsonProcessingException {
-        List<Auth> auths = role_service.get_all_auth();
-        String data = new ObjectMapper().writeValueAsString(auths);
-        return Result.success(data);
     }
 
 }

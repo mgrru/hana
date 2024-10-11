@@ -34,14 +34,17 @@ public class SysCtr {
      */
     @PostMapping("register")
     public Result register(@RequestBody String entity) throws JsonMappingException, JsonProcessingException {
-        LoginReq loginReq = new ObjectMapper().readValue(entity, LoginReq.class);
+        LoginReq register = new ObjectMapper().readValue(entity, LoginReq.class);
+        if (user_service.get_user_by_account(register.getAccount()) != null) {
+            return Result.error();
+        }
         // 设置默认值
         User user = new User();
-        user.setAccount(loginReq.getAccount());
-        user.setPass(loginReq.getPass());
+        user.setAccount(register.getAccount());
+        user.setPass(register.getPass());
         user.setName("新用户");
         user.setBan(false);
-        user.setRole(new Role(2, null, null));
+        user.setRole(new Role(2, null));
 
         user_service.add_user(user);
         return Result.success();
