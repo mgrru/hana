@@ -36,3 +36,11 @@ jwt:
 springdoc:
   swagger-ui:
     path: /v3/api
+
+
+# 邮箱验证
+email:
+  host: "smtp.larksuite.com"
+  from: "hana@fufu.moe"
+  username: "hana@fufu.moe"
+  password: "lw0lhfdtHuwK7dqk"

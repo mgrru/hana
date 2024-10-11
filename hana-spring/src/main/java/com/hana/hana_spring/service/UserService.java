@@ -23,6 +23,9 @@ public class UserService {
     @Autowired
     private RedisTemplate<String, String> redis;
 
+    @Autowired
+    private EmailSender email_sender;    
+
     public List<User> get_all_user() {
         return user_mapper.sel_all();
     }
@@ -84,7 +87,7 @@ public class UserService {
             code.append(random.nextInt(10));
         }
         redis.opsForValue().set(to, code.toString(), 5, TimeUnit.MINUTES);
-        EmailSender.send_email(to, "验证码有效期5分钟，您的验证码为：" + code.toString());
+        email_sender.send_email(to, "验证码有效期5分钟，您的验证码为：" + code.toString());
         return code.toString();
     }
 
