@@ -1,7 +1,5 @@
 package com.hana.hana_spring.entity;
 
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
@@ -15,5 +13,4 @@ import lombok.NoArgsConstructor;
 public class Role {
   private Integer id; // 角色id
   private String name; // 角色名
-  private List<Auth> auths; // 权限
 }

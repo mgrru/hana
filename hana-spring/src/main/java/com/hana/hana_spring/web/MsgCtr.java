@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hana.hana_spring.anno.LoginValidate;
+import com.hana.hana_spring.anno.Validate;
 import com.hana.hana_spring.entity.Msg;
 import com.hana.hana_spring.entity.dto.MsgReq;
 import com.hana.hana_spring.service.MsgService;
@@ -25,7 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("msg")
 @CrossOrigin("*")
-@LoginValidate
+@Validate
 public class MsgCtr {
     @Autowired
     private MsgService msg_service;

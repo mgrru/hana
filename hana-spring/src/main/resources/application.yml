@@ -13,6 +13,12 @@ spring:
     hikari:
       minimum-idle: 1
       maximum-pool-size: 20
+  data:
+    redis:
+      host: r-2zez9n165xtgwpcr6npd.redis.rds.aliyuncs.com
+      port: 6379
+      username: hana
+      password: Hana1234
 server:
   port: 9901
 
@@ -26,8 +32,15 @@ jwt:
   secret: "hana-secret"
   exp: 10800000 # 3小时
 
-
 # api文档访问接口
 springdoc:
   swagger-ui:
     path: /v3/api
+
+
+# 邮箱验证
+email:
+  host: "smtp.larksuite.com"
+  from: "hana@fufu.moe"
+  username: "hana@fufu.moe"
+  password: "lw0lhfdtHuwK7dqk"

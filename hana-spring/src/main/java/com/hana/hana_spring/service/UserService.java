@@ -1,19 +1,30 @@
 package com.hana.hana_spring.service;
 
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.mail.EmailException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hana.hana_spring.dao.UserMapper;
 import com.hana.hana_spring.entity.User;
+import com.hana.hana_spring.utils.EmailSender;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class UserService {
     @Autowired
     private UserMapper user_mapper;
+
+    @Autowired
+    private RedisTemplate<String, String> redis;
+
+    @Autowired
+    private EmailSender email_sender;    
 
     public List<User> get_all_user() {
         return user_mapper.sel_all();
@@ -67,6 +78,26 @@ public class UserService {
         } else {
             return null;
         }
+    }
+
+    public String send_email(String to) throws EmailException {
+        Random random = new Random();
+        StringBuilder code = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            code.append(random.nextInt(10));
+        }
+        redis.opsForValue().set(to, code.toString(), 5, TimeUnit.MINUTES);
+        email_sender.send_email(to, "验证码有效期5分钟，您的验证码为：" + code.toString());
+        return code.toString();
+    }
+
+    public boolean verify_code(String email, String input) {
+        String code = redis.opsForValue().get(email);
+        if (code.equals(input)) {
+            redis.delete(email);
+            return true;
+        }
+        return false;
     }
 
     public void upd_pass(Integer uid, String pass, String new_pass) {

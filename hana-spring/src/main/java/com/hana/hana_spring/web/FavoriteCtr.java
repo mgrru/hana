@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hana.hana_spring.anno.LoginValidate;
+import com.hana.hana_spring.anno.Validate;
 import com.hana.hana_spring.entity.Resource;
 import com.hana.hana_spring.service.FavoriteService;
 import com.hana.hana_spring.utils.JwtUtil;
@@ -24,7 +24,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("favorites")
 @CrossOrigin("*")
-@LoginValidate
+@Validate
 public class FavoriteCtr {
     @Autowired
     private FavoriteService favorite_service;

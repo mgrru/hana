@@ -28,4 +28,10 @@ public class Resource {
   private boolean process; // 审核状态
   private Integer uid; // 上传用户id
   private Integer sid; // 所属板块id
+  @JsonIgnore
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private Integer likes; // 点赞数量
+  @JsonIgnore
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private Integer views; // 播放数量
 }

@@ -29,6 +29,22 @@ public interface AnimeMapper {
     @Delete("delete from resource where id=#{id}")
     void del(int id);
 
+    @Delete("delete from resource where id=#{rid} and uid=#{uid}")
+    void del_user_ainme(int uid, int rid);
+
     @Update("update resource set process=#{process} where id=#{id}")
     void process(Resource resource);
+
+    @Select("SELECT * FROM resource WHERE name LIKE CONCAT('%', #{name}, '%')")
+    List<Resource> search(String name);
+
+    @Update("update resource set likes=#{likes} where id=#{id}")
+    void upd_likes(Resource resource);
+
+
+    @Select("select * from resource where id=#{id}")
+    Resource sel_by_id(int id);
+
+    @Update("update resource set views=#{views} where id=#{id}")
+    void upd_views(Resource resource);
 }

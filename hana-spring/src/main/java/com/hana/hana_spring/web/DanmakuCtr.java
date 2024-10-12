@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hana.hana_spring.anno.LoginValidate;
+import com.hana.hana_spring.anno.Validate;
 import com.hana.hana_spring.entity.Danmaku;
 import com.hana.hana_spring.entity.dto.DanmakuReq;
 import com.hana.hana_spring.service.DanmakuService;
@@ -27,7 +27,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("danmus")
 @CrossOrigin("*")
-@LoginValidate
+@Validate
 public class DanmakuCtr {
     @Autowired
     private DanmakuService danmaku_service;
@@ -41,7 +41,7 @@ public class DanmakuCtr {
      * @param rid 动漫id
      * @throws JsonProcessingException
      */
-    @LoginValidate(value = false)
+    @Validate(login = false)
     @GetMapping("{rid}")
     public Result get_danmaku(@PathVariable Integer rid) throws JsonProcessingException {
         List<Danmaku> danmus = danmaku_service.get_danmaku(rid);

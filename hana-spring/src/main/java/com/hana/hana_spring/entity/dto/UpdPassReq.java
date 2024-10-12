@@ -12,4 +12,5 @@ public class UpdPassReq {
     private String pass;
     @JsonAlias("new_pass")
     private String newPass;
+    private String code;
 }

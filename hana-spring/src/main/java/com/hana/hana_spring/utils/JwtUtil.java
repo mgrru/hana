@@ -19,9 +19,10 @@ public class JwtUtil {
     @Value("${jwt.token-prefix}")
     private String tokenPrefix;
 
-    public String generateToken(String id) {
+    public String generateToken(String id, Boolean admin) {
         return tokenPrefix + JWT.create()
                 .withSubject(id)
+                .withClaim("admin", admin)
                 .withExpiresAt(new Date(System.currentTimeMillis() + expTime))
                 .sign(Algorithm.HMAC512(secret));
     }
@@ -46,6 +47,22 @@ public class JwtUtil {
             return Integer.valueOf(id);
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public boolean verify_admin(String token) {
+        try {
+            boolean admin = JWT.require(Algorithm.HMAC512(secret))
+                    .build()
+                    .verify(token.replace(tokenPrefix, ""))
+                    .getClaim("admin").asBoolean();
+            if (admin) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
         }
     }
 }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hana.hana_spring.anno.LoginValidate;
+import com.hana.hana_spring.anno.Validate;
 import com.hana.hana_spring.entity.Resource;
 import com.hana.hana_spring.service.HistoryService;
 import com.hana.hana_spring.utils.JwtUtil;
@@ -24,7 +24,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("history")
 @CrossOrigin("*")
-@LoginValidate
+@Validate
 public class HistoryCtr {
     @Autowired
     private HistoryService history_service;

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hana.hana_spring.anno.LoginValidate;
+import com.hana.hana_spring.anno.Validate;
 import com.hana.hana_spring.entity.Comment;
 import com.hana.hana_spring.entity.dto.CommentReq;
 import com.hana.hana_spring.service.CommentService;
@@ -27,7 +27,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("comments")
 @CrossOrigin("*")
-@LoginValidate
+@Validate
 public class CommentCtr {
     @Autowired
     private CommentService comment_service;
@@ -41,7 +41,7 @@ public class CommentCtr {
      * @param rid 动漫id
      * @throws JsonProcessingException
      */
-    @LoginValidate(value = false)
+    @Validate(login = false)
     @GetMapping("{rid}")
     public Result get_comment(@PathVariable Integer rid) throws JsonProcessingException {
         List<Comment> comments = comment_service.get_comment(rid);

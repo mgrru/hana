@@ -35,6 +35,12 @@ public class AnimeService {
         }
     }
 
+    public void del_user_anime(Integer uid, Integer rid) {
+        if (uid != null && rid != null) {
+            anime_mapper.del_user_ainme(uid, rid);
+        }
+    }
+
     public void process_anime(Integer id) {
         if (id != null) {
             Resource resource = new Resource();
@@ -49,5 +55,25 @@ public class AnimeService {
         } else {
             return null;
         }
+    }
+
+    public List<Resource> search(String name) {
+        if (name != null) {
+            return anime_mapper.search(name);
+        } else {
+            return null;
+        }
+    }
+
+    public void add_likes(Integer rid) {
+        Resource resource = anime_mapper.sel_by_id(rid);
+        resource.setLikes(resource.getLikes() + 1);
+        anime_mapper.upd_likes(resource);
+    }
+
+    public void add_views(Integer rid) {
+        Resource resource = anime_mapper.sel_by_id(rid);
+        resource.setViews(resource.getViews() + 1);
+        anime_mapper.upd_views(resource);
     }
 }

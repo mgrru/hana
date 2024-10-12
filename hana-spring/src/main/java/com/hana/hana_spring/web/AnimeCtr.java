@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hana.hana_spring.anno.LoginValidate;
+import com.hana.hana_spring.anno.Validate;
 import com.hana.hana_spring.entity.Resource;
 import com.hana.hana_spring.service.AnimeService;
 import com.hana.hana_spring.utils.JwtUtil;
@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @CrossOrigin("*")
-@LoginValidate
+@Validate
 public class AnimeCtr {
 
     @Autowired
@@ -52,7 +52,7 @@ public class AnimeCtr {
      * @param episode_name 集名
      * @throws IOException
      */
-    @LoginValidate(value = false)
+    @Validate(login = false)
     @GetMapping("animes/{name}/{episode_name}")
     public void display_anime(@PathVariable String name, @PathVariable String episode_name, HttpServletRequest req,
             HttpServletResponse rep)
@@ -83,6 +83,10 @@ public class AnimeCtr {
         if (len != -1) {
             rep.getOutputStream().write(buffer, 0, len);
         }
+
+        Resource resource = anime_service.get_by_name(name, episode_name);
+        anime_service.add_views(resource.getId());
+
         random_access_file.close();
         rep.getOutputStream().flush();
         rep.getOutputStream().close();
@@ -94,7 +98,7 @@ public class AnimeCtr {
      * @return [{id, type, cover, name, episodeName, url, process, uid, sid}]
      * @throws JsonProcessingException
      */
-    @LoginValidate(value = false)
+    @Validate(login = false)
     @GetMapping("animes")
     public Result get_all_anime() throws JsonProcessingException {
         List<Resource> resources = anime_service.get_all_anime();
@@ -115,7 +119,7 @@ public class AnimeCtr {
      * @throws IOException
      */
     @PostMapping("upload")
-    public Result add_anime(@RequestParam MultipartFile resources, MultipartFile cover, String type, String name,
+    public Result add_anime(MultipartFile resources, MultipartFile cover, String type, String name,
             String episode_name, Integer sid, HttpServletRequest req) throws IOException {
 
         // 检查动漫名称是否冲突
@@ -195,6 +199,7 @@ public class AnimeCtr {
      * @param rid 要下架的动漫id
      * @return
      */
+    @Validate(auth = true)
     @DeleteMapping("deactivate/{rid}")
     public Result del_anime(@PathVariable Integer rid) {
         anime_service.del_anime(rid);
@@ -206,6 +211,7 @@ public class AnimeCtr {
      * 
      * @param rid 要审核的动漫id
      */
+    @Validate(auth = true)
     @PutMapping("approve/{rid}")
     public Result approve_anime(@PathVariable Integer rid) {
         anime_service.process_anime(rid);
@@ -217,6 +223,7 @@ public class AnimeCtr {
      * 
      * @param rid 要审核的动漫id
      */
+    @Validate(auth = true)
     @PutMapping("reject/{rid}")
     public Result reject_anime(@PathVariable Integer rid) {
         anime_service.del_anime(rid);
@@ -238,14 +245,44 @@ public class AnimeCtr {
     }
 
     /**
-     * 删除动漫
+     * 用户删除自己上传的动漫
      * 
      * @param rid 要删除的动漫id
      * @return
      */
     @DeleteMapping("resource/{rid}")
-    public Result del_user_anime(@PathVariable Integer rid) {
-        anime_service.del_anime(rid);
+    public Result del_user_anime(@PathVariable Integer rid, HttpServletRequest req) {
+        String token = req.getHeader("Authorization");
+        Integer uid = jwt_util.getLoginUserId(token);
+        anime_service.del_user_anime(uid, rid);
+        return Result.success();
+    }
+
+    /**
+     * 按名称搜索动漫(模糊搜索)
+     * 
+     * @param name 搜索名称关键字
+     * @return [{id, type, cover, name, episodeName, url, process, uid, sid}]
+     * @throws JsonProcessingException
+     */
+    @Validate(login = false)
+    @GetMapping("search")
+    public Result search(@RequestParam String name) throws JsonProcessingException {
+
+        List<Resource> resources = anime_service.search(name);
+        String data = new ObjectMapper().writeValueAsString(resources);
+
+        return Result.success(data);
+    }
+
+    /**
+     * 点赞
+     * @param rid 要点赞的动漫id
+     * @return
+     */
+    @PutMapping("animes/{rid}/like")
+    public Result add_likes(@PathVariable Integer rid) {
+        anime_service.add_likes(rid);
         return Result.success();
     }
 
