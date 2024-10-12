@@ -37,4 +37,14 @@ public interface AnimeMapper {
 
     @Select("SELECT * FROM resource WHERE name LIKE CONCAT('%', #{name}, '%')")
     List<Resource> search(String name);
+
+    @Update("update resource set likes=#{likes} where id=#{id}")
+    void upd_likes(Resource resource);
+
+
+    @Select("select * from resource where id=#{id}")
+    Resource sel_by_id(int id);
+
+    @Update("update resource set views=#{views} where id=#{id}")
+    void upd_views(Resource resource);
 }

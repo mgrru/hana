@@ -83,6 +83,10 @@ public class AnimeCtr {
         if (len != -1) {
             rep.getOutputStream().write(buffer, 0, len);
         }
+
+        Resource resource = anime_service.get_by_name(name, episode_name);
+        anime_service.add_views(resource.getId());
+
         random_access_file.close();
         rep.getOutputStream().flush();
         rep.getOutputStream().close();
@@ -269,6 +273,17 @@ public class AnimeCtr {
         String data = new ObjectMapper().writeValueAsString(resources);
 
         return Result.success(data);
+    }
+
+    /**
+     * 点赞
+     * @param rid 要点赞的动漫id
+     * @return
+     */
+    @PutMapping("animes/{rid}/like")
+    public Result add_likes(@PathVariable Integer rid) {
+        anime_service.add_likes(rid);
+        return Result.success();
     }
 
 }

@@ -64,4 +64,16 @@ public class AnimeService {
             return null;
         }
     }
+
+    public void add_likes(Integer rid) {
+        Resource resource = anime_mapper.sel_by_id(rid);
+        resource.setLikes(resource.getLikes() + 1);
+        anime_mapper.upd_likes(resource);
+    }
+
+    public void add_views(Integer rid) {
+        Resource resource = anime_mapper.sel_by_id(rid);
+        resource.setViews(resource.getViews() + 1);
+        anime_mapper.upd_views(resource);
+    }
 }
