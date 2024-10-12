@@ -1,6 +1,7 @@
 package com.hana.hana_spring.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +34,8 @@ public class SysCtr {
      * @throws JsonProcessingException
      */
     @PostMapping("register")
-    public Result register(@RequestBody String entity) throws JsonMappingException, JsonProcessingException {
+    public ResponseEntity<String> register(@RequestBody String entity)
+            throws JsonMappingException, JsonProcessingException {
         LoginReq register = new ObjectMapper().readValue(entity, LoginReq.class);
         if (user_service.get_user_by_account(register.getAccount()) != null) {
             return Result.error();
@@ -59,7 +61,8 @@ public class SysCtr {
      * @throws JsonProcessingException
      */
     @PostMapping("login")
-    public Result login(@RequestBody String entity) throws JsonMappingException, JsonProcessingException {
+    public ResponseEntity<String> login(@RequestBody String entity)
+            throws JsonMappingException, JsonProcessingException {
         LoginReq login = new ObjectMapper().readValue(entity, LoginReq.class);
         User user = user_service.get_user_by_account(login.getAccount());
         Role role = user.getRole();

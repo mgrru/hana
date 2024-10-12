@@ -3,6 +3,7 @@ package com.hana.hana_spring.web;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,7 +44,7 @@ public class CommentCtr {
      */
     @Validate(login = false)
     @GetMapping("{rid}")
-    public Result get_comment(@PathVariable Integer rid) throws JsonProcessingException {
+    public ResponseEntity<String> get_comment(@PathVariable Integer rid) throws JsonProcessingException {
         List<Comment> comments = comment_service.get_comment(rid);
         String data = new ObjectMapper().writeValueAsString(comments);
         return Result.success(data);
@@ -51,12 +52,13 @@ public class CommentCtr {
 
     /**
      * 添加评论
+     * 
      * @param entity {content, rid}
      * @throws JsonMappingException
      * @throws JsonProcessingException
      */
     @PostMapping
-    public Result add_comment(@RequestBody String entity, HttpServletRequest req)
+    public ResponseEntity<String> add_comment(@RequestBody String entity, HttpServletRequest req)
             throws JsonMappingException, JsonProcessingException {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
@@ -66,14 +68,14 @@ public class CommentCtr {
         return Result.success();
     }
 
-
     /**
      * 删除评论
+     * 
      * @param id 要删除的评论id
      * @return
      */
     @DeleteMapping("{id}")
-    public Result del_comment(@PathVariable Integer id) {
+    public ResponseEntity<String> del_comment(@PathVariable Integer id) {
         comment_service.del_comment(id);
         return Result.success();
     }

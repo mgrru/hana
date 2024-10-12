@@ -3,9 +3,14 @@ package com.hana.hana_spring.web;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,10 +21,6 @@ import com.hana.hana_spring.anno.Validate;
 import com.hana.hana_spring.entity.Announcement;
 import com.hana.hana_spring.service.AnnouncementService;
 import com.hana.hana_spring.utils.Result;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("announcements")
@@ -37,7 +38,7 @@ public class AnnouncementCtr {
      */
     @Validate(login = false, auth = false)
     @GetMapping
-    public Result get_all_announcement() throws JsonProcessingException {
+    public ResponseEntity<String> get_all_announcement() throws JsonProcessingException {
         List<Announcement> announcements = announcement_service.get_all_announcement();
         ObjectMapper mapper = new ObjectMapper();
         String data = mapper.writeValueAsString(announcements);
@@ -52,7 +53,8 @@ public class AnnouncementCtr {
      * @throws JsonProcessingException
      */
     @PostMapping
-    public Result add_announcement(@RequestBody String entity) throws JsonMappingException, JsonProcessingException {
+    public ResponseEntity<String> add_announcement(@RequestBody String entity)
+            throws JsonMappingException, JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Announcement announcement = mapper.readValue(entity, Announcement.class);
         announcement_service.add_announcement(announcement);
@@ -68,7 +70,7 @@ public class AnnouncementCtr {
      * @throws JsonProcessingException
      */
     @PutMapping("{id}")
-    public Result upd_announcement(@PathVariable Integer id, @RequestBody String entity)
+    public ResponseEntity<String> upd_announcement(@PathVariable Integer id, @RequestBody String entity)
             throws JsonMappingException, JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Announcement announcement = mapper.readValue(entity, Announcement.class);
@@ -83,7 +85,7 @@ public class AnnouncementCtr {
      * @param id 要删除的公告id
      */
     @DeleteMapping("{id}")
-    public Result del_section(@PathVariable Integer id) {
+    public ResponseEntity<String> del_section(@PathVariable Integer id) {
         announcement_service.del_announcement(id);
         return Result.success();
     }

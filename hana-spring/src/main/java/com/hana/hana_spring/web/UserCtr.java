@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.apache.commons.mail.EmailException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +26,6 @@ import com.hana.hana_spring.utils.JwtUtil;
 import com.hana.hana_spring.utils.Result;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.web.bind.annotation.PostMapping;
 
 @Validate
 @RestController
@@ -45,7 +46,7 @@ public class UserCtr {
      */
     @Validate(auth = true)
     @GetMapping("admin")
-    public Result get_all_user() throws JsonProcessingException {
+    public ResponseEntity<String> get_all_user() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
 
         List<User> users = user_service.get_all_user();
@@ -61,7 +62,7 @@ public class UserCtr {
      */
     @Validate(auth = true)
     @PutMapping("{id}/ban")
-    public Result ban_user(@PathVariable Integer id) {
+    public ResponseEntity<String> ban_user(@PathVariable Integer id) {
         user_service.ban_user(id);
 
         return Result.success();
@@ -74,7 +75,7 @@ public class UserCtr {
      */
     @Validate(auth = true)
     @PutMapping("{id}/unban")
-    public Result unban_user(@PathVariable Integer id) {
+    public ResponseEntity<String> unban_user(@PathVariable Integer id) {
         user_service.unban_user(id);
 
         return Result.success();
@@ -90,7 +91,7 @@ public class UserCtr {
      */
     @Validate(auth = true)
     @PutMapping("{id}/role/{rid}")
-    public Result upd_user_role(@PathVariable Integer id, @PathVariable Integer rid)
+    public ResponseEntity<String> upd_user_role(@PathVariable Integer id, @PathVariable Integer rid)
             throws JsonMappingException, JsonProcessingException {
         user_service.upd_role(id, rid);
         return Result.success();
@@ -103,7 +104,7 @@ public class UserCtr {
      * @throws JsonProcessingException
      */
     @GetMapping
-    public Result get_user_by_id(HttpServletRequest req) throws JsonProcessingException {
+    public ResponseEntity<String> get_user_by_id(HttpServletRequest req) throws JsonProcessingException {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         User user = user_service.get_user_by_id(uid);
@@ -119,7 +120,7 @@ public class UserCtr {
      * @throws JsonProcessingException
      */
     @PutMapping
-    public Result upd_user(@RequestBody String entity, HttpServletRequest req)
+    public ResponseEntity<String> upd_user(@RequestBody String entity, HttpServletRequest req)
             throws JsonMappingException, JsonProcessingException {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
@@ -137,7 +138,7 @@ public class UserCtr {
      * @throws JsonProcessingException
      */
     @PutMapping("pass")
-    public Result upd_user_pass(@RequestBody String entity, HttpServletRequest req)
+    public ResponseEntity<String> upd_user_pass(@RequestBody String entity, HttpServletRequest req)
             throws JsonMappingException, JsonProcessingException {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
@@ -154,10 +155,11 @@ public class UserCtr {
 
     /**
      * 修改密码验证邮箱
+     * 
      * @throws EmailException
      */
     @PostMapping("verify/email")
-    public Result postMethodName(HttpServletRequest req) throws EmailException {
+    public ResponseEntity<String> postMethodName(HttpServletRequest req) throws EmailException {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         String email = user_service.get_user_by_id(uid).getEmail();

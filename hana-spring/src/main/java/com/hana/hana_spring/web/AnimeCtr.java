@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -100,7 +101,7 @@ public class AnimeCtr {
      */
     @Validate(login = false)
     @GetMapping("animes")
-    public Result get_all_anime() throws JsonProcessingException {
+    public ResponseEntity<String> get_all_anime() throws JsonProcessingException {
         List<Resource> resources = anime_service.get_all_anime();
         String data = new ObjectMapper().writeValueAsString(resources);
 
@@ -119,7 +120,7 @@ public class AnimeCtr {
      * @throws IOException
      */
     @PostMapping("upload")
-    public Result add_anime(MultipartFile resources, MultipartFile cover, String type, String name,
+    public ResponseEntity<String> add_anime(MultipartFile resources, MultipartFile cover, String type, String name,
             String episode_name, Integer sid, HttpServletRequest req) throws IOException {
 
         // 检查动漫名称是否冲突
@@ -201,7 +202,7 @@ public class AnimeCtr {
      */
     @Validate(auth = true)
     @DeleteMapping("deactivate/{rid}")
-    public Result del_anime(@PathVariable Integer rid) {
+    public ResponseEntity<String> del_anime(@PathVariable Integer rid) {
         anime_service.del_anime(rid);
         return Result.success();
     }
@@ -213,7 +214,7 @@ public class AnimeCtr {
      */
     @Validate(auth = true)
     @PutMapping("approve/{rid}")
-    public Result approve_anime(@PathVariable Integer rid) {
+    public ResponseEntity<String> approve_anime(@PathVariable Integer rid) {
         anime_service.process_anime(rid);
         return Result.success();
     }
@@ -225,7 +226,7 @@ public class AnimeCtr {
      */
     @Validate(auth = true)
     @PutMapping("reject/{rid}")
-    public Result reject_anime(@PathVariable Integer rid) {
+    public ResponseEntity<String> reject_anime(@PathVariable Integer rid) {
         anime_service.del_anime(rid);
         return Result.success();
     }
@@ -236,7 +237,7 @@ public class AnimeCtr {
      * @throws JsonProcessingException
      */
     @GetMapping("users/animes")
-    public Result get_user_anime(HttpServletRequest req) throws JsonProcessingException {
+    public ResponseEntity<String> get_user_anime(HttpServletRequest req) throws JsonProcessingException {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         List<Resource> resources = anime_service.get_by_user(uid);
@@ -251,7 +252,7 @@ public class AnimeCtr {
      * @return
      */
     @DeleteMapping("resource/{rid}")
-    public Result del_user_anime(@PathVariable Integer rid, HttpServletRequest req) {
+    public ResponseEntity<String> del_user_anime(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         anime_service.del_user_anime(uid, rid);
@@ -267,7 +268,7 @@ public class AnimeCtr {
      */
     @Validate(login = false)
     @GetMapping("search")
-    public Result search(@RequestParam String name) throws JsonProcessingException {
+    public ResponseEntity<String> search(@RequestParam String name) throws JsonProcessingException {
 
         List<Resource> resources = anime_service.search(name);
         String data = new ObjectMapper().writeValueAsString(resources);
@@ -281,7 +282,7 @@ public class AnimeCtr {
      * @return
      */
     @PutMapping("animes/{rid}/like")
-    public Result add_likes(@PathVariable Integer rid) {
+    public ResponseEntity<String> add_likes(@PathVariable Integer rid) {
         anime_service.add_likes(rid);
         return Result.success();
     }
