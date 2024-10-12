@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useUserStore } from "../store/userStore";
+import { useAuthStore } from '../store/auth';
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -33,9 +34,9 @@ const router = createRouter({
       component: () => import("../components/Aside.vue"),
     },
     {
-      path: "/videolist",
-      name: "VideoList",
-      component: () => import("../views/VideoList.vue"),
+      path: "/animeList",
+      name: "AnimeList",
+      component: () => import("../views/AnimeList.vue"),
     },
     {
       path: "/video/:id",
@@ -65,11 +66,6 @@ const router = createRouter({
       name: "Favorite",
       component: () => import("../views/FavoriteView.vue"),
     },
-    {
-      path: "/admin",
-      name: "Admin",
-      component: () => import("../views/Admin.vue"),
-    },
   ],
 });
 
@@ -85,5 +81,15 @@ const router = createRouter({
 //       next(); // 允许访问
 //   }
 // });
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+  
+  // 如果没有token并且不是访问登录页，重定向到登录页
+  if (!authStore.token && to.path !== '/login') {
+    next('/login');
+  } else {
+    next();
+  }
+});
 
 export default router;

@@ -6,7 +6,8 @@
         <el-container class="main-container">
             <el-main>
                 <!-- <Recommend></Recommend> -->
-                <VideoList></VideoList>
+                <!-- <VideoList></VideoList> -->
+                <AnimeList />
             </el-main>
             <el-aside width="70px">
                 <Aside></Aside>
@@ -18,9 +19,9 @@
 
 <script setup>
 import Recommend from '../components/Recommend.vue';
-import VideoList from './VideoList.vue';
 import HeaderView from './HeaderView.vue';
 import Aside from '../components/Aside.vue';
+import AnimeList from './AnimeList.vue';
 import { onMounted } from 'vue';
 
 onMounted(() => {

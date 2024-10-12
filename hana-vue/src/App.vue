@@ -1,12 +1,10 @@
 <script setup>
 import { onMounted } from 'vue';
-import { useUserStore } from './store/userStore';
+import { useAuthStore } from './store/auth';
 
-const userStore = useUserStore();
-
-
+const authStore = useAuthStore();
 onMounted(() => {
-  userStore.initializeUser();
+  authStore.initializeUser();
 });
 </script>
 

@@ -13,7 +13,7 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
-import { useVideoStore } from '../store/videoStore';
+import { useVideoStore } from '../store/animeStore';
 import HeaderView from './HeaderView.vue';
 import VideoContainer from './VideoContainerView.vue';
 import { useRoute } from 'vue-router';

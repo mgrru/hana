@@ -15,11 +15,6 @@
             </div>
             <div class="right-entry">
                 <ul>
-                    <!-- 登录成功显示用户的头像 -->
-                    <!-- <li v-if="userStore.isLoggedIn">
-                        <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
-                    </li> -->
-                    <!-- 没有登录显示登录按钮 -->
                     <li class="login-avatar">
                         <Login></Login>
                     </li>
@@ -29,7 +24,7 @@
                     <li>
                         <router-link to="/history">历史</router-link>
                     </li>
-                    <li><router-link to="/">用户</router-link></li>
+                    <li><router-link to="/">投稿</router-link></li>
                 </ul>
             </div>
         </div>

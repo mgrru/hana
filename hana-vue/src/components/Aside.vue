@@ -2,7 +2,7 @@
     <!-- 侧边工具栏 -->
     <div class="aside-right">
         <div class="buttons-container">
-            <el-button icon="Refresh" class="refresh-button" @click="refreshVideoList">换一换</el-button>
+            <el-button icon="Refresh" class="refresh-button" @click="refreshAllAnimes">换一换</el-button>
 
             <el-dropdown placement="top-start" class="more-button">
                 <el-button>
@@ -33,11 +33,13 @@
 </template>
 
 <script setup>
-import { useVideoStore } from '../store/videoStore';
-const videoStore = useVideoStore();
+// import { useVideoStore } from '../store/videoStore';
+import { useAnimeStore } from '../store/animeStore';
+// const videoStore = useVideoStore();
+const animeStore = useAnimeStore();
 
-const refreshVideoList = async () => {
-    await videoStore.fetchVideoList();
+const refreshAllAnimes = async () => {
+    await animeStore.fetchAllAnimes();
 };
 
 const scrollToTop = () => {

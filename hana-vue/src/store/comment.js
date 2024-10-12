@@ -22,7 +22,7 @@ export const useCommentStore = defineStore("comment", () => {
           replies: comment.replies.map((reply) => ({
             ...reply,
 
-            showReplies: false,
+            showReplies: true,
             showReplyInput: false,
           })),
         }));

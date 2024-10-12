@@ -53,7 +53,7 @@
 
 <script setup>
 import { onMounted } from 'vue';
-import { useVideoStore } from '../store/videoStore';
+import { useVideoStore } from '../store/animeStore';
 import { useRoute } from 'vue-router';
 import { ref } from 'vue';
 import { watch } from 'vue';

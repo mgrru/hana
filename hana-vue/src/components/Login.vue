@@ -2,16 +2,15 @@
     <el-popover placement="bottom" :width="400" trigger="hover">
         <template #reference>
             <span @click="navigateToLogin">
-                <el-avatar :src="userStore.isLoggedIn ? userStore.userInfo.avatar : ''"
-                    style="background-color: lightskyblue;">
-                    {{ userStore.isLoggedIn ? '' : '登录' }}
+                <el-avatar :src="authStore.isLoggedIn ? '' : ''" style="background-color: lightskyblue;">
+                    {{ authStore.isLoggedIn ? '帅哥' : '登录' }}
                 </el-avatar>
             </span>
         </template>
 
-        <template v-if="userStore.isLoggedIn">
+        <template v-if="authStore.isLoggedIn">
             <div class="user-popover">
-                <p>{{ userStore.userInfo.userName }}</p>
+                <!-- <p>{{ userStore.userInfo.userName }}</p> -->
                 <el-button type="primary" @click="navigateToUserInfo">用户管理</el-button>
                 <el-button type="primary" @click="handleLogout">退出登录</el-button>
             </div>
@@ -31,7 +30,9 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { useUserStore } from '../store/userStore';
+import { useAuthStore } from '../store/auth';
 
+const authStore = useAuthStore();
 const userStore = useUserStore();
 const router = useRouter();
 
@@ -43,7 +44,8 @@ const navigateToUserInfo = () => {
 };
 
 const handleLogout = () => {
-    userStore.clearToken();
+    console.log('Logout function triggered');
+    authStore.clearToken();
     alert('退出登录成功！');
 };
 </script>

@@ -157,6 +157,7 @@ Mock.mock("/api/login", "post", (options) => {
 
   // 模拟用户登录信息
   const mockUser = {
+    id: Mock.Random.guid(), // 新增用户ID
     account: "tzt",
     pass: "111111", // 这里可以设置一个模拟密码
     token: Mock.Random.guid(), // 模拟token
@@ -164,9 +165,9 @@ Mock.mock("/api/login", "post", (options) => {
       avatar:
         "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
       userName: "tang",
-      age: Mock.Random.age,
-      phone: Mock.Random.phone,
-      email: Mock.Random.email,
+      age: Mock.Random.natural(0, 100),
+      phone: Mock.Random.string("number", 11),
+      email: Mock.Random.email(),
     },
   };
 

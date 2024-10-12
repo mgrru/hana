@@ -22,6 +22,7 @@
         </div>
 
         <!-- 子评论折叠按钮 -->
+        <!-- 待改进为展示前几条点赞数多的评论--默认展开 -->
         <div class="replies" v-if="comment.replies.length">
             <p class="toggle-replies" @click="toggleReplies(comment.id)">
                 {{ comment.showReplies ? '收起回复' : '查看回复 (' + calculateTotalReplies(comment) + ')' }}
