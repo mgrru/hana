@@ -3,6 +3,7 @@ package com.hana.hana_spring.web;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,7 +41,7 @@ public class MsgCtr {
      * @throws JsonProcessingException
      */
     @GetMapping
-    public Result get_msg(HttpServletRequest req) throws JsonProcessingException {
+    public ResponseEntity<String> get_msg(HttpServletRequest req) throws JsonProcessingException {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         List<Msg> msgs = msg_service.get_msg(uid);
@@ -56,7 +57,7 @@ public class MsgCtr {
      * @throws JsonProcessingException
      */
     @PostMapping
-    public Result send_msg(@RequestBody String entity, HttpServletRequest req)
+    public ResponseEntity<String> send_msg(@RequestBody String entity, HttpServletRequest req)
             throws JsonMappingException, JsonProcessingException {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);

@@ -3,6 +3,7 @@ package com.hana.hana_spring.web;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +40,7 @@ public class HistoryCtr {
      * @throws JsonProcessingException
      */
     @GetMapping
-    public Result get_history(HttpServletRequest req) throws JsonProcessingException {
+    public ResponseEntity<String> get_history(HttpServletRequest req) throws JsonProcessingException {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         List<Resource> histories = history_service.get_user_history(uid);
@@ -54,7 +55,7 @@ public class HistoryCtr {
      * @return
      */
     @PostMapping("{rid}")
-    public Result add_history(@PathVariable Integer rid, HttpServletRequest req) {
+    public ResponseEntity<String> add_history(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         history_service.add_history(uid, rid);
@@ -68,7 +69,7 @@ public class HistoryCtr {
      * @return
      */
     @DeleteMapping("{rid}")
-    public Result del_history(@PathVariable Integer rid, HttpServletRequest req) {
+    public ResponseEntity<String> del_history(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         history_service.del_history(uid, rid);

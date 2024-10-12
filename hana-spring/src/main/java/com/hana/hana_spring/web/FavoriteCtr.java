@@ -3,6 +3,7 @@ package com.hana.hana_spring.web;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +40,7 @@ public class FavoriteCtr {
      * @throws JsonProcessingException
      */
     @GetMapping
-    public Result get_favorites(HttpServletRequest req) throws JsonProcessingException {
+    public ResponseEntity<String> get_favorites(HttpServletRequest req) throws JsonProcessingException {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         List<Resource> favorites = favorite_service.get_user_favorite(uid);
@@ -54,7 +55,7 @@ public class FavoriteCtr {
      * @return
      */
     @PostMapping("{rid}")
-    public Result add_favorite(@PathVariable Integer rid, HttpServletRequest req) {
+    public ResponseEntity<String> add_favorite(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         favorite_service.add_favorite(uid, rid);
@@ -68,7 +69,7 @@ public class FavoriteCtr {
      * @return
      */
     @DeleteMapping("{rid}")
-    public Result del_favorite(@PathVariable Integer rid, HttpServletRequest req) {
+    public ResponseEntity<String> del_favorite(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         favorite_service.del_favorite(uid, rid);
