@@ -17,6 +17,11 @@ import com.hana.hana_spring.service.UserService;
 import com.hana.hana_spring.utils.JwtUtil;
 import com.hana.hana_spring.utils.Result;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
 @RestController
 @CrossOrigin("*")
 public class SysCtr {
@@ -26,13 +31,8 @@ public class SysCtr {
     @Autowired
     private JwtUtil jwt_util;
 
-    /**
-     * 用户注册的接口
-     * 
-     * @param entity {account,pass}
-     * @throws JsonMappingException
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "用户注册的接口")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = LoginReq.class)))
     @PostMapping("register")
     public ResponseEntity<String> register(@RequestBody String entity)
             throws JsonMappingException, JsonProcessingException {
@@ -52,14 +52,9 @@ public class SysCtr {
         return Result.success();
     }
 
-    /**
-     * 用户和管理员登录的接口
-     * 
-     * @param entity {account, pass}
-     * @return 直接返回token字符串
-     * @throws JsonMappingException
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "用户和管理员登录的接口")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = LoginReq.class)))
+    @ApiResponse(description = "直接返回token字符串")
     @PostMapping("login")
     public ResponseEntity<String> login(@RequestBody String entity)
             throws JsonMappingException, JsonProcessingException {

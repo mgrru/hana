@@ -25,8 +25,18 @@ import com.hana.hana_spring.service.UserService;
 import com.hana.hana_spring.utils.JwtUtil;
 import com.hana.hana_spring.utils.Result;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.SchemaProperty;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Validate
 @RestController
 @RequestMapping("users")
@@ -38,12 +48,8 @@ public class UserCtr {
     @Autowired
     private JwtUtil jwt_util;
 
-    /**
-     * 管理员获取所有用户的接口
-     * 
-     * @return [{id, account, name, isBan, age, phone, email, role}]
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "管理员获取所有用户")
+    @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class))))
     @Validate(auth = true)
     @GetMapping("admin")
     public ResponseEntity<String> get_all_user() throws JsonProcessingException {
@@ -55,11 +61,8 @@ public class UserCtr {
         return Result.success(data);
     }
 
-    /**
-     * 管理员封禁用户的接口
-     * 
-     * @param id 要封禁的用户id
-     */
+    @Operation(summary = "管理员封禁用户的接口")
+    @Parameters(@Parameter(name = "id", description = "要封禁的用户id"))
     @Validate(auth = true)
     @PutMapping("{id}/ban")
     public ResponseEntity<String> ban_user(@PathVariable Integer id) {
@@ -68,11 +71,8 @@ public class UserCtr {
         return Result.success();
     }
 
-    /**
-     * 管理员解封用户的接口
-     * 
-     * @param id 要解封的用户id
-     */
+    @Operation(summary = "管理员解封用户的接口")
+    @Parameters(@Parameter(name = "id", description = "要解封的用户id"))
     @Validate(auth = true)
     @PutMapping("{id}/unban")
     public ResponseEntity<String> unban_user(@PathVariable Integer id) {
@@ -81,14 +81,11 @@ public class UserCtr {
         return Result.success();
     }
 
-    /**
-     * 管理员修改用户角色的接口
-     * 
-     * @param id  要修改的用户id
-     * @param rid 要修改的角色id
-     * @throws JsonMappingException
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "管理员修改用户角色的接口")
+    @Parameters({
+            @Parameter(name = "id", description = "要修改的用户id"),
+            @Parameter(name = "rid", description = "要修改的角色id")
+    })
     @Validate(auth = true)
     @PutMapping("{id}/role/{rid}")
     public ResponseEntity<String> upd_user_role(@PathVariable Integer id, @PathVariable Integer rid)
@@ -97,12 +94,8 @@ public class UserCtr {
         return Result.success();
     }
 
-    /**
-     * 用户获取账号信息的接口
-     * 
-     * @return {id, account, name, isBan, age, phone, email, role}
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "用户获取账号信息的接口")
+    @ApiResponse(content = @Content(schema = @Schema(implementation = User.class)))
     @GetMapping
     public ResponseEntity<String> get_user_by_id(HttpServletRequest req) throws JsonProcessingException {
         String token = req.getHeader("Authorization");
@@ -112,13 +105,8 @@ public class UserCtr {
         return Result.success(data);
     }
 
-    /**
-     * 用户修改账号信息的接口
-     * 
-     * @param entity {name, age, phone, email} 只能修改这4个属性
-     * @throws JsonMappingException
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "用户修改账号信息", description = "四个属性可任选一或多个")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = UpdUserReq.class)))
     @PutMapping
     public ResponseEntity<String> upd_user(@RequestBody String entity, HttpServletRequest req)
             throws JsonMappingException, JsonProcessingException {
@@ -130,15 +118,10 @@ public class UserCtr {
         return Result.success();
     }
 
-    /**
-     * 用户修改账号密码的接口
-     * 
-     * @param entity {pass, new_pass, code}
-     * @throws JsonMappingException
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "用户修改账号密码")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = UpdPassReq.class)))
     @PutMapping("pass")
-    public ResponseEntity<String> upd_user_pass(@RequestBody String entity, HttpServletRequest req)
+    public ResponseEntity<String> upd_user_pass(String entity, HttpServletRequest req)
             throws JsonMappingException, JsonProcessingException {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
@@ -153,18 +136,17 @@ public class UserCtr {
         }
     }
 
-    /**
-     * 修改密码验证邮箱
-     * 
-     * @throws EmailException
-     */
+    @Operation(summary = "发送邮箱验证码")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schemaProperties = {
+            @SchemaProperty(name = "email", schema = @Schema(type = "string", name = "email"))
+    }))
+    @Validate(login = false)
     @PostMapping("verify/email")
-    public ResponseEntity<String> postMethodName(HttpServletRequest req) throws EmailException {
-        String token = req.getHeader("Authorization");
-        Integer uid = jwt_util.getLoginUserId(token);
-        String email = user_service.get_user_by_id(uid).getEmail();
-
+    public ResponseEntity<String> send_email(@RequestBody String entity, HttpServletRequest req)
+            throws EmailException, JsonMappingException, JsonProcessingException {
+        String email = new ObjectMapper().readTree(entity).get("email").asText();
         if (email == null || email.isBlank() || email.isEmpty()) {
+            log.error("get noemail");
             return Result.noemail();
         }
         user_service.send_email(email);
