@@ -22,7 +22,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @Aspect
 @Component
 @Async
-public class LoginAspect {
+public class ValiAspect {
     @Autowired
     private JwtUtil jwt_util;
 
