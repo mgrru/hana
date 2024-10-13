@@ -27,6 +27,14 @@ import com.hana.hana_spring.service.AnimeService;
 import com.hana.hana_spring.utils.JwtUtil;
 import com.hana.hana_spring.utils.Result;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.SchemaProperty;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -46,13 +54,7 @@ public class AnimeCtr {
     @Value("${save-path}")
     private String save_path;
 
-    /**
-     * 视频播放链接请求
-     * 
-     * @param name         视频名称
-     * @param episode_name 集名
-     * @throws IOException
-     */
+    @Operation(summary = "视频播放链接")
     @Validate(login = false)
     @GetMapping("animes/{name}/{episode_name}")
     public void display_anime(@PathVariable String name, @PathVariable String episode_name, HttpServletRequest req,
@@ -85,7 +87,7 @@ public class AnimeCtr {
             rep.getOutputStream().write(buffer, 0, len);
         }
 
-        Resource resource = anime_service.get_by_name(name, episode_name);
+        Resource resource = anime_service.get_by_name_episode(name, episode_name);
         anime_service.add_views(resource.getId());
 
         random_access_file.close();
@@ -93,12 +95,8 @@ public class AnimeCtr {
         rep.getOutputStream().close();
     }
 
-    /**
-     * 获取所有动漫信息
-     * 
-     * @return [{id, type, cover, name, episodeName, url, process, uid, sid}]
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "获取所有动漫信息")
+    @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
     @Validate(login = false)
     @GetMapping("animes")
     public ResponseEntity<String> get_all_anime() throws JsonProcessingException {
@@ -108,23 +106,27 @@ public class AnimeCtr {
         return Result.success(data);
     }
 
-    /**
-     * 上传动漫
-     * 
-     * @param resources    动漫文件
-     * @param cover        封面图
-     * @param type         类型 '动画' | '漫画'
-     * @param name         动漫名
-     * @param episode_name 集名 第一集 | 第二集
-     * @param sid          板块id
-     * @throws IOException
-     */
+    @Operation(summary = "上传动漫")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "multipart/form-data", schemaProperties = {
+            @SchemaProperty(name = "resources", schema = @Schema(type = "string", format = "binary", name = "resources")),
+            @SchemaProperty(name = "cover", schema = @Schema(type = "string", format = "binary", name = "cover")),
+            @SchemaProperty(name = "type", schema = @Schema(name = "type")),
+            @SchemaProperty(name = "name", schema = @Schema(name = "name")),
+            @SchemaProperty(name = "episode_name", schema = @Schema(name = "episode_name")),
+            @SchemaProperty(name = "sid", schema = @Schema(type = "integer", format = "int32", name = "sid")),
+    }))
     @PostMapping("upload")
-    public ResponseEntity<String> add_anime(MultipartFile resources, MultipartFile cover, String type, String name,
-            String episode_name, Integer sid, HttpServletRequest req) throws IOException {
-
+    public ResponseEntity<String> add_anime(
+            MultipartFile resources,
+            MultipartFile cover,
+            String type,
+            String name,
+            String episode_name,
+            Integer sid,
+            HttpServletRequest req)
+            throws IOException {
         // 检查动漫名称是否冲突
-        if (anime_service.get_by_name(name, episode_name) != null) {
+        if (anime_service.get_by_name_episode(name, episode_name) != null) {
             return Result.error();
         }
 
@@ -153,7 +155,8 @@ public class AnimeCtr {
         }
 
         // 检查封面图片格式
-        String cover_suffix = cover.getOriginalFilename().substring(cover.getOriginalFilename().lastIndexOf("."));
+        String cover_suffix = cover.getOriginalFilename()
+                .substring(cover.getOriginalFilename().lastIndexOf("."));
         if (!(cover_suffix.equalsIgnoreCase(".png") || cover_suffix.equalsIgnoreCase(".jpg"))) {
             if (anime.exists()) {
                 anime.delete();
@@ -194,12 +197,8 @@ public class AnimeCtr {
         return Result.success();
     }
 
-    /**
-     * 下架动漫
-     * 
-     * @param rid 要下架的动漫id
-     * @return
-     */
+    @Operation(summary = "下架动漫")
+    @Parameters(@Parameter(name = "id", description = "要下架的动漫id"))
     @Validate(auth = true)
     @DeleteMapping("deactivate/{rid}")
     public ResponseEntity<String> del_anime(@PathVariable Integer rid) {
@@ -207,11 +206,8 @@ public class AnimeCtr {
         return Result.success();
     }
 
-    /**
-     * 通过审核
-     * 
-     * @param rid 要审核的动漫id
-     */
+    @Operation(summary = "通过审核")
+    @Parameters(@Parameter(name = "id", description = "要审核的动漫id"))
     @Validate(auth = true)
     @PutMapping("approve/{rid}")
     public ResponseEntity<String> approve_anime(@PathVariable Integer rid) {
@@ -219,11 +215,8 @@ public class AnimeCtr {
         return Result.success();
     }
 
-    /**
-     * 不通过审核
-     * 
-     * @param rid 要审核的动漫id
-     */
+    @Operation(summary = "不通过审核")
+    @Parameters(@Parameter(name = "id", description = "要审核的动漫id"))
     @Validate(auth = true)
     @PutMapping("reject/{rid}")
     public ResponseEntity<String> reject_anime(@PathVariable Integer rid) {
@@ -231,11 +224,8 @@ public class AnimeCtr {
         return Result.success();
     }
 
-    /**
-     * 用户获取自己上传动漫的接口
-     * 
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "用户获取自己上传动漫")
+    @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
     @GetMapping("users/animes")
     public ResponseEntity<String> get_user_anime(HttpServletRequest req) throws JsonProcessingException {
         String token = req.getHeader("Authorization");
@@ -245,12 +235,8 @@ public class AnimeCtr {
         return Result.success(data);
     }
 
-    /**
-     * 用户删除自己上传的动漫
-     * 
-     * @param rid 要删除的动漫id
-     * @return
-     */
+    @Operation(summary = "用户删除自己上传的动漫")
+    @Parameters(@Parameter(name = "id", description = "要删除的动漫id"))
     @DeleteMapping("resource/{rid}")
     public ResponseEntity<String> del_user_anime(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");
@@ -259,13 +245,8 @@ public class AnimeCtr {
         return Result.success();
     }
 
-    /**
-     * 按名称搜索动漫(模糊搜索)
-     * 
-     * @param name 搜索名称关键字
-     * @return [{id, type, cover, name, episodeName, url, process, uid, sid}]
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "按名称搜索动漫(模糊搜索)")
+    @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
     @Validate(login = false)
     @GetMapping("search")
     public ResponseEntity<String> search(@RequestParam String name) throws JsonProcessingException {
@@ -276,15 +257,24 @@ public class AnimeCtr {
         return Result.success(data);
     }
 
-    /**
-     * 点赞
-     * @param rid 要点赞的动漫id
-     * @return
-     */
+    @Operation(summary = "点赞")
+    @Parameters(@Parameter(name = "id", description = "要点赞的动漫id"))
+    @Validate(login = false)
     @PutMapping("animes/{rid}/like")
     public ResponseEntity<String> add_likes(@PathVariable Integer rid) {
         anime_service.add_likes(rid);
         return Result.success();
+    }
+
+    @Operation(summary = "按名称获取动漫信息")
+    @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
+    @Validate(login = false)
+    @GetMapping("animes/{name}")
+    public ResponseEntity<String> get_animes_by_name(@PathVariable String name) throws JsonProcessingException {
+        List<Resource> resources = anime_service.get_by_name(name);
+        String data = new ObjectMapper().writeValueAsString(resources);
+
+        return Result.success(data);
     }
 
 }

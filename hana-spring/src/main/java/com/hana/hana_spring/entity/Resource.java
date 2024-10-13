@@ -2,6 +2,7 @@ package com.hana.hana_spring.entity;
 
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,6 +23,8 @@ public class Resource {
   @Schema(example = "byte[]")
   private byte[] cover; // 动漫封面
   private String name; // 动漫名
+  @Schema(name = "episode_name")
+  @JsonAlias("episode_name")
   private String episodeName; // 集名
   @JsonIgnore
   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

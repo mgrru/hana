@@ -19,8 +19,12 @@ public class AnimeService {
         return anime_mapper.sel_all();
     }
 
-    public Resource get_by_name(String name, String episode_name) {
-        return anime_mapper.sel_by_name(name, episode_name);
+    public Resource get_by_name_episode(String name, String episode_name) {
+        return anime_mapper.sel_by_name_episode(name, episode_name);
+    }
+
+    public List<Resource> get_by_name(String name) {
+        return anime_mapper.sel_by_name(name);
     }
 
     public void add_anime(Resource resource) {

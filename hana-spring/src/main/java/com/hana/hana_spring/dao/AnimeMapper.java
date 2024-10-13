@@ -17,7 +17,10 @@ public interface AnimeMapper {
     List<Resource> sel_all();
 
     @Select("select * from resource where name=#{name} and episode_name=#{episode_name}")
-    Resource sel_by_name(String name, String episode_name);
+    Resource sel_by_name_episode(String name, String episode_name);
+
+    @Select("select * from resource where name=#{name}")
+    List<Resource> sel_by_name(String name);
 
     @Select("select * from resource where uid=#{uid}")
     List<Resource> sel_by_user(int uid);
@@ -40,7 +43,6 @@ public interface AnimeMapper {
 
     @Update("update resource set likes=#{likes} where id=#{id}")
     void upd_likes(Resource resource);
-
 
     @Select("select * from resource where id=#{id}")
     Resource sel_by_id(int id);
