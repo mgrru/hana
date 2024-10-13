@@ -1,5 +1,6 @@
 package com.hana.hana_spring.web;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,21 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hana.hana_spring.anno.Validate;
 import com.hana.hana_spring.entity.Comment;
+import com.hana.hana_spring.entity.User;
+import com.hana.hana_spring.entity.dto.CommentRep;
 import com.hana.hana_spring.entity.dto.CommentReq;
 import com.hana.hana_spring.service.CommentService;
+import com.hana.hana_spring.service.UserService;
 import com.hana.hana_spring.utils.JwtUtil;
 import com.hana.hana_spring.utils.Result;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -34,29 +45,29 @@ public class CommentCtr {
     private CommentService comment_service;
 
     @Autowired
+    private UserService user_service;
+
+    @Autowired
     private JwtUtil jwt_util;
 
-    /**
-     * 获取动漫的评论
-     * 
-     * @param rid 动漫id
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "获取动漫的评论")
+    @Parameters(@Parameter(name = "rid", description = "动漫id"))
+    @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = CommentRep.class))))
     @Validate(login = false)
     @GetMapping("{rid}")
     public ResponseEntity<String> get_comment(@PathVariable Integer rid) throws JsonProcessingException {
         List<Comment> comments = comment_service.get_comment(rid);
-        String data = new ObjectMapper().writeValueAsString(comments);
+        List<CommentRep> result = new ArrayList<>();
+        for (Comment comment : comments) {
+            User user = user_service.get_user_by_id(comment.getUid());
+            result.add(CommentRep.newRep(user.getName(), comment));
+        }
+        String data = new ObjectMapper().writeValueAsString(result);
         return Result.success(data);
     }
 
-    /**
-     * 添加评论
-     * 
-     * @param entity {content, rid}
-     * @throws JsonMappingException
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "发送评论")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = CommentReq.class)))
     @PostMapping
     public ResponseEntity<String> add_comment(@RequestBody String entity, HttpServletRequest req)
             throws JsonMappingException, JsonProcessingException {
@@ -68,12 +79,8 @@ public class CommentCtr {
         return Result.success();
     }
 
-    /**
-     * 删除评论
-     * 
-     * @param id 要删除的评论id
-     * @return
-     */
+    @Operation(summary = "删除评论")
+    @Parameters(@Parameter(name = "id", description = "要删除的评论id"))
     @DeleteMapping("{id}")
     public ResponseEntity<String> del_comment(@PathVariable Integer id) {
         comment_service.del_comment(id);

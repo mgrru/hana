@@ -22,6 +22,14 @@ import com.hana.hana_spring.entity.Announcement;
 import com.hana.hana_spring.service.AnnouncementService;
 import com.hana.hana_spring.utils.Result;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
 @RestController
 @RequestMapping("announcements")
 @CrossOrigin("*")
@@ -30,12 +38,8 @@ public class AnnouncementCtr {
     @Autowired
     private AnnouncementService announcement_service;
 
-    /**
-     * 获取公告
-     * 
-     * @return {id, title, content, time}
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "获取公告")
+    @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Announcement.class))))
     @Validate(login = false, auth = false)
     @GetMapping
     public ResponseEntity<String> get_all_announcement() throws JsonProcessingException {
@@ -45,30 +49,21 @@ public class AnnouncementCtr {
         return Result.success(data);
     }
 
-    /**
-     * 添加公告
-     * 
-     * @param entity {title, content, time}
-     * @throws JsonMappingException
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "添加公告")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = Announcement.class)), description = "id属性不需要")
     @PostMapping
     public ResponseEntity<String> add_announcement(@RequestBody String entity)
             throws JsonMappingException, JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Announcement announcement = mapper.readValue(entity, Announcement.class);
+        announcement.setId(null);
         announcement_service.add_announcement(announcement);
         return Result.success();
     }
 
-    /**
-     * 修改公告
-     * 
-     * @param id     要修改的公告id
-     * @param entity {title, content, time}
-     * @throws JsonMappingException
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "修改公告")
+    @Parameters(@Parameter(name = "id", description = "要修改的公告id"))
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = Announcement.class)), description = "id属性不用")
     @PutMapping("{id}")
     public ResponseEntity<String> upd_announcement(@PathVariable Integer id, @RequestBody String entity)
             throws JsonMappingException, JsonProcessingException {
@@ -79,11 +74,8 @@ public class AnnouncementCtr {
         return Result.success();
     }
 
-    /**
-     * 删除公告
-     * 
-     * @param id 要删除的公告id
-     */
+    @Operation(summary = "删除公告")
+    @Parameters(@Parameter(name = "id", description = "要删除的公告id"))
     @DeleteMapping("{id}")
     public ResponseEntity<String> del_section(@PathVariable Integer id) {
         announcement_service.del_announcement(id);

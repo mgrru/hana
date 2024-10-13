@@ -20,6 +20,13 @@ import com.hana.hana_spring.service.FavoriteService;
 import com.hana.hana_spring.utils.JwtUtil;
 import com.hana.hana_spring.utils.Result;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -33,12 +40,8 @@ public class FavoriteCtr {
     @Autowired
     private JwtUtil jwt_util;
 
-    /**
-     * 获取收藏
-     * 
-     * @return [{id, type, cover, name, episodeName, url, process, uid, sid}]
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "获取收藏")
+    @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
     @GetMapping
     public ResponseEntity<String> get_favorites(HttpServletRequest req) throws JsonProcessingException {
         String token = req.getHeader("Authorization");
@@ -48,12 +51,8 @@ public class FavoriteCtr {
         return Result.success(data);
     }
 
-    /**
-     * 添加收藏
-     * 
-     * @param rid 收藏的动漫id
-     * @return
-     */
+    @Operation(summary = "添加收藏")
+    @Parameters(@Parameter(name = "rid", description = "收藏的动漫id"))
     @PostMapping("{rid}")
     public ResponseEntity<String> add_favorite(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");
@@ -62,12 +61,8 @@ public class FavoriteCtr {
         return Result.success();
     }
 
-    /**
-     * 删除收藏
-     * 
-     * @param rid 收藏的动漫id
-     * @return
-     */
+    @Operation(summary = "删除收藏")
+    @Parameters(@Parameter(name = "rid", description = "要删除的收藏的动漫id"))
     @DeleteMapping("{rid}")
     public ResponseEntity<String> del_favorite(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");

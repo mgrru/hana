@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
 public class Resource {
   private Integer id; // 动漫id
   private String type; // 动漫类型 动画 | 漫画
+  @Schema(example = "byte[]")
   private byte[] cover; // 动漫封面
   private String name; // 动漫名
   private String episodeName; // 集名
@@ -28,10 +30,8 @@ public class Resource {
   private boolean process; // 审核状态
   private Integer uid; // 上传用户id
   private Integer sid; // 所属板块id
-  @JsonIgnore
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Integer likes; // 点赞数量
-  @JsonIgnore
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Integer views; // 播放数量
 }
