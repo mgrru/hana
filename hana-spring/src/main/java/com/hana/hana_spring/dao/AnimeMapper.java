@@ -25,6 +25,12 @@ public interface AnimeMapper {
     @Select("select * from resource where uid=#{uid}")
     List<Resource> sel_by_user(int uid);
 
+    @Select("SELECT * FROM resource WHERE id IN (SELECT id FROM (SELECT MAX(id) as id FROM resource GROUP BY name ORDER BY MAX(views) DESC LIMIT 10) AS temp)")
+    List<Resource> sel_popular();
+
+    @Select("SELECT * FROM resource WHERE id IN (SELECT id FROM (SELECT MIN(id) as id FROM resource GROUP BY name ORDER BY RAND() LIMIT 10) AS temp)")
+    List<Resource> sel_recommend();
+
     @Insert("insert into resource(type, cover, name, episode_name, path, url, process, uid, sid) values(#{type}, #{cover}, #{name}, #{episodeName}, #{path}, #{url}, #{process}, #{uid}, #{sid})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void ins(Resource resource);

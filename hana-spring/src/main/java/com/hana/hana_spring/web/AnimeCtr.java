@@ -60,7 +60,7 @@ public class AnimeCtr {
     public void display_anime(@PathVariable String name, @PathVariable String episode_name, HttpServletRequest req,
             HttpServletResponse rep)
             throws IOException {
-        File file = new File(save_path + name + episode_name + ".mp4");
+        File file = new File(save_path + "/" + name + episode_name + ".mp4");
         if (!file.exists()) {
             rep.getOutputStream().close();
             return;
@@ -246,6 +246,7 @@ public class AnimeCtr {
     }
 
     @Operation(summary = "按名称搜索动漫(模糊搜索)")
+    @Parameters(@Parameter(name = "name", description = "搜索动漫名称关键词"))
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
     @Validate(login = false)
     @GetMapping("search")
@@ -275,6 +276,26 @@ public class AnimeCtr {
         List<Resource> resources = anime_service.get_by_name(name);
         String data = new ObjectMapper().writeValueAsString(resources);
 
+        return Result.success(data);
+    }
+
+    @Operation(summary = "获取播放量前十的动漫")
+    @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
+    @Validate(login = false)
+    @GetMapping("animes/popular")
+    public ResponseEntity<String> get_popular() throws JsonProcessingException {
+        List<Resource> popular = anime_service.get_popular();
+        String data = new ObjectMapper().writeValueAsString(popular);
+        return Result.success(data);
+    }
+
+    @Operation(summary = "获取播放量前十的动漫")
+    @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
+    @Validate(login = false)
+    @GetMapping("animes/recommend")
+    public ResponseEntity<String> get_recommend() throws JsonProcessingException {
+        List<Resource> recommend = anime_service.get_recommend();
+        String data = new ObjectMapper().writeValueAsString(recommend);
         return Result.success(data);
     }
 

@@ -80,4 +80,12 @@ public class AnimeService {
         resource.setViews(resource.getViews() + 1);
         anime_mapper.upd_views(resource);
     }
+
+    public List<Resource> get_recommend() {
+        return anime_mapper.sel_recommend();
+    }
+
+    public List<Resource> get_popular() {
+        return anime_mapper.sel_popular();
+    }
 }
