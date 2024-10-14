@@ -8,12 +8,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hana.hana_spring.dao.AnimeMapper;
 import com.hana.hana_spring.entity.Resource;
+import com.hana.hana_spring.utils.Oss;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class AnimeService {
     @Autowired
     private AnimeMapper anime_mapper;
+
+    @Autowired
+    private Oss oss;
 
     public List<Resource> get_all_anime() {
         return anime_mapper.sel_all();
@@ -35,12 +39,14 @@ public class AnimeService {
 
     public void del_anime(Integer id) {
         if (id != null) {
+            oss.delete(anime_mapper.sel_by_id(id).getCover());
             anime_mapper.del(id);
         }
     }
 
     public void del_user_anime(Integer uid, Integer rid) {
         if (uid != null && rid != null) {
+            oss.delete(anime_mapper.sel_by_id(rid).getCover());
             anime_mapper.del_user_ainme(uid, rid);
         }
     }

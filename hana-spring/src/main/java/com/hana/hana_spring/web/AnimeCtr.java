@@ -25,6 +25,7 @@ import com.hana.hana_spring.anno.Validate;
 import com.hana.hana_spring.entity.Resource;
 import com.hana.hana_spring.service.AnimeService;
 import com.hana.hana_spring.utils.JwtUtil;
+import com.hana.hana_spring.utils.Oss;
 import com.hana.hana_spring.utils.Result;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,6 +51,9 @@ public class AnimeCtr {
 
     @Autowired
     private JwtUtil jwt_util;
+
+    @Autowired
+    private Oss oss;
 
     @Value("${save-path}")
     private String save_path;
@@ -157,7 +161,9 @@ public class AnimeCtr {
         // 检查封面图片格式
         String cover_suffix = cover.getOriginalFilename()
                 .substring(cover.getOriginalFilename().lastIndexOf("."));
-        if (!(cover_suffix.equalsIgnoreCase(".png") || cover_suffix.equalsIgnoreCase(".jpg"))) {
+        if (!(cover_suffix.equalsIgnoreCase(".png")
+                || cover_suffix.equalsIgnoreCase(".jpg")
+                || cover_suffix.equalsIgnoreCase(".jpeg"))) {
             if (anime.exists()) {
                 anime.delete();
             }
@@ -179,7 +185,8 @@ public class AnimeCtr {
 
         // 设置动画保存信息
         save_resource.setType(type);
-        save_resource.setCover(cover.getBytes());
+        String cover_url = oss.upload(cover);
+        save_resource.setCover(cover_url);
         save_resource.setName(name);
         save_resource.setEpisodeName(episode_name);
         save_resource.setSid(sid);

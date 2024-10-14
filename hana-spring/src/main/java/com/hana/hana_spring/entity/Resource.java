@@ -20,8 +20,7 @@ import lombok.NoArgsConstructor;
 public class Resource {
   private Integer id; // 动漫id
   private String type; // 动漫类型 动画 | 漫画
-  @Schema(example = "byte[]")
-  private byte[] cover; // 动漫封面
+  private String cover; // 动漫封面url
   private String name; // 动漫名
   @Schema(name = "episode_name")
   @JsonAlias("episode_name")

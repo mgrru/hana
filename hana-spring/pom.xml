@@ -71,6 +71,12 @@
 			<version>1.6.0</version>
 		</dependency>
 
+		<!-- 阿里oss图片保存 -->
+		<dependency>
+			<groupId>com.aliyun.oss</groupId>
+			<artifactId>aliyun-sdk-oss</artifactId>
+			<version>3.8.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
