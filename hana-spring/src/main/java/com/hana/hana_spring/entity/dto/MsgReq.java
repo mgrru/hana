@@ -14,8 +14,8 @@ public class MsgReq {
     private Integer recipient;
     private String content;
 
-    public Msg toMsg(Integer uid) {
+    public Msg toMsg(Integer sender) {
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        return new Msg(null, uid, recipient, content, now);
+        return new Msg(null, sender, recipient, content, now);
     }
 }

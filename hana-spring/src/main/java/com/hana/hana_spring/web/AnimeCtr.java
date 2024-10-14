@@ -23,7 +23,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hana.hana_spring.anno.Validate;
 import com.hana.hana_spring.entity.Resource;
+import com.hana.hana_spring.entity.dto.MsgReq;
 import com.hana.hana_spring.service.AnimeService;
+import com.hana.hana_spring.service.MsgService;
 import com.hana.hana_spring.utils.JwtUtil;
 import com.hana.hana_spring.utils.Oss;
 import com.hana.hana_spring.utils.Result;
@@ -48,6 +50,9 @@ public class AnimeCtr {
 
     @Autowired
     private AnimeService anime_service;
+
+    @Autowired
+    private MsgService msg_service;
 
     @Autowired
     private JwtUtil jwt_util;
@@ -99,12 +104,23 @@ public class AnimeCtr {
         rep.getOutputStream().close();
     }
 
+    @Operation(summary = "获取所有动漫信息(管理员用)")
+    @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
+    @Validate(auth = true)
+    @GetMapping("animes/all")
+    public ResponseEntity<String> get_all_anime() throws JsonProcessingException {
+        List<Resource> resources = anime_service.get_all_anime();
+        String data = new ObjectMapper().writeValueAsString(resources);
+
+        return Result.success(data);
+    }
+
     @Operation(summary = "获取所有动漫信息")
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
     @Validate(login = false)
     @GetMapping("animes")
-    public ResponseEntity<String> get_all_anime() throws JsonProcessingException {
-        List<Resource> resources = anime_service.get_all_anime();
+    public ResponseEntity<String> get_all_anime_process() throws JsonProcessingException {
+        List<Resource> resources = anime_service.get_all_process();
         String data = new ObjectMapper().writeValueAsString(resources);
 
         return Result.success(data);
@@ -226,7 +242,14 @@ public class AnimeCtr {
     @Parameters(@Parameter(name = "rid", description = "要审核的动漫id"))
     @Validate(auth = true)
     @PutMapping("reject/{rid}")
-    public ResponseEntity<String> reject_anime(@PathVariable Integer rid) {
+    public ResponseEntity<String> reject_anime(@PathVariable Integer rid, HttpServletRequest req) {
+        String token = req.getHeader("Authorization");
+        Integer uid = jwt_util.getLoginUserId(token);
+        MsgReq msg = new MsgReq();
+        msg.setRecipient(uid);
+        msg.setContent("您上传的动漫: \"" + anime_service.get_by_id(rid).getName() + " - "
+                + anime_service.get_by_id(rid).getEpisodeName() + "\" 有违规内容，请修改后重新上传！");
+        msg_service.send_msg(msg.toMsg(1));
         anime_service.del_anime(rid);
         return Result.success();
     }

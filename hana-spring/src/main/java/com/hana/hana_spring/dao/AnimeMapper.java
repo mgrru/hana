@@ -16,19 +16,22 @@ public interface AnimeMapper {
     @Select("select * from resource")
     List<Resource> sel_all();
 
+    @Select("select * from resource where process=true")
+    List<Resource> sel_all_process();
+
     @Select("select * from resource where name=#{name} and episode_name=#{episode_name}")
     Resource sel_by_name_episode(String name, String episode_name);
 
-    @Select("select * from resource where name=#{name}")
+    @Select("select * from resource where name=#{name} and process=true")
     List<Resource> sel_by_name(String name);
 
     @Select("select * from resource where uid=#{uid}")
     List<Resource> sel_by_user(int uid);
 
-    @Select("SELECT * FROM resource WHERE id IN (SELECT id FROM (SELECT MAX(id) as id FROM resource GROUP BY name ORDER BY MAX(views) DESC LIMIT 10) AS temp)")
+    @Select("SELECT * FROM resource WHERE id IN (SELECT id FROM (SELECT MAX(id) as id FROM resource GROUP BY name ORDER BY MAX(views) DESC LIMIT 10) AS temp) AND process=true")
     List<Resource> sel_popular();
 
-    @Select("SELECT * FROM resource WHERE id IN (SELECT id FROM (SELECT MIN(id) as id FROM resource GROUP BY name ORDER BY RAND() LIMIT 10) AS temp)")
+    @Select("SELECT * FROM resource WHERE id IN (SELECT id FROM (SELECT MIN(id) as id FROM resource GROUP BY name ORDER BY RAND() LIMIT 10) AS temp) AND process=true")
     List<Resource> sel_recommend();
 
     @Insert("insert into resource(type, cover, name, episode_name, path, url, process, uid, sid) values(#{type}, #{cover}, #{name}, #{episodeName}, #{path}, #{url}, #{process}, #{uid}, #{sid})")

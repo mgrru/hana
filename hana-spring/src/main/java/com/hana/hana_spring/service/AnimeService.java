@@ -94,4 +94,12 @@ public class AnimeService {
     public List<Resource> get_popular() {
         return anime_mapper.sel_popular();
     }
+
+    public Resource get_by_id(Integer id) {
+        return anime_mapper.sel_by_id(id);
+    }
+
+    public List<Resource> get_all_process() {
+        return anime_mapper.sel_all_process();
+    }
 }
