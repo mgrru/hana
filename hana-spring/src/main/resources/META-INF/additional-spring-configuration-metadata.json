@@ -43,5 +43,25 @@
     "name": "email.password",
     "type": "java.lang.String",
     "description": "登录密码"
+  },
+  {
+    "name": "oss.pic.endpoint",
+    "type": "java.lang.String",
+    "description": "图片保存地址"
+  },
+  {
+    "name": "oss.pic.username",
+    "type": "java.lang.String",
+    "description": "key"
+  },
+  {
+    "name": "oss.pic.password",
+    "type": "java.lang.String",
+    "description": "secret"
+  },
+  {
+    "name": "oss.pic.bucket",
+    "type": "java.lang.String",
+    "description": "bucket"
   }
 ]}

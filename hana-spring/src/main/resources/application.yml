@@ -48,6 +48,6 @@ email:
 oss:
   pic:
     endpoint: oss-cn-beijing.aliyuncs.com
-    accessKeyId: LTAI5tEW82h8RKbemdkzy8NM
-    accessKeySecret: z1czVibXBUssajIoOreqYFRO9m5PWb
-    bucketName: hana-pic
+    username: LTAI5tEW82h8RKbemdkzy8NM
+    password: z1czVibXBUssajIoOreqYFRO9m5PWb
+    bucket: hana-pic
