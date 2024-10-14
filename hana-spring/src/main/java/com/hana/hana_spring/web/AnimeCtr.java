@@ -286,7 +286,7 @@ public class AnimeCtr {
         return Result.success(data);
     }
 
-    @Operation(summary = "获取播放量前十的动漫")
+    @Operation(summary = "获取热门动漫")
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
     @Validate(login = false)
     @GetMapping("animes/popular")
@@ -296,7 +296,7 @@ public class AnimeCtr {
         return Result.success(data);
     }
 
-    @Operation(summary = "获取播放量前十的动漫")
+    @Operation(summary = "获取推荐动漫")
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
     @Validate(login = false)
     @GetMapping("animes/recommend")
