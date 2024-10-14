@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class Danmaku {
-  private Integer id; // 弹幕id
-  private int uid; // 发送弹幕用户id
-  private int rid; // 动漫资源id
-  private String content; // 弹幕内容
+    private Integer id; // 弹幕id
+    private int uid; // 发送弹幕用户id
+    private int rid; // 动漫资源id
+    private String content; // 弹幕内容
 }

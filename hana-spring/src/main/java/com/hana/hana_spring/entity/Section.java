@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class Section {
-  private Integer id; // 板块id
-  private String name; // 板块名
+    private Integer id; // 板块id
+    private String name; // 板块名
 }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class History {
-  private int id; // 观看历史id
-  private int uid; // 用户id
-  private int rid; // 观看动漫id
+    private int id; // 观看历史id
+    private int uid; // 用户id
+    private int rid; // 观看动漫id
 }

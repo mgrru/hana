@@ -8,9 +8,9 @@ import java.lang.annotation.Target;
 
 /**
  * 登录验证
- * 
+ *
  * @param login 默认 true 开启验证
- * @param auth 默认 false 不开启验证
+ * @param auth  默认 false 不开启验证
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

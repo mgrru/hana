@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class Role {
-  private Integer id; // 角色id
-  private String name; // 角色名
+    private Integer id; // 角色id
+    private String name; // 角色名
 }
