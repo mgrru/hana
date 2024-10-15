@@ -55,7 +55,7 @@ public class DanmakuCtr {
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = DanmakuRep.class))))
     @Validate(login = false)
     @GetMapping("{rid}")
-    public ResponseEntity<String> get_danmaku(@PathVariable Integer rid) throws JsonProcessingException {
+    public ResponseEntity<String> get_danmaku(@PathVariable Integer rid) throws Exception {
         List<Danmaku> danmus = danmaku_service.get_danmaku(rid);
         List<DanmakuRep> result = new ArrayList<>();
         for (Danmaku danmaku : danmus) {

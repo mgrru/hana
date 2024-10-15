@@ -7,14 +7,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hana.hana_spring.entity.Role;
 import com.hana.hana_spring.entity.User;
 import com.hana.hana_spring.entity.dto.LoginReq;
 import com.hana.hana_spring.service.UserService;
-import com.hana.hana_spring.utils.HashUtil;
 import com.hana.hana_spring.utils.JwtUtil;
 import com.hana.hana_spring.utils.Result;
 
@@ -32,14 +29,11 @@ public class SysCtr {
     @Autowired
     private JwtUtil jwt_util;
 
-    @Autowired
-    private HashUtil hash_util;
-
     @Operation(summary = "用户注册的接口")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = LoginReq.class)))
     @PostMapping("register")
     public ResponseEntity<String> register(@RequestBody String entity)
-            throws JsonMappingException, JsonProcessingException {
+            throws Exception {
         LoginReq register = new ObjectMapper().readValue(entity, LoginReq.class);
         if (user_service.get_user_by_account(register.getAccount()) != null) {
             return Result.error();
@@ -47,7 +41,7 @@ public class SysCtr {
         // 设置默认值
         User user = new User();
         user.setAccount(register.getAccount());
-        user.setPass(hash_util.hash(register.getPass()));
+        user.setPass(register.getPass());
         user.setName("新用户");
         user.setBan(false);
         user.setRole(new Role(2, null));
@@ -61,11 +55,11 @@ public class SysCtr {
     @ApiResponse(description = "直接返回token字符串")
     @PostMapping("login")
     public ResponseEntity<String> login(@RequestBody String entity)
-            throws JsonMappingException, JsonProcessingException {
+            throws Exception {
         LoginReq login = new ObjectMapper().readValue(entity, LoginReq.class);
         User user = user_service.get_user_by_account(login.getAccount());
         Role role = user.getRole();
-        if (user != null && user.getPass().equals(hash_util.hash(login.getPass()))) {
+        if (user != null && user_service.verify_pass(user.getPass(), login.getPass())) {
             if (role.getName().equals("管理员")) {
                 return Result.success(jwt_util.generateToken(user.getId().toString(), true));
             } else {

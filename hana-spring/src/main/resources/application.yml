@@ -54,6 +54,8 @@ oss:
 
 
 # 密码加密
-hash:
-  salt: hana-salt
+encry:
+  salt: hana-hash-salt
   algorithm: SHA-256
+  sym-algorithm: AES
+  key: hana-aes-key-123

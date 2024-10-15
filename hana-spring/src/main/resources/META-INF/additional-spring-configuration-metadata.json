@@ -65,13 +65,28 @@
     "description": "bucket"
   },
   {
-    "name": "hash.salt",
+    "name": "encry.salt",
     "type": "java.lang.String",
-    "description": "A description for 'hash.salt'"
+    "description": "A description for 'encry.salt'"
   },
   {
-    "name": "hash.algorithm",
+    "name": "encry.algorithm",
     "type": "java.lang.String",
-    "description": "A description for 'hash.algorithm'"
+    "description": "A description for 'encry.algorithm'"
+  },
+  {
+    "name": "encry.sym-algorithm",
+    "type": "java.lang.String",
+    "description": "A description for 'encry.sym-algorithm'"
+  },
+  {
+    "name": "encry.sym-salt",
+    "type": "java.lang.String",
+    "description": "A description for 'encry.sym-salt'"
+  },
+  {
+    "name": "encry.key",
+    "type": "java.lang.String",
+    "description": "A description for 'encry.key'"
   }
 ]}

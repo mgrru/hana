@@ -55,7 +55,7 @@ public class CommentCtr {
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = CommentRep.class))))
     @Validate(login = false)
     @GetMapping("{rid}")
-    public ResponseEntity<String> get_comment(@PathVariable Integer rid) throws JsonProcessingException {
+    public ResponseEntity<String> get_comment(@PathVariable Integer rid) throws Exception {
         List<Comment> comments = comment_service.get_comment(rid);
         List<CommentRep> result = new ArrayList<>();
         for (Comment comment : comments) {

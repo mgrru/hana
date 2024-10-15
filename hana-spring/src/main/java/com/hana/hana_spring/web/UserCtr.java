@@ -33,6 +33,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.SchemaProperty;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,7 +53,7 @@ public class UserCtr {
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class))))
     @Validate(auth = true)
     @GetMapping("admin")
-    public ResponseEntity<String> get_all_user() throws JsonProcessingException {
+    public ResponseEntity<String> get_all_user() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
         List<User> users = user_service.get_all_user();
@@ -95,9 +96,11 @@ public class UserCtr {
     }
 
     @Operation(summary = "用户获取账号信息的接口")
+    @SecurityRequirement(name = "jwt")
     @ApiResponse(content = @Content(schema = @Schema(implementation = User.class)))
     @GetMapping
-    public ResponseEntity<String> get_user_by_id(HttpServletRequest req) throws JsonProcessingException {
+    public ResponseEntity<String> get_user_by_id(HttpServletRequest req)
+            throws Exception {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         User user = user_service.get_user_by_id(uid);
@@ -109,7 +112,7 @@ public class UserCtr {
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = UpdUserReq.class)))
     @PutMapping
     public ResponseEntity<String> upd_user(@RequestBody String entity, HttpServletRequest req)
-            throws JsonMappingException, JsonProcessingException {
+            throws Exception {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         UpdUserReq userReq = new ObjectMapper().readValue(entity, UpdUserReq.class);
@@ -122,7 +125,7 @@ public class UserCtr {
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = UpdPassReq.class)))
     @PutMapping("pass")
     public ResponseEntity<String> upd_user_pass(String entity, HttpServletRequest req)
-            throws JsonMappingException, JsonProcessingException {
+            throws Exception {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         UpdPassReq passReq = new ObjectMapper().readValue(entity, UpdPassReq.class);
@@ -145,7 +148,7 @@ public class UserCtr {
     public ResponseEntity<String> send_email(@RequestBody String entity, HttpServletRequest req)
             throws EmailException, JsonMappingException, JsonProcessingException {
         String email = new ObjectMapper().readTree(entity).get("email").asText();
-        if (email == null || email.isBlank() || email.isEmpty()) {
+        if (email == null || email.isBlank()) {
             log.error("get noemail");
             return Result.no_email();
         }
