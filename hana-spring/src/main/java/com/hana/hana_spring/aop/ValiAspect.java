@@ -43,7 +43,7 @@ public class ValiAspect {
         if (jwt_util.validateToken(token)) {
             return join_point.proceed(join_point.getArgs());
         } else {
-            return Result.noauth();
+            return Result.no_auth();
         }
     }
 
@@ -64,7 +64,7 @@ public class ValiAspect {
         if (jwt_util.verify_admin(token)) {
             return join_point.proceed(join_point.getArgs());
         } else {
-            return Result.noauth();
+            return Result.no_auth();
         }
 
     }

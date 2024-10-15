@@ -51,3 +51,9 @@ oss:
     username: LTAI5tEW82h8RKbemdkzy8NM
     password: z1czVibXBUssajIoOreqYFRO9m5PWb
     bucket: hana-pic
+
+
+# 密码加密
+hash:
+  salt: hana-salt
+  algorithm: SHA-256

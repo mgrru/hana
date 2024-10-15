@@ -31,13 +31,19 @@ public class Result {
         return ResponseEntity.status(c.code()).body(c.msg());
     }
 
-    public static ResponseEntity<String> noauth() {
+    public static ResponseEntity<String> no_auth() {
         Code c = Code.NOAUTH;
 
         return ResponseEntity.status(c.code()).body(c.msg());
     }
 
-    public static ResponseEntity<String> noemail() {
+    public static ResponseEntity<String> no_email() {
+        Code c = Code.NOEMAIL;
+
+        return ResponseEntity.status(c.code()).body(c.msg());
+    }
+
+    public static ResponseEntity<String> email_err() {
         Code c = Code.NOEMAIL;
 
         return ResponseEntity.status(c.code()).body(c.msg());

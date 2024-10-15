@@ -132,7 +132,7 @@ public class UserCtr {
             user_service.upd_pass(uid, passReq.getPass(), passReq.getNewPass());
             return Result.success();
         } else {
-            return Result.error();
+            return Result.email_err();
         }
     }
 
@@ -147,7 +147,7 @@ public class UserCtr {
         String email = new ObjectMapper().readTree(entity).get("email").asText();
         if (email == null || email.isBlank() || email.isEmpty()) {
             log.error("get noemail");
-            return Result.noemail();
+            return Result.no_email();
         }
         user_service.send_email(email);
 

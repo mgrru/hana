@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hana.hana_spring.dao.UserMapper;
 import com.hana.hana_spring.entity.User;
 import com.hana.hana_spring.utils.EmailSender;
+import com.hana.hana_spring.utils.HashUtil;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -24,7 +25,10 @@ public class UserService {
     private RedisTemplate<String, String> redis;
 
     @Autowired
-    private EmailSender email_sender;    
+    private EmailSender email_sender;
+
+    @Autowired
+    private HashUtil hash_util;
 
     public List<User> get_all_user() {
         return user_mapper.sel_all();
@@ -102,8 +106,8 @@ public class UserService {
 
     public void upd_pass(Integer uid, String pass, String new_pass) {
         User user = user_mapper.sel_by_id(uid);
-        if (user.getPass().equals(pass) && pass != new_pass) {
-            user.setPass(new_pass);
+        if (user.getPass().equals(hash_util.hash(pass))) {
+            user.setPass(hash_util.hash(new_pass));
             user_mapper.upd_pass(user);
         }
     }

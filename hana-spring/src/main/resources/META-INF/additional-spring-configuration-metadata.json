@@ -63,5 +63,15 @@
     "name": "oss.pic.bucket",
     "type": "java.lang.String",
     "description": "bucket"
+  },
+  {
+    "name": "hash.salt",
+    "type": "java.lang.String",
+    "description": "A description for 'hash.salt'"
+  },
+  {
+    "name": "hash.algorithm",
+    "type": "java.lang.String",
+    "description": "A description for 'hash.algorithm'"
   }
 ]}
