@@ -132,6 +132,8 @@ public class AnimeCtr {
             @SchemaProperty(name = "cover", schema = @Schema(type = "string", format = "binary", name = "cover")),
             @SchemaProperty(name = "type", schema = @Schema(name = "type")),
             @SchemaProperty(name = "name", schema = @Schema(name = "name")),
+            @SchemaProperty(name = "title", schema = @Schema(name = "title")),
+            @SchemaProperty(name = "episode", schema = @Schema(type = "integer", format = "int32", name = "episode")),
             @SchemaProperty(name = "episode_name", schema = @Schema(name = "episode_name")),
             @SchemaProperty(name = "sid", schema = @Schema(type = "integer", format = "int32", name = "sid")),
     }))
@@ -141,6 +143,8 @@ public class AnimeCtr {
             MultipartFile cover,
             String type,
             String name,
+            @RequestParam(required = false) String title,
+            Integer episode,
             String episode_name,
             Integer sid,
             HttpServletRequest req)
@@ -204,6 +208,8 @@ public class AnimeCtr {
         String cover_url = oss.upload(cover);
         save_resource.setCover(cover_url);
         save_resource.setName(name);
+        save_resource.setTitle(title);
+        save_resource.setEpisode(episode);
         save_resource.setEpisodeName(episode_name);
         save_resource.setSid(sid);
         save_resource.setPath(anime.getPath());

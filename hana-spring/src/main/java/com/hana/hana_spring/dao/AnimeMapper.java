@@ -34,7 +34,7 @@ public interface AnimeMapper {
     @Select("SELECT * FROM resource WHERE id IN (SELECT id FROM (SELECT MIN(id) as id FROM resource GROUP BY name ORDER BY RAND() LIMIT 10) AS temp) AND process=true")
     List<Resource> sel_recommend();
 
-    @Insert("insert into resource(type, cover, name, episode_name, path, url, process, uid, sid) values(#{type}, #{cover}, #{name}, #{episodeName}, #{path}, #{url}, #{process}, #{uid}, #{sid})")
+    @Insert("insert into resource(type, cover, name, title, episode, episode_name, path, url, process, uid, sid) values(#{type}, #{cover}, #{name}, #{title}, #{episode}, #{episodeName}, #{path}, #{url}, #{process}, #{uid}, #{sid})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void ins(Resource resource);
 

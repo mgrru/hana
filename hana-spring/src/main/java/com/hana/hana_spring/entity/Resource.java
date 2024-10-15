@@ -22,6 +22,8 @@ public class Resource {
     private String type; // 动漫类型 动画 | 漫画
     private String cover; // 动漫封面url
     private String name; // 动漫名
+    private String title; // 动漫标题
+    private Integer episode; // 集数
     @Schema(name = "episode_name")
     @JsonAlias("episode_name")
     private String episodeName; // 集名
