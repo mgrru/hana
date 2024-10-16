@@ -113,8 +113,8 @@ public class UserService {
         for (int i = 0; i < 6; i++) {
             code.append(random.nextInt(10));
         }
-        redis.opsForValue().set(to, code.toString(), 5, TimeUnit.MINUTES);
         email_sender.send_email(to, "验证码有效期5分钟，您的验证码为：" + code.toString());
+        redis.opsForValue().set(to, code.toString(), 5, TimeUnit.MINUTES);
         return code.toString();
     }
 
@@ -161,7 +161,7 @@ public class UserService {
             user_mapper.upd_phone(user);
         }
         if (user.getEmail() != null) {
-            user.setEmail(encry_util.decrypt(user.getEmail()));
+            user.setEmail(encry_util.encrypt(user.getEmail()));
             user_mapper.upd_email(user);
         }
 

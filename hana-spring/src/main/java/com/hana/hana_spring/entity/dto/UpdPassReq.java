@@ -13,7 +13,7 @@ public class UpdPassReq {
     @Schema(description = "旧密码")
     private String pass;
     @JsonAlias("new_pass")
-    @Schema(description = "新密码")
+    @Schema(description = "新密码", name = "new_pass")
     private String newPass;
     @Schema(description = "验证码")
     private String code;

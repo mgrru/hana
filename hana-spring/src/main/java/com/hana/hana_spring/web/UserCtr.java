@@ -50,6 +50,7 @@ public class UserCtr {
     private JwtUtil jwt_util;
 
     @Operation(summary = "管理员获取所有用户")
+    @SecurityRequirement(name = "jwt")
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class))))
     @Validate(auth = true)
     @GetMapping("admin")
@@ -63,6 +64,7 @@ public class UserCtr {
     }
 
     @Operation(summary = "管理员封禁用户的接口")
+    @SecurityRequirement(name = "jwt")
     @Parameters(@Parameter(name = "id", description = "要封禁的用户id"))
     @Validate(auth = true)
     @PutMapping("{id}/ban")
@@ -73,6 +75,7 @@ public class UserCtr {
     }
 
     @Operation(summary = "管理员解封用户的接口")
+    @SecurityRequirement(name = "jwt")
     @Parameters(@Parameter(name = "id", description = "要解封的用户id"))
     @Validate(auth = true)
     @PutMapping("{id}/unban")
@@ -83,6 +86,7 @@ public class UserCtr {
     }
 
     @Operation(summary = "管理员修改用户角色的接口")
+    @SecurityRequirement(name = "jwt")
     @Parameters({
             @Parameter(name = "id", description = "要修改的用户id"),
             @Parameter(name = "rid", description = "要修改的角色id")
@@ -109,30 +113,32 @@ public class UserCtr {
     }
 
     @Operation(summary = "用户修改账号信息", description = "四个属性可任选一或多个")
+    @SecurityRequirement(name = "jwt")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = UpdUserReq.class)))
     @PutMapping
     public ResponseEntity<String> upd_user(@RequestBody String entity, HttpServletRequest req)
             throws Exception {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
-        UpdUserReq userReq = new ObjectMapper().readValue(entity, UpdUserReq.class);
-        User user = userReq.toUser(uid);
+        UpdUserReq user_req = new ObjectMapper().readValue(entity, UpdUserReq.class);
+        User user = user_req.toUser(uid);
         user_service.upd_user(user);
         return Result.success();
     }
 
     @Operation(summary = "用户修改账号密码")
+    @SecurityRequirement(name = "jwt")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = UpdPassReq.class)))
     @PutMapping("pass")
-    public ResponseEntity<String> upd_user_pass(String entity, HttpServletRequest req)
+    public ResponseEntity<String> upd_user_pass(@RequestBody String entity, HttpServletRequest req)
             throws Exception {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
-        UpdPassReq passReq = new ObjectMapper().readValue(entity, UpdPassReq.class);
+        UpdPassReq pass_req = new ObjectMapper().readValue(entity, UpdPassReq.class);
 
         String email = user_service.get_user_by_id(uid).getEmail();
-        if (user_service.verify_code(email, passReq.getCode())) {
-            user_service.upd_pass(uid, passReq.getPass(), passReq.getNewPass());
+        if (user_service.verify_code(email, pass_req.getCode())) {
+            user_service.upd_pass(uid, pass_req.getPass(), pass_req.getNewPass());
             return Result.success();
         } else {
             return Result.email_err();
