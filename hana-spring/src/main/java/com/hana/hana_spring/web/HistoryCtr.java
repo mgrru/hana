@@ -52,7 +52,7 @@ public class HistoryCtr {
     }
 
     @Operation(summary = "添加观看历史")
-    @Parameters(@Parameter(name = "rid", description = "观看的动漫id"))
+    @Parameters({ @Parameter(name = "rid", description = "观看的动漫id") })
     @PostMapping("{rid}")
     public ResponseEntity<String> add_history(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");
@@ -62,7 +62,7 @@ public class HistoryCtr {
     }
 
     @Operation(summary = "删除观看历史")
-    @Parameters(@Parameter(name = "rid", description = "要删除的动漫id"))
+    @Parameters({ @Parameter(name = "rid", description = "要删除的动漫id") })
     @DeleteMapping("{rid}")
     public ResponseEntity<String> del_history(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");

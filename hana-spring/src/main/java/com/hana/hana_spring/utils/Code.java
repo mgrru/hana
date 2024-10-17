@@ -9,7 +9,8 @@ public enum Code {
     EXCEPTION(555, "异常"),
     NOAUTH(666, "无权限"),
     NOEMAIL(466, "没有邮箱"),
-    EMAILERR(333, "验证码错误"),
+    CODEERR(333, "验证码错误"),
+    RESULTERR(455, "结果出错"),
     ;
 
     private final int code;

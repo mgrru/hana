@@ -65,7 +65,7 @@ public class UserCtr {
 
     @Operation(summary = "管理员封禁用户的接口")
     @SecurityRequirement(name = "jwt")
-    @Parameters(@Parameter(name = "id", description = "要封禁的用户id"))
+    @Parameters({ @Parameter(name = "id", description = "要封禁的用户id") })
     @Validate(auth = true)
     @PutMapping("{id}/ban")
     public ResponseEntity<String> ban_user(@PathVariable Integer id) {
@@ -76,7 +76,7 @@ public class UserCtr {
 
     @Operation(summary = "管理员解封用户的接口")
     @SecurityRequirement(name = "jwt")
-    @Parameters(@Parameter(name = "id", description = "要解封的用户id"))
+    @Parameters({ @Parameter(name = "id", description = "要解封的用户id") })
     @Validate(auth = true)
     @PutMapping("{id}/unban")
     public ResponseEntity<String> unban_user(@PathVariable Integer id) {
@@ -152,13 +152,19 @@ public class UserCtr {
     @Validate(login = false)
     @PostMapping("verify/email")
     public ResponseEntity<String> send_email(@RequestBody String entity, HttpServletRequest req)
-            throws EmailException, JsonMappingException, JsonProcessingException {
+            throws JsonMappingException, JsonProcessingException {
         String email = new ObjectMapper().readTree(entity).get("email").asText();
         if (email == null || email.isBlank()) {
             log.error("get noemail");
             return Result.no_email();
         }
-        user_service.send_email(email);
+
+        try {
+            user_service.send_email(email);
+        } catch (EmailException e) {
+            log.error("email err!");
+            return Result.no_email();
+        }
 
         return Result.success();
     }

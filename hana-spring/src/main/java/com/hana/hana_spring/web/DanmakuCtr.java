@@ -51,7 +51,7 @@ public class DanmakuCtr {
     private JwtUtil jwt_util;
 
     @Operation(summary = "获取动漫的弹幕")
-    @Parameters(@Parameter(name = "rid", description = "动漫id"))
+    @Parameters({ @Parameter(name = "rid", description = "动漫id") })
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = DanmakuRep.class))))
     @Validate(login = false)
     @GetMapping("{rid}")
@@ -80,7 +80,7 @@ public class DanmakuCtr {
     }
 
     @Operation(summary = "删除弹幕")
-    @Parameters(@Parameter(name = "id", description = "要删除的弹幕id"))
+    @Parameters({ @Parameter(name = "id", description = "要删除的弹幕id") })
     @DeleteMapping("{id}")
     public ResponseEntity<String> del_danmaku(@PathVariable Integer id) {
         danmaku_service.del_danmaku(id);

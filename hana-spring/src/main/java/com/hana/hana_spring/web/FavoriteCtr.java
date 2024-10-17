@@ -52,7 +52,7 @@ public class FavoriteCtr {
     }
 
     @Operation(summary = "添加收藏")
-    @Parameters(@Parameter(name = "rid", description = "收藏的动漫id"))
+    @Parameters({ @Parameter(name = "rid", description = "收藏的动漫id") })
     @PostMapping("{rid}")
     public ResponseEntity<String> add_favorite(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");
@@ -62,7 +62,7 @@ public class FavoriteCtr {
     }
 
     @Operation(summary = "删除收藏")
-    @Parameters(@Parameter(name = "rid", description = "要删除的收藏的动漫id"))
+    @Parameters({ @Parameter(name = "rid", description = "要删除的收藏的动漫id") })
     @DeleteMapping("{rid}")
     public ResponseEntity<String> del_favorite(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");

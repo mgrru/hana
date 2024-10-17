@@ -56,11 +56,7 @@ public class JwtUtil {
                     .build()
                     .verify(token.replace(tokenPrefix, ""))
                     .getClaim("admin").asBoolean();
-            if (admin) {
-                return true;
-            } else {
-                return false;
-            }
+            return admin;
         } catch (Exception e) {
             return false;
         }

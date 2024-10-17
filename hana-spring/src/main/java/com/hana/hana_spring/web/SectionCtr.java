@@ -64,7 +64,7 @@ public class SectionCtr {
     }
 
     @Operation(summary = "修改板块")
-    @Parameters(@Parameter(name = "id", description = "要修改的板块id"))
+    @Parameters({ @Parameter(name = "id", description = "要修改的板块id") })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = Section.class)), description = "id属性不用")
     @PutMapping("{id}")
     public ResponseEntity<String> upd_section(@PathVariable Integer id, @RequestBody String entity)
@@ -77,7 +77,7 @@ public class SectionCtr {
     }
 
     @Operation(summary = "删除板块")
-    @Parameters(@Parameter(name = "id", description = "要删除的板块id"))
+    @Parameters({ @Parameter(name = "id", description = "要删除的板块id") })
     @DeleteMapping("{id}")
     public ResponseEntity<String> del_section(@PathVariable Integer id) {
         section_service.del_section(id);

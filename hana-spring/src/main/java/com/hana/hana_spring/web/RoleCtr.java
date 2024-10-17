@@ -61,7 +61,7 @@ public class RoleCtr {
     }
 
     @Operation(summary = "修改角色")
-    @Parameters(@Parameter(name = "id", description = "要修改的角色id"))
+    @Parameters({ @Parameter(name = "id", description = "要修改的角色id") })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = Role.class)), description = "id属性不用")
     @PutMapping("roles/{id}")
     public ResponseEntity<String> upd_role(@PathVariable Integer id, @RequestBody String entity)
@@ -74,7 +74,7 @@ public class RoleCtr {
     }
 
     @Operation(summary = "删除角色")
-    @Parameters(@Parameter(name = "id", description = "要删除的角色id"))
+    @Parameters({ @Parameter(name = "id", description = "要删除的角色id") })
     @DeleteMapping("roles/{id}")
     public ResponseEntity<String> del_role(@PathVariable Integer id) {
         role_service.del_role(id);

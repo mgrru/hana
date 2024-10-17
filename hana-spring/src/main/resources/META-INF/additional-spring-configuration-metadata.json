@@ -67,26 +67,26 @@
   {
     "name": "encry.salt",
     "type": "java.lang.String",
-    "description": "A description for 'encry.salt'"
+    "description": "哈希盐"
   },
   {
     "name": "encry.algorithm",
     "type": "java.lang.String",
-    "description": "A description for 'encry.algorithm'"
+    "description": "哈希算法"
   },
   {
     "name": "encry.sym-algorithm",
     "type": "java.lang.String",
-    "description": "A description for 'encry.sym-algorithm'"
+    "description": "对称算法"
   },
   {
     "name": "encry.sym-salt",
     "type": "java.lang.String",
-    "description": "A description for 'encry.sym-salt'"
+    "description": "对称盐"
   },
   {
     "name": "encry.key",
     "type": "java.lang.String",
-    "description": "A description for 'encry.key'"
+    "description": "对称密钥"
   }
 ]}

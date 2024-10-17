@@ -8,8 +8,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
+import com.aliyun.oss.OSSException;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -66,11 +68,23 @@ public class Oss {
         try {
             // 删除文件
             oss_client.deleteObject(bucket, object_name);
-        } catch (Exception e) {
-            log.error("删除文件出错！");
+        } catch (OSSException oe) {
+            System.out.println("Caught an OSSException, which means your request made it to OSS, "
+                    + "but was rejected with an error response for some reason.");
+            System.out.println("Error Message:" + oe.getErrorMessage());
+            System.out.println("Error Code:" + oe.getErrorCode());
+            System.out.println("Request ID:" + oe.getRequestId());
+            System.out.println("Host ID:" + oe.getHostId());
+        } catch (ClientException ce) {
+            System.out.println("Caught an ClientException, which means the client encountered "
+                    + "a serious internal problem while trying to communicate with OSS, "
+                    + "such as not being able to access the network.");
+            System.out.println("Error Message:" + ce.getMessage());
         } finally {
             // 关闭OSSClient
-            oss_client.shutdown();
+            if (oss_client != null) {
+                oss_client.shutdown();
+            }
         }
     }
 

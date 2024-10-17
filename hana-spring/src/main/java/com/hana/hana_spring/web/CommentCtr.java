@@ -51,7 +51,7 @@ public class CommentCtr {
     private JwtUtil jwt_util;
 
     @Operation(summary = "获取动漫的评论")
-    @Parameters(@Parameter(name = "rid", description = "动漫id"))
+    @Parameters({ @Parameter(name = "rid", description = "动漫id") })
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = CommentRep.class))))
     @Validate(login = false)
     @GetMapping("{rid}")
@@ -80,7 +80,7 @@ public class CommentCtr {
     }
 
     @Operation(summary = "删除评论")
-    @Parameters(@Parameter(name = "id", description = "要删除的评论id"))
+    @Parameters({ @Parameter(name = "id", description = "要删除的评论id") })
     @DeleteMapping("{id}")
     public ResponseEntity<String> del_comment(@PathVariable Integer id) {
         comment_service.del_comment(id);

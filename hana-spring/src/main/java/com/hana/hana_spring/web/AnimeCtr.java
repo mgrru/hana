@@ -38,6 +38,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.SchemaProperty;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -227,7 +228,7 @@ public class AnimeCtr {
     }
 
     @Operation(summary = "下架动漫")
-    @Parameters(@Parameter(name = "rid", description = "要下架的动漫id"))
+    @Parameters({ @Parameter(name = "rid", description = "要下架的动漫id") })
     @Validate(auth = true)
     @DeleteMapping("deactivate/{rid}")
     public ResponseEntity<String> del_anime(@PathVariable Integer rid) {
@@ -236,7 +237,7 @@ public class AnimeCtr {
     }
 
     @Operation(summary = "通过审核")
-    @Parameters(@Parameter(name = "rid", description = "要审核的动漫id"))
+    @Parameters({ @Parameter(name = "rid", description = "要审核的动漫id") })
     @Validate(auth = true)
     @PutMapping("approve/{rid}")
     public ResponseEntity<String> approve_anime(@PathVariable Integer rid) {
@@ -245,7 +246,8 @@ public class AnimeCtr {
     }
 
     @Operation(summary = "不通过审核")
-    @Parameters(@Parameter(name = "rid", description = "要审核的动漫id"))
+    @SecurityRequirement(name = "jwt")
+    @Parameters({ @Parameter(name = "rid", description = "要审核的动漫id") })
     @Validate(auth = true)
     @PutMapping("reject/{rid}")
     public ResponseEntity<String> reject_anime(@PathVariable Integer rid, HttpServletRequest req) {
@@ -272,7 +274,7 @@ public class AnimeCtr {
     }
 
     @Operation(summary = "用户删除自己上传的动漫")
-    @Parameters(@Parameter(name = "rid", description = "要删除的动漫id"))
+    @Parameters({ @Parameter(name = "rid", description = "要删除的动漫id") })
     @DeleteMapping("resource/{rid}")
     public ResponseEntity<String> del_user_anime(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");
@@ -282,7 +284,7 @@ public class AnimeCtr {
     }
 
     @Operation(summary = "按名称搜索动漫(模糊搜索)")
-    @Parameters(@Parameter(name = "name", description = "搜索动漫名称关键词"))
+    @Parameters({ @Parameter(name = "name", description = "搜索动漫名称关键词") })
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
     @Validate(login = false)
     @GetMapping("search")
@@ -295,7 +297,7 @@ public class AnimeCtr {
     }
 
     @Operation(summary = "点赞")
-    @Parameters(@Parameter(name = "rid", description = "要点赞的动漫id"))
+    @Parameters({ @Parameter(name = "rid", description = "要点赞的动漫id") })
     @Validate(login = false)
     @PutMapping("animes/{rid}/like")
     public ResponseEntity<String> add_likes(@PathVariable Integer rid) {
@@ -304,7 +306,7 @@ public class AnimeCtr {
     }
 
     @Operation(summary = "按名称获取动漫信息")
-    @Parameters(@Parameter(name = "name", description = "动漫名称"))
+    @Parameters({ @Parameter(name = "name", description = "动漫名称") })
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
     @Validate(login = false)
     @GetMapping("animes/{name}")

@@ -7,6 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hana.hana_spring.dao.AnimeMapper;
+import com.hana.hana_spring.dao.CommentMapper;
+import com.hana.hana_spring.dao.DanmakuMapper;
+import com.hana.hana_spring.dao.FavoriteMapper;
+import com.hana.hana_spring.dao.HistoryMapper;
 import com.hana.hana_spring.entity.Resource;
 import com.hana.hana_spring.utils.Oss;
 
@@ -15,6 +19,18 @@ import com.hana.hana_spring.utils.Oss;
 public class AnimeService {
     @Autowired
     private AnimeMapper anime_mapper;
+
+    @Autowired
+    private CommentMapper comment_mapper;
+
+    @Autowired
+    private DanmakuMapper danmaku_mapper;
+
+    @Autowired
+    private FavoriteMapper favorite_mapper;
+
+    @Autowired
+    private HistoryMapper history_mapper;
 
     @Autowired
     private Oss oss;
@@ -37,9 +53,17 @@ public class AnimeService {
         }
     }
 
+    private void del_relate(Integer rid) {
+        comment_mapper.disable(rid);
+        danmaku_mapper.disable(rid);
+        history_mapper.disable(rid);
+        favorite_mapper.disable(rid);
+    }
+
     public void del_anime(Integer id) {
         if (id != null) {
             oss.delete(anime_mapper.sel_by_id(id).getCover());
+            del_relate(id);
             anime_mapper.del(id);
         }
     }
@@ -47,6 +71,7 @@ public class AnimeService {
     public void del_user_anime(Integer uid, Integer rid) {
         if (uid != null && rid != null) {
             oss.delete(anime_mapper.sel_by_id(rid).getCover());
+            del_relate(rid);
             anime_mapper.del_user_ainme(uid, rid);
         }
     }

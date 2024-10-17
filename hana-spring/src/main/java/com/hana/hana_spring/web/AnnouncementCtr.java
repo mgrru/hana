@@ -62,7 +62,7 @@ public class AnnouncementCtr {
     }
 
     @Operation(summary = "修改公告")
-    @Parameters(@Parameter(name = "id", description = "要修改的公告id"))
+    @Parameters({ @Parameter(name = "id", description = "要修改的公告id") })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = Announcement.class)), description = "id属性不用")
     @PutMapping("{id}")
     public ResponseEntity<String> upd_announcement(@PathVariable Integer id, @RequestBody String entity)
@@ -75,7 +75,7 @@ public class AnnouncementCtr {
     }
 
     @Operation(summary = "删除公告")
-    @Parameters(@Parameter(name = "id", description = "要删除的公告id"))
+    @Parameters({ @Parameter(name = "id", description = "要删除的公告id") })
     @DeleteMapping("{id}")
     public ResponseEntity<String> del_section(@PathVariable Integer id) {
         announcement_service.del_announcement(id);
