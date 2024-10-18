@@ -21,4 +21,7 @@ public interface HistoryMapper {
 
     @Delete("delete from history where uid=#{uid} and rid=#{rid}")
     void del(int uid, int rid);
+
+    @Delete("delete from history where rid=#{rid}")
+    void disable(int rid);
 }

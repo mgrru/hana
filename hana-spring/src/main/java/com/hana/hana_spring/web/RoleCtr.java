@@ -3,6 +3,7 @@ package com.hana.hana_spring.web;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,14 @@ import com.hana.hana_spring.entity.Role;
 import com.hana.hana_spring.service.RoleService;
 import com.hana.hana_spring.utils.Result;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
 @RestController
 @CrossOrigin("*")
 @Validate(auth = true)
@@ -27,14 +36,10 @@ public class RoleCtr {
     @Autowired
     private RoleService role_service;
 
-    /**
-     * 查询所有角色的接口
-     * 
-     * @return {id, name}
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "查询所有角色")
+    @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Role.class))))
     @GetMapping("roles")
-    public Result get_all_role() throws JsonProcessingException {
+    public ResponseEntity<String> get_all_role() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
 
         List<Role> roles = role_service.get_all_role();
@@ -44,30 +49,22 @@ public class RoleCtr {
         return Result.success(data);
     }
 
-    /**
-     * 创建角色
-     * 
-     * @param entity {name}
-     * @throws JsonMappingException
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "创建角色")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = Role.class)), description = "id属性不用")
     @PostMapping("roles")
-    public Result add_role(@RequestBody String entity) throws JsonMappingException, JsonProcessingException {
+    public ResponseEntity<String> add_role(@RequestBody String entity)
+            throws JsonMappingException, JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Role role = mapper.readValue(entity, Role.class);
         role_service.add_role(role);
         return Result.success();
     }
 
-    /**
-     * 修改角色的接口
-     * @param id 要修改的角色id
-     * @param entity {name}
-     * @throws JsonMappingException
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "修改角色")
+    @Parameters({ @Parameter(name = "id", description = "要修改的角色id") })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = Role.class)), description = "id属性不用")
     @PutMapping("roles/{id}")
-    public Result upd_role(@PathVariable Integer id, @RequestBody String entity)
+    public ResponseEntity<String> upd_role(@PathVariable Integer id, @RequestBody String entity)
             throws JsonMappingException, JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Role role = mapper.readValue(entity, Role.class);
@@ -76,13 +73,10 @@ public class RoleCtr {
         return Result.success();
     }
 
-    /**
-     * 删除角色
-     * @param id 要删除的角色id
-     * @return
-     */
+    @Operation(summary = "删除角色")
+    @Parameters({ @Parameter(name = "id", description = "要删除的角色id") })
     @DeleteMapping("roles/{id}")
-    public Result del_role(@PathVariable Integer id) {
+    public ResponseEntity<String> del_role(@PathVariable Integer id) {
         role_service.del_role(id);
         return Result.success();
     }

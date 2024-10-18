@@ -1,47 +1,56 @@
 package com.hana.hana_spring.utils;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
 public class Result {
-    private int code;
-    private String msg;
-    private String data;
 
-    public static Result success() {
+    public static ResponseEntity<String> success() {
         Code c = Code.SUCCESS;
-        return new Result(c.code(), c.msg(), null);
+        return ResponseEntity.status(c.code()).body(c.msg());
     }
 
-    public static Result success(String data) {
-        Code c = Code.SUCCESS;
-        return new Result(c.code(), c.msg(), data);
+    public static ResponseEntity<String> success(Object data) {
+        try {
+            Code c = Code.SUCCESS;
+            return ResponseEntity.status(c.code()).body(new ObjectMapper().writeValueAsString(data));
+        } catch (JsonProcessingException e) {
+            Code c = Code.RESULTERR;
+            return ResponseEntity.status(c.code()).body(c.msg());
+        }
     }
 
-    public static Result error() {
+    public static ResponseEntity<String> error() {
         Code c = Code.ERROR;
-        return new Result(c.code(), c.msg(), null);
+
+        return ResponseEntity.status(c.code()).body(c.msg());
     }
 
-    public static Result exception() {
+    public static ResponseEntity<String> exception() {
         Code c = Code.EXCEPTION;
-        return new Result(c.code(), c.msg(), null);
+
+        return ResponseEntity.status(c.code()).body(c.msg());
     }
 
-    public static Result noauth() {
+    public static ResponseEntity<String> no_auth() {
         Code c = Code.NOAUTH;
-        return new Result(c.code(), c.msg(), null);
+
+        return ResponseEntity.status(c.code()).body(c.msg());
     }
 
-    public static Result noemail() {
+    public static ResponseEntity<String> no_email() {
         Code c = Code.NOEMAIL;
-        return new Result(c.code(), c.msg(), null);
+
+        return ResponseEntity.status(c.code()).body(c.msg());
+    }
+
+    public static ResponseEntity<String> email_err() {
+        Code c = Code.NOEMAIL;
+
+        return ResponseEntity.status(c.code()).body(c.msg());
     }
 }

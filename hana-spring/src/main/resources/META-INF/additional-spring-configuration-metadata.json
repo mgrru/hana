@@ -43,5 +43,50 @@
     "name": "email.password",
     "type": "java.lang.String",
     "description": "登录密码"
+  },
+  {
+    "name": "oss.pic.endpoint",
+    "type": "java.lang.String",
+    "description": "图片保存地址"
+  },
+  {
+    "name": "oss.pic.username",
+    "type": "java.lang.String",
+    "description": "key"
+  },
+  {
+    "name": "oss.pic.password",
+    "type": "java.lang.String",
+    "description": "secret"
+  },
+  {
+    "name": "oss.pic.bucket",
+    "type": "java.lang.String",
+    "description": "bucket"
+  },
+  {
+    "name": "encry.salt",
+    "type": "java.lang.String",
+    "description": "哈希盐"
+  },
+  {
+    "name": "encry.algorithm",
+    "type": "java.lang.String",
+    "description": "哈希算法"
+  },
+  {
+    "name": "encry.sym-algorithm",
+    "type": "java.lang.String",
+    "description": "对称算法"
+  },
+  {
+    "name": "encry.sym-salt",
+    "type": "java.lang.String",
+    "description": "对称盐"
+  },
+  {
+    "name": "encry.key",
+    "type": "java.lang.String",
+    "description": "对称密钥"
   }
 ]}

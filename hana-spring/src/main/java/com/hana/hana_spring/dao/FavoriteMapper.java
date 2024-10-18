@@ -21,4 +21,7 @@ public interface FavoriteMapper {
 
     @Delete("delete from favorite where uid=#{uid} and rid=#{rid}")
     void del(int uid, int rid);
+
+    @Delete("delete from favorite where rid=#{rid}")
+    void disable(int rid);
 }

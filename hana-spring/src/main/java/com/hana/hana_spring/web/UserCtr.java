@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.apache.commons.mail.EmailException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,9 +25,19 @@ import com.hana.hana_spring.service.UserService;
 import com.hana.hana_spring.utils.JwtUtil;
 import com.hana.hana_spring.utils.Result;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.SchemaProperty;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.web.bind.annotation.PostMapping;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Validate
 @RestController
 @RequestMapping("users")
@@ -37,15 +49,12 @@ public class UserCtr {
     @Autowired
     private JwtUtil jwt_util;
 
-    /**
-     * 管理员获取所有用户的接口
-     * 
-     * @return [{id, account, name, isBan, age, phone, email, role}]
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "管理员获取所有用户")
+    @SecurityRequirement(name = "jwt")
+    @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class))))
     @Validate(auth = true)
     @GetMapping("admin")
-    public Result get_all_user() throws JsonProcessingException {
+    public ResponseEntity<String> get_all_user() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
         List<User> users = user_service.get_all_user();
@@ -54,56 +63,48 @@ public class UserCtr {
         return Result.success(data);
     }
 
-    /**
-     * 管理员封禁用户的接口
-     * 
-     * @param id 要封禁的用户id
-     */
+    @Operation(summary = "管理员封禁用户的接口")
+    @SecurityRequirement(name = "jwt")
+    @Parameters({ @Parameter(name = "id", description = "要封禁的用户id") })
     @Validate(auth = true)
     @PutMapping("{id}/ban")
-    public Result ban_user(@PathVariable Integer id) {
+    public ResponseEntity<String> ban_user(@PathVariable Integer id) {
         user_service.ban_user(id);
 
         return Result.success();
     }
 
-    /**
-     * 管理员解封用户的接口
-     * 
-     * @param id 要解封的用户id
-     */
+    @Operation(summary = "管理员解封用户的接口")
+    @SecurityRequirement(name = "jwt")
+    @Parameters({ @Parameter(name = "id", description = "要解封的用户id") })
     @Validate(auth = true)
     @PutMapping("{id}/unban")
-    public Result unban_user(@PathVariable Integer id) {
+    public ResponseEntity<String> unban_user(@PathVariable Integer id) {
         user_service.unban_user(id);
 
         return Result.success();
     }
 
-    /**
-     * 管理员修改用户角色的接口
-     * 
-     * @param id  要修改的用户id
-     * @param rid 要修改的角色id
-     * @throws JsonMappingException
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "管理员修改用户角色的接口")
+    @SecurityRequirement(name = "jwt")
+    @Parameters({
+            @Parameter(name = "id", description = "要修改的用户id"),
+            @Parameter(name = "rid", description = "要修改的角色id")
+    })
     @Validate(auth = true)
     @PutMapping("{id}/role/{rid}")
-    public Result upd_user_role(@PathVariable Integer id, @PathVariable Integer rid)
+    public ResponseEntity<String> upd_user_role(@PathVariable Integer id, @PathVariable Integer rid)
             throws JsonMappingException, JsonProcessingException {
         user_service.upd_role(id, rid);
         return Result.success();
     }
 
-    /**
-     * 用户获取账号信息的接口
-     * 
-     * @return {id, account, name, isBan, age, phone, email, role}
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "用户获取账号信息的接口")
+    @SecurityRequirement(name = "jwt")
+    @ApiResponse(content = @Content(schema = @Schema(implementation = User.class)))
     @GetMapping
-    public Result get_user_by_id(HttpServletRequest req) throws JsonProcessingException {
+    public ResponseEntity<String> get_user_by_id(HttpServletRequest req)
+            throws Exception {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         User user = user_service.get_user_by_id(uid);
@@ -111,61 +112,59 @@ public class UserCtr {
         return Result.success(data);
     }
 
-    /**
-     * 用户修改账号信息的接口
-     * 
-     * @param entity {name, age, phone, email} 只能修改这4个属性
-     * @throws JsonMappingException
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "用户修改账号信息", description = "四个属性可任选一或多个")
+    @SecurityRequirement(name = "jwt")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = UpdUserReq.class)))
     @PutMapping
-    public Result upd_user(@RequestBody String entity, HttpServletRequest req)
-            throws JsonMappingException, JsonProcessingException {
+    public ResponseEntity<String> upd_user(@RequestBody String entity, HttpServletRequest req)
+            throws Exception {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
-        UpdUserReq userReq = new ObjectMapper().readValue(entity, UpdUserReq.class);
-        User user = userReq.toUser(uid);
+        UpdUserReq user_req = new ObjectMapper().readValue(entity, UpdUserReq.class);
+        User user = user_req.toUser(uid);
         user_service.upd_user(user);
         return Result.success();
     }
 
-    /**
-     * 用户修改账号密码的接口
-     * 
-     * @param entity {pass, new_pass, code}
-     * @throws JsonMappingException
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "用户修改账号密码")
+    @SecurityRequirement(name = "jwt")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = UpdPassReq.class)))
     @PutMapping("pass")
-    public Result upd_user_pass(@RequestBody String entity, HttpServletRequest req)
-            throws JsonMappingException, JsonProcessingException {
+    public ResponseEntity<String> upd_user_pass(@RequestBody String entity, HttpServletRequest req)
+            throws Exception {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
-        UpdPassReq passReq = new ObjectMapper().readValue(entity, UpdPassReq.class);
+        UpdPassReq pass_req = new ObjectMapper().readValue(entity, UpdPassReq.class);
 
         String email = user_service.get_user_by_id(uid).getEmail();
-        if (user_service.verify_code(email, passReq.getCode())) {
-            user_service.upd_pass(uid, passReq.getPass(), passReq.getNewPass());
+        if (user_service.verify_code(email, pass_req.getCode())) {
+            user_service.upd_pass(uid, pass_req.getPass(), pass_req.getNewPass());
             return Result.success();
         } else {
-            return Result.error();
+            return Result.email_err();
         }
     }
 
-    /**
-     * 修改密码验证邮箱
-     * @throws EmailException
-     */
+    @Operation(summary = "发送邮箱验证码")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schemaProperties = {
+            @SchemaProperty(name = "email", schema = @Schema(type = "string", name = "email"))
+    }))
+    @Validate(login = false)
     @PostMapping("verify/email")
-    public Result postMethodName(HttpServletRequest req) throws EmailException {
-        String token = req.getHeader("Authorization");
-        Integer uid = jwt_util.getLoginUserId(token);
-        String email = user_service.get_user_by_id(uid).getEmail();
-
-        if (email == null || email.isBlank() || email.isEmpty()) {
-            return Result.noemail();
+    public ResponseEntity<String> send_email(@RequestBody String entity, HttpServletRequest req)
+            throws JsonMappingException, JsonProcessingException {
+        String email = new ObjectMapper().readTree(entity).get("email").asText();
+        if (email == null || email.isBlank()) {
+            log.error("get noemail");
+            return Result.no_email();
         }
-        user_service.send_email(email);
+
+        try {
+            user_service.send_email(email);
+        } catch (EmailException e) {
+            log.error("email err!");
+            return Result.no_email();
+        }
 
         return Result.success();
     }

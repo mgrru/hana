@@ -3,6 +3,7 @@ package com.hana.hana_spring.web;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,13 @@ import com.hana.hana_spring.service.HistoryService;
 import com.hana.hana_spring.utils.JwtUtil;
 import com.hana.hana_spring.utils.Result;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -32,14 +40,10 @@ public class HistoryCtr {
     @Autowired
     private JwtUtil jwt_util;
 
-    /**
-     * 获取观看历史
-     * 
-     * @return [{id, type, cover, name, episodeName, url, process, uid, sid}]
-     * @throws JsonProcessingException
-     */
+    @Operation(summary = "获取观看历史")
+    @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
     @GetMapping
-    public Result get_history(HttpServletRequest req) throws JsonProcessingException {
+    public ResponseEntity<String> get_history(HttpServletRequest req) throws JsonProcessingException {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         List<Resource> histories = history_service.get_user_history(uid);
@@ -47,28 +51,20 @@ public class HistoryCtr {
         return Result.success(data);
     }
 
-    /**
-     * 添加观看历史
-     * 
-     * @param rid 观看的动漫id
-     * @return
-     */
+    @Operation(summary = "添加观看历史")
+    @Parameters({ @Parameter(name = "rid", description = "观看的动漫id") })
     @PostMapping("{rid}")
-    public Result add_history(@PathVariable Integer rid, HttpServletRequest req) {
+    public ResponseEntity<String> add_history(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         history_service.add_history(uid, rid);
         return Result.success();
     }
 
-    /**
-     * 删除观看历史
-     * 
-     * @param rid 要删除的动漫id
-     * @return
-     */
+    @Operation(summary = "删除观看历史")
+    @Parameters({ @Parameter(name = "rid", description = "要删除的动漫id") })
     @DeleteMapping("{rid}")
-    public Result del_history(@PathVariable Integer rid, HttpServletRequest req) {
+    public ResponseEntity<String> del_history(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         history_service.del_history(uid, rid);

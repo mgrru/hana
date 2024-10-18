@@ -21,4 +21,7 @@ public interface CommentMapper {
 
     @Delete("delete from comment where id=#{id}")
     void del(int id);
+
+    @Delete("delete from comment where rid=#{rid}")
+    void disable(int rid);
 }

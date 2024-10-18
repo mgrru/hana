@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hana.hana_spring.dao.UserMapper;
 import com.hana.hana_spring.entity.User;
 import com.hana.hana_spring.utils.EmailSender;
+import com.hana.hana_spring.utils.EncryUtil;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -24,15 +25,32 @@ public class UserService {
     private RedisTemplate<String, String> redis;
 
     @Autowired
-    private EmailSender email_sender;    
+    private EmailSender email_sender;
 
-    public List<User> get_all_user() {
-        return user_mapper.sel_all();
+    @Autowired
+    private EncryUtil encry_util;
+
+    public List<User> get_all_user() throws Exception {
+        List<User> users = user_mapper.sel_all();
+        if (users != null && !users.isEmpty()) {
+            for (User user : users) {
+                user.setPhone(encry_util.decrypt(user.getPhone()));
+                user.setEmail(encry_util.decrypt(user.getEmail()));
+            }
+            return users;
+        } else {
+            throw new Exception();
+        }
     }
 
-    public void add_user(User user) {
+    public void add_user(User user) throws Exception {
         if (user != null) {
+            user.setPass(encry_util.hash(user.getPass()));
+            user.setPhone(encry_util.encrypt(user.getPhone()));
+            user.setEmail(encry_util.encrypt(user.getEmail()));
             user_mapper.ins(user);
+        } else {
+            throw new Exception();
         }
     }
 
@@ -64,19 +82,28 @@ public class UserService {
         }
     }
 
-    public User get_user_by_id(Integer id) {
+    public User get_user_by_id(Integer id) throws Exception {
         if (id != null) {
-            return user_mapper.sel_by_id(id);
+            User user = user_mapper.sel_by_id(id);
+            user.setPhone(encry_util.decrypt(user.getPhone()));
+            user.setEmail(encry_util.decrypt(user.getEmail()));
+            return user;
         } else {
-            return null;
+            throw new Exception();
         }
     }
 
-    public User get_user_by_account(String account) {
+    public User get_user_by_account(String account) throws Exception {
         if (account != null) {
-            return user_mapper.sel_by_account(account);
+            User user = user_mapper.sel_by_account(account);
+            if (user == null) {
+                return null;
+            }
+            user.setPhone(encry_util.decrypt(user.getPhone()));
+            user.setEmail(encry_util.decrypt(user.getEmail()));
+            return user;
         } else {
-            return null;
+            throw new Exception();
         }
     }
 
@@ -86,8 +113,8 @@ public class UserService {
         for (int i = 0; i < 6; i++) {
             code.append(random.nextInt(10));
         }
-        redis.opsForValue().set(to, code.toString(), 5, TimeUnit.MINUTES);
         email_sender.send_email(to, "验证码有效期5分钟，您的验证码为：" + code.toString());
+        redis.opsForValue().set(to, code.toString(), 5, TimeUnit.MINUTES);
         return code.toString();
     }
 
@@ -100,15 +127,25 @@ public class UserService {
         return false;
     }
 
-    public void upd_pass(Integer uid, String pass, String new_pass) {
+    public void upd_pass(Integer uid, String pass, String new_pass) throws Exception {
         User user = user_mapper.sel_by_id(uid);
-        if (user.getPass().equals(pass) && pass != new_pass) {
-            user.setPass(new_pass);
+        String hash_pass = encry_util.hash(pass);
+        String hash_new_pass = encry_util.hash(new_pass);
+        if (user.getPass().equals(hash_pass) && !hash_pass.equals(hash_new_pass)) {
+            user.setPass(hash_new_pass);
             user_mapper.upd_pass(user);
         }
     }
 
-    public void upd_user(User user) {
+    public boolean verify_pass(String pass, String login_pass) throws Exception {
+        if (pass.equals(encry_util.hash(login_pass))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void upd_user(User user) throws Exception {
         if (user == null) {
             return;
         }
@@ -120,9 +157,11 @@ public class UserService {
             user_mapper.upd_age(user);
         }
         if (user.getPhone() != null) {
+            user.setPhone(encry_util.encrypt(user.getPhone()));
             user_mapper.upd_phone(user);
         }
         if (user.getEmail() != null) {
+            user.setEmail(encry_util.encrypt(user.getEmail()));
             user_mapper.upd_email(user);
         }
 

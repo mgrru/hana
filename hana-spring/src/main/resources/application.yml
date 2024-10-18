@@ -37,10 +37,25 @@ springdoc:
   swagger-ui:
     path: /v3/api
 
-
 # 邮箱验证
 email:
   host: "smtp.larksuite.com"
   from: "hana@fufu.moe"
   username: "hana@fufu.moe"
   password: "lw0lhfdtHuwK7dqk"
+
+# 图片保存
+oss:
+  pic:
+    endpoint: oss-cn-beijing.aliyuncs.com
+    username: LTAI5tEW82h8RKbemdkzy8NM
+    password: z1czVibXBUssajIoOreqYFRO9m5PWb
+    bucket: hana-pic
+
+
+# 密码加密
+encry:
+  salt: hana-hash-salt
+  algorithm: SHA-256
+  sym-algorithm: AES
+  key: hana-aes-key-123

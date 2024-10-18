@@ -21,4 +21,7 @@ public interface DanmakuMapper {
 
     @Delete("delete from danmaku where id=#{id}")
     void del(int id);
+
+    @Delete("delete from danmaku where rid=#{rid}")
+    void disable(int rid);
 }
