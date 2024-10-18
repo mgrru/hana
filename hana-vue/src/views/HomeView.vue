@@ -5,9 +5,18 @@
         </el-header>
         <el-container class="main-container">
             <el-main>
-                <!-- <Recommend></Recommend> -->
-                <!-- <VideoList></VideoList> -->
-                <AnimeList />
+                <Announcements />
+                <div>
+                    <AnimeList :animesList="popularAnimesList" />
+                </div>
+                <div>
+                    <AnimeList :animesList="recommendAnimesList" />
+                </div>
+
+                <div>
+                    <AnimeList :animesList="animesList" />
+                </div>
+                <!-- <Section /> -->
             </el-main>
             <el-aside width="70px">
                 <Aside></Aside>
@@ -18,15 +27,30 @@
 
 
 <script setup>
-import Recommend from '../components/Recommend.vue';
+import Announcements from '../components/Announcements.vue';
 import HeaderView from './HeaderView.vue';
 import Aside from '../components/Aside.vue';
-import AnimeList from './AnimeList.vue';
 import { onMounted } from 'vue';
+import Section from '../components/Section.vue';
+import { useAnimeStore } from '../store/animeStore';
+import { storeToRefs } from 'pinia';
+import AnimeList from './AnimeList.vue';
 
-onMounted(() => {
+const animeStore = useAnimeStore();
+const { popularAnimesList, recommendAnimesList, animesList } = storeToRefs(animeStore);
 
-})
+// 页面加载时并行获取视频列表
+onMounted(async () => {
+    try {
+        await Promise.all([
+            animeStore.fetchPopularAnimes(),
+            animeStore.fetchRecommendAnimes(),
+            animeStore.fetchAllAnimes(),
+        ]);
+    } catch (error) {
+        console.error("获取视频列表失败：", error);
+    }
+});
 </script>
 
 <style scoped>
@@ -41,7 +65,7 @@ onMounted(() => {
 
 
 .main-container {
-    padding: 0 20px;
+    padding: 0 5px;
 }
 
 .el-main {

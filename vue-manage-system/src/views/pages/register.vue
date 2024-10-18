@@ -2,7 +2,7 @@
     <div class="login-bg">
         <div class="login-container">
             <div class="login-header">
-                <img class="logo mr10" src="../../assets/img/logo.svg" alt="" />
+                <!-- <img class="logo mr10" src="../../assets/img/logo.svg" alt="" /> -->
                 <div class="login-title">后台管理系统</div>
             </div>
             <el-form :model="param" :rules="rules" ref="register" size="large">
@@ -15,22 +15,9 @@
                         </template>
                     </el-input>
                 </el-form-item>
-                <el-form-item prop="email">
-                    <el-input v-model="param.email" placeholder="邮箱">
-                        <template #prepend>
-                            <el-icon>
-                                <Message />
-                            </el-icon>
-                        </template>
-                    </el-input>
-                </el-form-item>
                 <el-form-item prop="password">
-                    <el-input
-                        type="password"
-                        placeholder="密码"
-                        v-model="param.password"
-                        @keyup.enter="submitForm(register)"
-                    >
+                    <el-input type="password" placeholder="密码" v-model="param.password"
+                        @keyup.enter="submitForm(register)">
                         <template #prepend>
                             <el-icon>
                                 <Lock />
@@ -57,7 +44,6 @@ const router = useRouter();
 const param = reactive<Register>({
     username: '',
     password: '',
-    email: '',
 });
 
 const rules: FormRules = {
@@ -69,7 +55,6 @@ const rules: FormRules = {
         },
     ],
     password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
-    email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
 };
 const register = ref<FormInstance>();
 const submitForm = (formEl: FormInstance | undefined) => {
@@ -92,7 +77,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
     justify-content: center;
     width: 100%;
     height: 100vh;
-    background: url(../../assets/img/login-bg.jpg) center/cover no-repeat;
+    background: beige center/cover no-repeat;
 }
 
 .login-header {

@@ -1,12 +1,11 @@
 <template>
     <div class="favorite-page">
-        <h2>我的收藏</h2>
-        <ul v-if="favoriteList.length > 0" class="favorite-list">
-            <li v-for="video in favoriteList" :key="video.id" class="favorite-item">
-                <img :src="video.thumbnail" alt="Thumbnail" class="thumbnail" />
-                <div class="video-info">
-                    <p class="title">{{ video.title }}</p>
-                    <p class="timestamp">收藏时间: {{ video.timestamp }}</p>
+        <h2></h2>
+        <ul v-if="favoriteList.length > 0" class="favorite-list" title="我的收藏">
+            <li v-for="favorite in favoriteList" :key="favorite.id" class="favorite-item">
+                <img :src="favorite.cover" alt="Cover" class="cover" />
+                <div class="favorite-info">
+                    <p class="title">{{ favorite.title }}</p>
                 </div>
             </li>
         </ul>
@@ -50,14 +49,14 @@ const { favoriteList } = storeToRefs(favoriteStore);
     transform: scale(1.02);
 }
 
-.thumbnail {
+.cover {
     width: 120px;
     height: 90px;
     border-radius: 4px;
     margin-right: 15px;
 }
 
-.video-info {
+.favorite-info {
     display: flex;
     flex-direction: column;
 }
@@ -68,10 +67,6 @@ const { favoriteList } = storeToRefs(favoriteStore);
     color: #333;
 }
 
-.timestamp {
-    font-size: 14px;
-    color: #888;
-}
 
 .no-favorites {
     text-align: center;

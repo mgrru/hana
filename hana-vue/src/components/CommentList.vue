@@ -2,7 +2,9 @@
     <div class="comment-list">
         <h2>评论区</h2>
         <!-- 发布评论区 -->
-
+        <div class="reply-input">
+            <input v-model="sendContent" placeholder="发布评论" @keyup.enter="submitComment()" />
+        </div>
         <!-- 加载状态 -->
         <div v-if="commentStore.loading">加载中...</div>
 
@@ -30,16 +32,22 @@ import { useUserStore } from '../store/userStore';
 import Comment from './Comment.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { watchEffect } from 'vue';
+import { useAnimeStore } from '../store/animeStore';
 
+const animeStore = useAnimeStore();
 const commentStore = useCommentStore();
 const userStore = useUserStore();
-const route = useRoute();
 const router = useRouter();
 
-// 获取视频 ID (rid)
-const rid = ref(null);
+// 直接从 animeStore 中获取 id
+const rid = computed(() => animeStore.id);
+
 // 获取评论列表
 const comments = computed(() => commentStore.comments);
+
+const sendContent = ref('');
+
+
 // 限制最多显示的评论数量，未登录时限制为3条
 const maxVisibleComments = 3;
 // 计算可见的评论，未登录状态下最多显示 `maxVisibleComments` 条
@@ -50,15 +58,23 @@ const visibleComments = computed(() => {
 });
 
 // 动态获取视频 ID
-watchEffect(async () => {
-    rid.value = route.params.id;
-    if (rid.value) {
-        await commentStore.loadComments(rid.value);
-        console.log('获取到的评论数据:', comments.value); // 调试信息
-    } else {
-        console.error('缺少视频 ID (rid)');
+// watchEffect(async () => {
+//     if (rid.value) {
+//         await commentStore.loadComments(rid.value);
+//         console.log('获取到的评论数据:', comments.value); // 调试信息
+//     } else {
+//         console.error('缺少视频 ID (rid)');
+//     }
+// });
+
+
+// 提交回复功能
+const submitComment = () => {
+    if (sendContent.value.trim()) {
+        commentStore.sendCommentAction(rid, sendContent);
+        sendContent.value = '';
     }
-});
+};
 
 const commentToLogin = () => {
     router.push({ name: 'Login' }); // 替换为你的登录页面路由名称

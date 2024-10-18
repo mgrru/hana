@@ -1,16 +1,18 @@
-
 export interface User {
+  id: number;
+  account: string;
+  name: string;
+  age: string;
+  email: string;
+  phone: string;
+  role: {
     id: number;
     name: string;
-    password: string;
-    email: string;
-    phone: string;
-    role: string;
-    date: string;
+  };
+  ban: boolean;
 }
 
 export interface Register {
-    username: string;
-    password: string;
-    email: string;
+  username: string;
+  password: string;
 }

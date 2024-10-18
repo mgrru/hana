@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useUserStore } from "../store/userStore";
-import { useAuthStore } from '../store/auth';
+import { useAuthStore } from "../store/auth";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -24,6 +24,16 @@ const router = createRouter({
       component: () => import("../views/LoginView.vue"),
     },
     {
+      path: "/upload",
+      name: "Upload",
+      component: () => import("../views/UploudView.vue"),
+    },
+    {
+      path: "/msg",
+      name: "Msg",
+      component: () => import("../components/Msg.vue"),
+    },
+    {
       path: "/videoplayer",
       name: "VideoPlayer",
       component: () => import("../components/VideoPlayer.vue"),
@@ -39,21 +49,23 @@ const router = createRouter({
       component: () => import("../views/AnimeList.vue"),
     },
     {
-      path: "/video/:id",
-      name: "VideoView",
-      component: () => import("../views/VideoView.vue"), // 在videoview挂载VideoContainerView
+      path: "/animes/:name",
+      name: "AnimeView",
+      component: () => import("../views/AnimeView.vue"),
       props: true,
       children: [
         {
-          path: "", // 空路径表示默认展示 VideoContainer
-          name: "VideoContainer", // 给子路由一个独立的名称
-          component: () => import("../views/VideoContainerView.vue"),
-          props: route => ({ videoId: route.params.id }), // 直接传递 videoId 作为 props
+          path: "", // 空路径表示默认展示 AnimeContainer
+          name: "AnimeContainer", // 给子路由一个独立的名称
+          component: () => import("../views/AnimeContainerView.vue"),
+          props: (route) => ({
+            name: route.params.name,
+          }),
         },
       ],
     },
     {
-      path: "/video", // 处理没有 id 的情况
+      path: "/animes", // 处理没有 name 的情况
       redirect: "/home", // 重定向到首页或者一个默认页面
     },
     {
@@ -65,6 +77,16 @@ const router = createRouter({
       path: "/favorite",
       name: "Favorite",
       component: () => import("../views/FavoriteView.vue"),
+    },
+    {
+      path: "/section",
+      name: "Section",
+      component: () => import("../components/Section.vue"),
+    },
+    {
+      path: "/episode",
+      name: "Episode",
+      component: () => import("../components/Episode.vue"),
     },
   ],
 });
@@ -81,15 +103,15 @@ const router = createRouter({
 //       next(); // 允许访问
 //   }
 // });
-router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore();
-  
-  // 如果没有token并且不是访问登录页，重定向到登录页
-  if (!authStore.token && to.path !== '/login') {
-    next('/login');
-  } else {
-    next();
-  }
-});
+// router.beforeEach((to, from, next) => {
+//   const authStore = useAuthStore();
+
+//   // 如果没有token并且不是访问登录页，重定向到登录页
+//   if (!authStore.token && to.path !== '/login') {
+//     next('/login');
+//   } else {
+//     next();
+//   }
+// });
 
 export default router;

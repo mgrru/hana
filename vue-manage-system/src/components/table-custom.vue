@@ -57,6 +57,17 @@
                                     删除
                                 </el-button>
                             </template>
+                            <template v-else-if="item.prop == 'animeOperator'">
+                                <el-button type="warning" size="small" :icon="View" @click="viewFunc(row)">
+                                    查看
+                                </el-button>
+                                <el-button type="primary" size="small" :icon="Edit" @click="editFunc(row)">
+                                    审核
+                                </el-button>
+                                <el-button type="danger" size="small" :icon="Delete" @click="handleDeactivate(row)">
+                                    下架
+                                </el-button>
+                            </template>
                             <span v-else-if="item.formatter">
                                 {{ item.formatter(row[item.prop]) }}
                             </span>
@@ -141,6 +152,10 @@ const props = defineProps({
     changePage: {
         type: Function,
         default: () => { }
+    },
+    deactivateFunc: {
+        type: Function,
+        default: () => { }
     }
 })
 
@@ -182,6 +197,16 @@ const handleDelete = (row) => {
         })
         .catch(() => { });
 };
+
+const handleDeactivate = (row) => {
+    ElMessageBox.confirm('确定要下架吗？', '提示', {
+        type: 'warning'
+    })
+        .then(async () => {
+            props.delFunc(row);
+        })
+        .catch(() => { });
+}
 
 const getIndex = (index: number) => {
     return index + 1 + (currentPage.value - 1) * pageSize.value

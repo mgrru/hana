@@ -71,43 +71,23 @@ const toggleForm = () => {
 };
 
 // 登录处理函数
-// const handleLogin = async () => {
-//     try {
-//         const response = await axios.post('/login', loginForm.value);
-
-//         const token = response.data.data;
-
-//         authStore.setToken(token); // 保存token
-//         // console,log(authStore.isLogin.value)
-//         ElMessage.success('登录成功！');
-//         clearLoginForm();
-//         // 跳转到首页或其他页面
-//         router.push('/');
-//     } catch (error) {
-//         errorMessage.value = '登录请求失败，请重试。';
-//     }
-// };
 const handleLogin = async () => {
     try {
         const response = await axios.post('/login', loginForm.value);
+        console.log('响应的数据为', response.data)
+        const token = response.data;  // 获取 token
+        console.log(token)
 
-        // 检查后端返回的 code 是否为 200
-        if (response.data.code === 200) {
-            const token = response.data.data;  // 获取 token
+        authStore.setToken(token);  // 保存 token
+        await userStore.fetchUserInfo();
 
-            authStore.setToken(token);  // 保存 token
-            await userStore.fetchUserInfo();
+        ElMessage.success('登录成功！');
+        clearLoginForm();
+        router.push('/');  // 跳转到首页
 
-            ElMessage.success('登录成功！');
-            clearLoginForm();
-            router.push('/');  // 跳转到首页
-        } else {
-            // 登录失败，显示后端返回的错误信息
-            ElMessage.error(response.data.msg || '账号或密码错误');
-        }
     } catch (error) {
         console.error('登录请求失败:', error);
-        ElMessage.error('登录请求失败，请重试。');
+        ElMessage.error('登录账号或密码错误，请重试。');
     }
 };
 

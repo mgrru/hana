@@ -1,15 +1,17 @@
 <template>
     <div id="app">
         <div class="main-content">
-            <p>推荐</p>
-            <div v-if="recommendAnimesList && recommendAnimesList.length > 0" class="anime-item"
-                v-for="recommendAnime in recommendAnimesList" :key="recommendAnime.id">
-                <router-link :to="'/animes/' + recommendAnime.name">
-                    <img :src="recommendAnime.cover" alt="推荐封面">
-                    <p>{{ recommendAnime.name }}</p>
-                </router-link>
+            <div>
+                <p>热门</p>
+                <div v-if="popularAnimesList && popularAnimesList.length > 0" class="anime-item"
+                    v-for="popularAnime in popularAnimesList" :key="popularAnime.id">
+                    <router-link :to="'/animes/' + popularAnime.name">
+                        <img :src="popularAnime.cover" alt="热门封面">
+                        <p>{{ popularAnime.name }}</p>
+                    </router-link>
+                </div>
+                <p v-else>没有找到热门视频。</p> <!-- 处理没有数据的情况 -->
             </div>
-            <p v-else>没有找到推荐视频。</p> <!-- 处理没有数据的情况 -->
         </div>
     </div>
 </template>
@@ -21,12 +23,12 @@ import { useHistoryStore } from '../store/historyStore';
 import { storeToRefs } from 'pinia';
 
 const animeStore = useAnimeStore();
-const { recommendAnimesList } = storeToRefs(animeStore);
+const { popularAnimesList } = storeToRefs(animeStore);
 
 // 页面加载时获取视频列表
 onMounted(async () => {
     try {
-        await animeStore.fetchRecommendAnimes();
+        await animeStore.fetchPopularAnimes();
         // console.log("视频页获取的所有推荐视频列表:", popularAnimesList.value);  // 检查数据是否被正确加载
         // console.log("获取的推荐视频列表数:", popularAnimesList.value.length);  // 检查数据是否被正确加载
     } catch (error) {

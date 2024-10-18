@@ -1,20 +1,17 @@
+<!-- VideoPlayer.vue -->
 <template>
     <div class="video-info-container">
-        <h1 class="video-info-title">{{ title }}</h1>
-
+        <h1 class="video-info-title">{{ animesInfo.title }}</h1>
         <div class="video-info-meta">
-            <span>播放量: {{ views }}</span>
-            <span>弹幕数: {{ danmakuCount }}</span>
-            <span>发布时间: {{ publishDate }}</span>
+            <span>播放量: {{ animesInfo.views }}</span>
+            <!-- <span>弹幕数: {{ danmakuCount }}</span> -->
+            <!-- <span>发布时间: {{ publishDate }}</span> -->
         </div>
-
-
         <div style="position: relative; width: 100%;">
             <!-- 视频播放器 -->
-            <video ref="videoRef" width="100%" controls @play="handlePlay" @pause="handlePause">
-                <source :src="videoSrc" type="video/mp4" />
+            <video ref="animeRef" width="100%" controls @play="handlePlay" @pause="handlePause">
+                <source :src="animesInfo.url" type="video/mp4" />
             </video>
-
             <!-- 弹幕组件，使用自定义弹幕结构 -->
             <vue-danmaku ref="danmakuRef" v-model:danmus="danmakuList" loop :channels="5" useSlot
                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"
@@ -42,18 +39,18 @@
 
         <!-- 点赞组件 -->
         <div class="video-stats">
-            <like-button />
+            <ToolBar />
         </div>
 
-        <div class="video-desc-container">
+        <!-- <div class="video-desc-container">
             <p>{{ description }}</p>
-        </div>
+        </div> -->
     </div>
 </template>
 
 <script setup>
 import { onMounted } from 'vue';
-import { useVideoStore } from '../store/animeStore';
+import { useAnimeStore } from '../store/animeStore';
 import { useRoute } from 'vue-router';
 import { ref } from 'vue';
 import { watch } from 'vue';
@@ -62,64 +59,69 @@ import { useDanmakuStore } from '../store/danmaku';
 import vueDanmaku from 'vue3-danmaku'
 import { generateRandomDanmaku } from '../mock/mockData';
 import { storeToRefs } from 'pinia';
-import LikeButton from './LikeButton.vue';
-//测试视频
-// import videoSrc from '../videos/barca1.mp4'
+import ToolBar from './ToolBar.vue';
 
 
-const store = useDanmakuStore();
-const input = ref('');
-const danmakuList = computed(() => store.danmakuList);
-const videoRef = ref(null);
-const danmakuRef = ref(null);
-const danmakuCount = computed(() => store.danmakuList.length);
-// console.log("弹幕数：" + danmakuCount.value);
+const props = defineProps({
+    name: String,
+});
 
-const videoStore = useVideoStore();
 const route = useRoute();
-const videoId = ref(route.params.id);
+const danmakuStore = useDanmakuStore();
+const animeStore = useAnimeStore();
+const animeRef = ref(null);
 
-const isPlaying = computed(() => store.isPlaying);
-const isDanmakuVisible = computed(() => store.isDanmakuVisibility);
+const input = ref('');
+const danmakuList = computed(() => danmakuStore.danmakuList);
+const danmakuRef = ref(null);
+const danmakuCount = computed(() => danmakuStore.danmakuList.length);
+
+// const animeName = ref(route.params.name);
+// const animeEpisode_name = ref(route.params.episode_name);
+const animeName = props.name;
+
+const isPlaying = computed(() => danmakuStore.isPlaying);
+const isDanmakuVisible = computed(() => danmakuStore.isDanmakuVisibility);
+
+
+const { animesInfo } = storeToRefs(animeStore);
 
 // 控制播放按钮
 const togglePlay = () => {
     if (isPlaying.value) {
-        videoRef.value.pause(); // 暂停视频
+        animeRef.value.pause(); // 暂停视频
         danmakuRef.value.pause(); // 暂停弹幕
     } else {
         // 尝试播放视频，并处理可能的 NotAllowedError
-        videoRef.value.play().catch(error => {
+        animeRef.value.play().catch(error => {
             if (error.name === 'NotAllowedError') {
-                console.error('Video cannot be played automatically. Please click the play button.');
+                console.error('视频无法自动播放。请单击播放按钮。');
             } else {
-                console.error('Playback failed:', error);
+                console.error('播放失败：', error);
             }
         });
         danmakuRef.value.play(); // 播放弹幕
     }
-    store.togglePlay(); // 更新 Pinia 状态
+    danmakuStore.togglePlay(); // 更新 Pinia 状态
 };
 
 // 显示/隐藏弹幕
 const toggleDanmakuVisibility = () => {
-    store.toggleDanmakuVisibility();
+    danmakuStore.toggleDanmakuVisibility();
     if (danmakuRef.value) {
         isDanmakuVisible.value ? danmakuRef.value.show() : danmakuRef.value.hide();
     }
 };
 
-//发送弹幕
+// 发送弹幕
 const sendDanmaku = () => {
     if (input.value.trim()) {
         const newDanmaku = {
-            id: Date.now(),
+            id: animesInfo.id,
             content: input.value,
-            timestamp: new Date().toLocaleString(),  // 使用本地时间格式
-            color: '#FF0000' // 默认颜色
         };
         console.log('发送的弹幕:', newDanmaku);  // 打印发送的弹幕
-        store.addDanmaku(newDanmaku); // 将弹幕添加到 Pinia store
+        danmakuStore.addDanmaku(newDanmaku); // 将弹幕添加到 Pinia store
         input.value = '';
     }
 };
@@ -127,59 +129,72 @@ const sendDanmaku = () => {
 
 // 监听视频播放和暂停事件，立即同步状态
 const handlePlay = () => {
-    store.isPlaying = true;  // 更新 Pinia 中的状态
+    danmakuStore.isPlaying = true;  // 更新 Pinia 中的状态
     danmakuRef.value.play(); // 弹幕开始播放
 };
 
 const handlePause = () => {
-    store.isPlaying = false;  // 更新 Pinia 中的状态
+    danmakuStore.isPlaying = false;  // 更新 Pinia 中的状态
     danmakuRef.value.pause(); // 弹幕暂停
 };
 
 // 监听播放状态变化，控制弹幕同步
 watch(isPlaying, (newVal) => {
-    if (videoRef.value && danmakuRef.value) {
+    if (animeRef.value && danmakuRef.value) {
         if (newVal) {
-            videoRef.value.play();
+            animeRef.value.play();
             danmakuRef.value.play();  // 确保弹幕同步播放
         } else {
-            videoRef.value.pause();
+            animeRef.value.pause();
             danmakuRef.value.pause();  // 确保弹幕同步暂停
         }
     }
-    console.log('Danmaku List:', newVal); // 确保数据正确
+    console.log('弹幕列表', newVal); // 确保数据正确
 });
 
 
 
 onMounted(async () => {
-    if (videoId.value) {
-        videoStore.fetchVideoData(videoId.value); // 根据视频 ID 加载数据
-        console.log('加载视频的Id为：', videoId.value);
-        console.log('获取的视频数据:', videoStore.title); // 检查标题是否已更新
+
+    if (animeName) {
+
+        await animeStore.fetchAnimeData(animeName);
+        // console.log("当前视频页获取的所有视频数据:", animeInfo.value);  // 检查数据是否被正确加载
+        console.log('加载视频的 name 为：', animeName);
+        console.log("视频标题:", animesInfo.value.title);
+        console.log("视频播放量:", animesInfo.value.views);
     }
     // 初始化弹幕列表
-    const initialDanmakuList = generateRandomDanmaku(10);
-    store.danmakuList = initialDanmakuList;
+    // const initialDanmakuList = generateRandomDanmaku(10);
+    // store.danmakuList = initialDanmakuList;
+    await animeStore.fecthDanmakuData(animesInfo.id);
+
 
     // 页面加载时不自动播放视频和弹幕，等待用户点击播放
-    if (videoRef.value && danmakuRef.value) {
-        videoRef.value.pause(); // 暂停视频
+    if (animeRef.value && danmakuRef.value) {
+        animeRef.value.pause(); // 暂停视频
         danmakuRef.value.pause(); // 暂停弹幕
     }
     console.log('组件挂载时的弹幕列表:', danmakuList.value);  // 打印初始弹幕列表
 });
 
-const { videoSrc, title, description, views, likes, stars, danmaku, publishDate, shares } = storeToRefs(videoStore);
-// const { title, description, views, likes, stars, danmaku, publishDate, shares } = videoStore;
 
-// 监听视频 ID 变化，当用户点击不同视频时自动更新
-watch(() => route.params.id, async (newId) => {
-    if (newId) {
-        videoId.value = newId;
-        await videoStore.fetchVideoData(videoId.value); // 根据新ID拉取视频数据
+
+
+const currentAnimeName = ref(animeName);  // 使用 ref 保存局部状态
+
+watch(
+    () => route.params,
+    async (newParams) => {
+        const name = newParams.name;  // 确保 newParams 中包含正确的 name 参数
+        if (name) {
+            currentAnimeName.value = name;  // 更新局部变量，而不是直接修改 props
+            await animeStore.fetchAnimeData(currentAnimeName.value); // 拉取新视频数据
+        }
     }
-});
+);
+
+
 </script>
 
 <style scoped>

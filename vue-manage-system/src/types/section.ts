@@ -1,4 +1,4 @@
-export interface Role {
+export interface Section {
   id: number;
   name: string;
 }

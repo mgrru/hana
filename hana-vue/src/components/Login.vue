@@ -10,7 +10,7 @@
 
         <template v-if="authStore.isLoggedIn">
             <div class="user-popover">
-                <!-- <p>{{ userStore.userInfo.userName }}</p> -->
+                <strong>{{ userStore.userInfo.name }}</strong>
                 <el-button type="primary" @click="navigateToUserInfo">用户管理</el-button>
                 <el-button type="primary" @click="handleLogout">退出登录</el-button>
             </div>
@@ -31,10 +31,27 @@
 import { useRouter } from 'vue-router';
 import { useUserStore } from '../store/userStore';
 import { useAuthStore } from '../store/auth';
+import { ref, watch } from 'vue';
 
 const authStore = useAuthStore();
 const userStore = useUserStore();
 const router = useRouter();
+
+// 监听 userStore 的变化，当用户信息加载完成时设置 userId
+// watch(
+//     () => userStore.userInfo.name, // 监听 userStore.userInfo.id 的变化
+//     (newName) => {
+//         // 当 userInfo.id 改变时，执行该回调
+//         if (newName) {
+//             // 如果新的 ID 有值（即不为 null 或 undefined）
+//             userName.value = newName; // 将 userId 设置为新的 userInfo.id
+//             userStore.fetchUserInfo(); // 然后调用 fetchMessages 获取消息
+//         }
+//     },
+//     { immediate: true } // immediate: true 表示初始监听时立即执行回调
+// );
+
+
 
 const navigateToLogin = () => {
     router.push({ name: 'Login' }); // 替换为你的登录页面路由名称

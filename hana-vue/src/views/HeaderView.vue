@@ -4,9 +4,9 @@
             <div class="left-entry">
                 <ul>
                     <li><a href="/">首页</a></li>
-                    <li><router-link to="/video">番剧</router-link></li>
-                    <li><a href="#">漫画</a></li>
-                    <li><router-link to="/video">视频</router-link></li>
+                    <li><router-link to="/">动漫</router-link></li>
+                    <li><a href="/">漫画</a></li>
+                    <li><router-link to="/">视频</router-link></li>
                 </ul>
             </div>
             <div class="center-search-container">
@@ -24,7 +24,8 @@
                     <li>
                         <router-link to="/history">历史</router-link>
                     </li>
-                    <li><router-link to="/">投稿</router-link></li>
+                    <li><router-link to="/upload">投稿</router-link></li>
+                    <li><router-link to="/msg">消息</router-link></li>
                 </ul>
             </div>
         </div>
@@ -34,10 +35,6 @@
 <script setup lang="ts">
 import Login from "../components/Login.vue";
 import Search from "../components/Search.vue";
-import { useUserStore } from '../store/userStore';
-
-
-const userStore = useUserStore(); // 访问登录状态
 
 </script>
 

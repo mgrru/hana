@@ -1,6 +1,6 @@
 <template>
     <div>
-        <TableSearch :query="query" :options="searchOpt" :search="handleSearch" />
+        <!-- <TableSearch :query="query" :options="searchOpt" :search="handleSearch" /> -->
         <div class="container">
 
             <TableCustom :columns="columns" :tableData="tableData" :total="page.total" :viewFunc="handleView"
@@ -17,10 +17,9 @@
                 </template>
             </TableCustom>
         </div>
-        <!-- destroy-on-close	当关闭 Dialog 时，销毁其中的元素 -->
         <el-dialog :title="isEdit ? '编辑' : '新增'" v-model="visible" width="700px" destroy-on-close
             :close-on-click-modal="false" @close="closeDialog">
-            <TableEdit :form-data="rowData" :options="options" :edit="isEdit" :update="updateData" />
+            <TableEdit :form-data="rowData" :options="options" :edit="isEdit" :update="updateData" :add="addData" />
         </el-dialog>
         <el-dialog title="查看详情" v-model="visible1" width="700px" destroy-on-close>
             <TableDetail :data="viewData">
@@ -40,30 +39,31 @@
 import { ref, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 import { Role } from '@/types/role';
-import { fetchRoleData } from '@/api';
+import { fetchRoleData, addRole, updateRole, deleteRole } from '@/api';
 import TableCustom from '@/components/table-custom.vue';
 import TableDetail from '@/components/table-detail.vue';
 import RolePermission from './role-permission.vue'
 import { CirclePlusFilled } from '@element-plus/icons-vue';
 import { FormOption, FormOptionList } from '@/types/form-option';
+import axios from 'axios';
 
-// 查询相关
-const query = reactive({
-    name: '',
-});
-const searchOpt = ref<FormOptionList[]>([
-    { type: 'input', label: '角色名称：', prop: 'name' }
-])
-const handleSearch = () => {
-    changePage(1);
-};
+// // 查询相关
+// const query = reactive({
+//     name: '',
+// });
+// const searchOpt = ref<FormOptionList[]>([
+//     { type: 'input', label: '角色名称：', prop: 'name' }
+// ])
+// const handleSearch = () => {
+//     changePage(1);
+// };
 
 // 表格相关
 let columns = ref([
-    { type: 'index', label: '序号', width: 55, align: 'center' },
+    { prop: 'id', label: '角色ID' },  // 确保表格中有正确的id
     { prop: 'name', label: '角色名称' },
     // { prop: 'key', label: '角色标识' },
-    { prop: 'status', label: '状态' },
+    // { prop: 'status', label: '状态' },
     { prop: 'permissions', label: '权限管理' },
     { prop: 'operator', label: '操作', width: 250 },
 ])
@@ -73,29 +73,12 @@ const page = reactive({
     total: 0,
 })
 const tableData = ref<Role[]>([]);
-// const getData = async () => {
-//     const res = await fetchRoleData()
-//     tableData.value = res.data.list;
-//     page.total = res.data.pageTotal;
-// };
 const getData = async () => {
-    const res = await fetchRoleData();
-
-    // 解析后端返回的 data 字段
-    let rawData = typeof res.data === 'string' ? JSON.parse(res.data) : JSON.parse(res.data.data);
-
-    // 将数据映射到表格需要的格式
-    tableData.value = rawData.map((item: any) => ({
-        id: item.id,
-        name: item.name,
-        // key: item.key || '无标识',  // 如果没有角色标识，默认显示 "无标识"
-        status: item.status !== undefined ? item.status : true,  // 显示状态
-        permissions: item.auths.map((auth: any) => auth.name).join(', ') || '无权限'  // 显示权限列表
-    }));
-
-    page.total = rawData.length;  // 设置总数据条数
+    const res = await fetchRoleData()
+    console.log(res.data)
+    tableData.value = JSON.parse(res.data);
+    // page.total = res.data.pageTotal;
 };
-
 getData();
 const changePage = (val: number) => {
     page.index = val;
@@ -107,23 +90,53 @@ const options = ref<FormOption>({
     labelWidth: '100px',
     span: 24,
     list: [
+        { type: 'input', label: '角色ID', prop: 'id', required: true },
         { type: 'input', label: '角色名称', prop: 'name', required: true },
         // { type: 'input', label: '角色标识', prop: 'key', required: true },
-        { type: 'switch', label: '状态', prop: 'status', required: false, activeText: '启用', inactiveText: '禁用' },
+        // { type: 'switch', label: '状态', prop: 'status', required: false, activeText: '启用', inactiveText: '禁用' },
     ]
 })
 const visible = ref(false);
 const isEdit = ref(false);
-const rowData = ref({});
+// const rowData = ref({});
+const rowData = ref<Partial<Role>>({});
 const handleEdit = (row: Role) => {
     rowData.value = { ...row };
     isEdit.value = true;
     visible.value = true;
 };
-const updateData = () => {
-    closeDialog();
+const updateData = async (newForm) => {
+    console.log(`更新role`)
+    const rid = newForm.value.id; // 获取ID
+    // 构建数据对象，符合接口要求
+    const roleData = {
+        name: newForm.value.name,
+    };
+    await updateRole(rid, roleData)
+    ElMessage.success('更新成功');
     getData();
+    closeDialog();
+    ElMessage.error('更新失败');
 };
+
+
+const addData = async (newForm) => {
+    console.log(`修改role`)
+    // 构建数据对象，符合接口要求
+    const roleData = {
+        name: newForm.value.name,
+    };
+    try {
+        await addRole(roleData)
+        ElMessage.success('更新成功');
+        getData();
+        closeDialog();
+    } catch (error) {
+        ElMessage.error('更新失败');
+    }
+
+};
+
 const closeDialog = () => {
     visible.value = false;
     isEdit.value = false;
@@ -148,22 +161,21 @@ const handleView = (row: Role) => {
             prop: 'name',
             label: '角色名称',
         },
-        // {
-        //     prop: 'key',
-        //     label: '角色标识',
-        // },
-        {
-            prop: 'status',
-            label: '角色状态',
-        },
     ]
     visible1.value = true;
 };
 
 // 删除相关
-const handleDelete = (row: Role) => {
-    ElMessage.success('删除成功');
-}
+const handleDelete = async (row: Role) => {
+    try {
+        await deleteRole(row.id)
+        ElMessage.success('删除成功');
+        getData();
+    } catch (error) {
+        ElMessage.error('删除失败', error);
+    }
+};
+
 
 
 // 权限管理弹窗相关
@@ -174,7 +186,6 @@ const handlePermission = (row: Role) => {
     permissOptions.value = {
         id: row.id,
         // permiss: row.permiss
-        permiss: row.auths || []  // 如果没有权限，默认为空数组
     };
 }
 </script>

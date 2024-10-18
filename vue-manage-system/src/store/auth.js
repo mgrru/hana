@@ -3,14 +3,13 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "./userStore"; // 引入 userStore
-import { useMsgStore } from "./msgStore"; // 引入 msgStore
+// import { useMsgStore } from "./msgStore"; // 引入 msgStore
 
 export const useAuthStore = defineStore("auth", () => {
   const token = ref("");
   const isLoggedIn = ref(false);
   const router = useRouter();
   const userStore = useUserStore(); // 使用 userStore
-  const msgStore = useMsgStore(); // 获取 msgStore 实例
 
   // 保存token
   const setToken = async (newToken) => {
@@ -22,8 +21,6 @@ export const useAuthStore = defineStore("auth", () => {
     // 获取用户信息并存储在 userStore
     try {
       await userStore.fetchUserInfo(); // 假设 fetchUserInfo 调用了用户信息的 API
-      // 当用户登录时，重新获取该用户的消息
-      await msgStore.fetchMessages(); // 获取当前登录用户的消息
     } catch (error) {
       console.error("获取用户信息失败:", error);
     }
@@ -38,9 +35,6 @@ export const useAuthStore = defineStore("auth", () => {
 
     // 清除 userStore 中的用户信息
     userStore.clearUserInfo(); // 需要在 userStore 中定义 clearUserInfo 函数
-
-    // 清除消息状态
-    msgStore.messages = [];
 
     // 执行退出登录后的操作，比如跳转到登录页面
     router.push("/login");

@@ -4,7 +4,10 @@
         <div class="buttons-container">
             <el-button icon="Refresh" class="refresh-button" @click="refreshAllAnimes">换一换</el-button>
 
+            <!-- <Login></Login> -->
+
             <el-dropdown placement="top-start" class="more-button">
+
                 <el-button>
                     <el-icon>
                         <MoreFilled />
@@ -35,6 +38,8 @@
 <script setup>
 // import { useVideoStore } from '../store/videoStore';
 import { useAnimeStore } from '../store/animeStore';
+import Login from "../components/Login.vue";
+
 // const videoStore = useVideoStore();
 const animeStore = useAnimeStore();
 
