@@ -55,7 +55,7 @@ public class EncryUtil {
         if (data == null) {
             return null;
         }
-        SecretKeySpec key_spec = new SecretKeySpec(key.getBytes(), sym_algorithm);
+        SecretKeySpec key_spec = new SecretKeySpec(pad_key(key).getBytes(), sym_algorithm);
         Cipher cipher = Cipher.getInstance(sym_algorithm);
         cipher.init(Cipher.ENCRYPT_MODE, key_spec);
         byte[] encrypted_bytes = cipher.doFinal(data.getBytes());
@@ -69,11 +69,24 @@ public class EncryUtil {
         if (encrypted_data == null) {
             return null;
         }
-        SecretKeySpec key_spec = new SecretKeySpec(key.getBytes(), sym_algorithm);
+        SecretKeySpec key_spec = new SecretKeySpec(pad_key(key).getBytes(), sym_algorithm);
         Cipher cipher = Cipher.getInstance(sym_algorithm);
         cipher.init(Cipher.DECRYPT_MODE, key_spec);
         byte[] decoded_bytes = Base64.getDecoder().decode(encrypted_data);
         byte[] decrypted_bytes = cipher.doFinal(decoded_bytes);
         return new String(decrypted_bytes);
     }
+
+    private String pad_key(String key) {
+        int length = 32;
+        if (key.length() < length) {
+            StringBuilder sb = new StringBuilder(key);
+            while (sb.length() < length) {
+                sb.append("0"); // 使用 "0" 补齐
+            }
+            return sb.toString();
+        }
+        return key.substring(0, length); // 如果超过则截断
+    }
+
 }

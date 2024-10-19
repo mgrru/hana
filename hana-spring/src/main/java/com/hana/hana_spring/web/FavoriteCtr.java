@@ -27,6 +27,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -41,6 +42,7 @@ public class FavoriteCtr {
     private JwtUtil jwt_util;
 
     @Operation(summary = "获取收藏")
+    @SecurityRequirement(name = "jwt")
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
     @GetMapping
     public ResponseEntity<String> get_favorites(HttpServletRequest req) throws JsonProcessingException {
@@ -52,6 +54,7 @@ public class FavoriteCtr {
     }
 
     @Operation(summary = "添加收藏")
+    @SecurityRequirement(name = "jwt")
     @Parameters({ @Parameter(name = "rid", description = "收藏的动漫id") })
     @PostMapping("{rid}")
     public ResponseEntity<String> add_favorite(@PathVariable Integer rid, HttpServletRequest req) {
@@ -62,6 +65,7 @@ public class FavoriteCtr {
     }
 
     @Operation(summary = "删除收藏")
+    @SecurityRequirement(name = "jwt")
     @Parameters({ @Parameter(name = "rid", description = "要删除的收藏的动漫id") })
     @DeleteMapping("{rid}")
     public ResponseEntity<String> del_favorite(@PathVariable Integer rid, HttpServletRequest req) {

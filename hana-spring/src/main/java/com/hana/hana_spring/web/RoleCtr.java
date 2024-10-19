@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @CrossOrigin("*")
@@ -37,6 +38,7 @@ public class RoleCtr {
     private RoleService role_service;
 
     @Operation(summary = "查询所有角色")
+    @SecurityRequirement(name = "jwt")
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Role.class))))
     @GetMapping("roles")
     public ResponseEntity<String> get_all_role() throws JsonProcessingException {
@@ -50,6 +52,7 @@ public class RoleCtr {
     }
 
     @Operation(summary = "创建角色")
+    @SecurityRequirement(name = "jwt")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = Role.class)), description = "id属性不用")
     @PostMapping("roles")
     public ResponseEntity<String> add_role(@RequestBody String entity)
@@ -61,6 +64,7 @@ public class RoleCtr {
     }
 
     @Operation(summary = "修改角色")
+    @SecurityRequirement(name = "jwt")
     @Parameters({ @Parameter(name = "id", description = "要修改的角色id") })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = Role.class)), description = "id属性不用")
     @PutMapping("roles/{id}")
@@ -74,6 +78,7 @@ public class RoleCtr {
     }
 
     @Operation(summary = "删除角色")
+    @SecurityRequirement(name = "jwt")
     @Parameters({ @Parameter(name = "id", description = "要删除的角色id") })
     @DeleteMapping("roles/{id}")
     public ResponseEntity<String> del_role(@PathVariable Integer id) {

@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -40,6 +41,7 @@ public class MsgCtr {
     private JwtUtil jwt_util;
 
     @Operation(summary = "获取消息", description = "获取登录者的消息，包括管理员和用户")
+    @SecurityRequirement(name = "jwt")
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Msg.class))))
     @GetMapping
     public ResponseEntity<String> get_msg(HttpServletRequest req) throws JsonProcessingException {
@@ -51,6 +53,7 @@ public class MsgCtr {
     }
 
     @Operation(summary = "发送消息")
+    @SecurityRequirement(name = "jwt")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = MsgReq.class)))
     @PostMapping
     public ResponseEntity<String> send_msg(@RequestBody String entity, HttpServletRequest req)

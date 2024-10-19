@@ -27,6 +27,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -41,6 +42,7 @@ public class HistoryCtr {
     private JwtUtil jwt_util;
 
     @Operation(summary = "获取观看历史")
+    @SecurityRequirement(name = "jwt")
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
     @GetMapping
     public ResponseEntity<String> get_history(HttpServletRequest req) throws JsonProcessingException {
@@ -52,6 +54,7 @@ public class HistoryCtr {
     }
 
     @Operation(summary = "添加观看历史")
+    @SecurityRequirement(name = "jwt")
     @Parameters({ @Parameter(name = "rid", description = "观看的动漫id") })
     @PostMapping("{rid}")
     public ResponseEntity<String> add_history(@PathVariable Integer rid, HttpServletRequest req) {
@@ -62,6 +65,7 @@ public class HistoryCtr {
     }
 
     @Operation(summary = "删除观看历史")
+    @SecurityRequirement(name = "jwt")
     @Parameters({ @Parameter(name = "rid", description = "要删除的动漫id") })
     @DeleteMapping("{rid}")
     public ResponseEntity<String> del_history(@PathVariable Integer rid, HttpServletRequest req) {

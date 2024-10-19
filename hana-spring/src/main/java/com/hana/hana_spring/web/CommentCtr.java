@@ -34,6 +34,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -67,6 +68,7 @@ public class CommentCtr {
     }
 
     @Operation(summary = "发送评论")
+    @SecurityRequirement(name = "jwt")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = CommentReq.class)))
     @PostMapping
     public ResponseEntity<String> add_comment(@RequestBody String entity, HttpServletRequest req)
@@ -80,6 +82,7 @@ public class CommentCtr {
     }
 
     @Operation(summary = "删除评论")
+    @SecurityRequirement(name = "jwt")
     @Parameters({ @Parameter(name = "id", description = "要删除的评论id") })
     @DeleteMapping("{id}")
     public ResponseEntity<String> del_comment(@PathVariable Integer id) {
