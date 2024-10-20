@@ -11,6 +11,7 @@ public enum Code {
     NOEMAIL(466, "没有邮箱"),
     CODEERR(333, "验证码错误"),
     RESULTERR(455, "结果出错"),
+    NOUSER(477, "用户已封禁"),
     ;
 
     private final int code;

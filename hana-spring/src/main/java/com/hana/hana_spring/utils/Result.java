@@ -53,4 +53,10 @@ public class Result {
 
         return ResponseEntity.status(c.code()).body(c.msg());
     }
+
+    public static ResponseEntity<String> no_user() {
+        Code c = Code.NOUSER;
+
+        return ResponseEntity.status(c.code()).body(c.msg());
+    }
 }
