@@ -81,6 +81,7 @@ public class AnimeService {
             Resource resource = new Resource();
             resource.setId(id);
             resource.setProcess(true);
+            anime_mapper.process(resource);
         }
     }
 
