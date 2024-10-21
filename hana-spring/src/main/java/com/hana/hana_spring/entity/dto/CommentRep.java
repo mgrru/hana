@@ -19,7 +19,7 @@ public class CommentRep {
     private Integer id;
     private String user_name;
     private String content;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date time;
 
     public static CommentRep newRep(String user_name, Comment comment) {
