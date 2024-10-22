@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
 import com.hana.hana_spring.entity.Resource;
@@ -16,7 +15,6 @@ public interface HistoryMapper {
     List<Resource> sel_all(int uid);
 
     @Insert("insert into history(uid, rid) values(#{uid}, #{rid})")
-    @Options(useGeneratedKeys = true, keyProperty = "id")
     void ins(int uid, int rid);
 
     @Delete("delete from history where uid=#{uid} and rid=#{rid}")
