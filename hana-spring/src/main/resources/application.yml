@@ -47,10 +47,11 @@ email:
 # 图片保存
 oss:
   pic:
-    endpoint: oss-cn-beijing.aliyuncs.com
-    username: LTAI5tEW82h8RKbemdkzy8NM
-    password: z1czVibXBUssajIoOreqYFRO9m5PWb
-    bucket: hana-pic
+    domain: cdn.cover.fufu.moe
+    key: 9gy50DDZu74pGqeso2F_KMDtZRIVhfZIWdaaRCLi
+    secret: rcuHcG7qR75NYpxAMaLWK3jkSiHHFIx-Q3s4y263
+    bucket: hana-cover
+    region: as0
 
 
 # 密码加密
