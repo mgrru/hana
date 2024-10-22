@@ -60,7 +60,11 @@ public class FavoriteCtr {
     public ResponseEntity<String> add_favorite(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
-        favorite_service.add_favorite(uid, rid);
+        try {
+            favorite_service.add_favorite(uid, rid);
+        } catch (Exception e) {
+            return Result.error();
+        }
         return Result.success();
     }
 

@@ -19,9 +19,9 @@ public class HistoryService {
         return history_mapper.sel_all(uid);
     }
 
-    public void add_history(Integer uid, Integer rid) {
+    public void add_history(Integer uid, Integer rid) throws Exception {
         if (history_mapper.sel_by_uid_and_rid(uid, rid) != null) {
-            return;
+            throw new Exception();
         }
         history_mapper.ins(uid, rid);
     }

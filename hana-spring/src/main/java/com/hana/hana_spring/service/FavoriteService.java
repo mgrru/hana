@@ -19,9 +19,9 @@ public class FavoriteService {
         return favorite_mapper.sel_all(uid);
     }
 
-    public void add_favorite(Integer uid, Integer rid) {
+    public void add_favorite(Integer uid, Integer rid) throws Exception {
         if (favorite_mapper.sel_by_uid_and_rid(uid, rid) != null) {
-            return;
+            throw new Exception();
         }
         favorite_mapper.ins(uid, rid);
     }

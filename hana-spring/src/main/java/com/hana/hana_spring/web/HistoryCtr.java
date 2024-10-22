@@ -60,7 +60,11 @@ public class HistoryCtr {
     public ResponseEntity<String> add_history(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
-        history_service.add_history(uid, rid);
+        try {
+            history_service.add_history(uid, rid);
+        } catch (Exception e) {
+            return Result.error();
+        }
         return Result.success();
     }
 
