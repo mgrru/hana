@@ -20,6 +20,9 @@ public class HistoryService {
     }
 
     public void add_history(Integer uid, Integer rid) {
+        if (history_mapper.sel_by_uid_and_rid(uid, rid) != null) {
+            return;
+        }
         history_mapper.ins(uid, rid);
     }
 

@@ -7,12 +7,16 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import com.hana.hana_spring.entity.History;
 import com.hana.hana_spring.entity.Resource;
 
 @Mapper
 public interface HistoryMapper {
     @Select("select resource.* from resource,history where history.uid=#{uid} and history.rid=resource.id")
     List<Resource> sel_all(int uid);
+
+    @Select("select * from history where uid=#{uid} and rid=#{rid}")
+    History sel_by_uid_and_rid(int uid, int rid);
 
     @Insert("insert into history(uid, rid) values(#{uid}, #{rid})")
     void ins(int uid, int rid);

@@ -20,6 +20,9 @@ public class FavoriteService {
     }
 
     public void add_favorite(Integer uid, Integer rid) {
+        if (favorite_mapper.sel_by_uid_and_rid(uid, rid) != null) {
+            return;
+        }
         favorite_mapper.ins(uid, rid);
     }
 
