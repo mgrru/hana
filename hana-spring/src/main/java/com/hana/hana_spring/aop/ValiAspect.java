@@ -36,11 +36,15 @@ public class ValiAspect {
     @Order(1)
     @Around("validate()")
     public Object login_validate(ProceedingJoinPoint join_point) throws Throwable {
-        log.info("登录验证");
-
         // 检查是否需要验证
         Method method = ((MethodSignature) join_point.getSignature()).getMethod();
         Validate validate = method.getAnnotation(Validate.class);
+
+        // 如果方法上没有注解，再尝试获取类上的 @Validate 注解
+        if (validate == null) {
+            Class<?> targetClass = method.getDeclaringClass();
+            validate = targetClass.getAnnotation(Validate.class);
+        }
 
         if (validate != null && !validate.login()) {
             return join_point.proceed(join_point.getArgs());
@@ -59,11 +63,15 @@ public class ValiAspect {
     @Order(2)
     @Around("validate()")
     public Object admin_validate(ProceedingJoinPoint join_point) throws Throwable {
-        log.info("管理员验证");
-
         // 检查是否需要验证
         Method method = ((MethodSignature) join_point.getSignature()).getMethod();
         Validate validate = method.getAnnotation(Validate.class);
+
+        // 如果方法上没有注解，再尝试获取类上的 @Validate 注解
+        if (validate == null) {
+            Class<?> targetClass = method.getDeclaringClass();
+            validate = targetClass.getAnnotation(Validate.class);
+        }
 
         if (validate != null && !validate.auth()) {
             return join_point.proceed(join_point.getArgs());
