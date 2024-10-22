@@ -5,24 +5,22 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
 import com.hana.hana_spring.entity.History;
-import com.hana.hana_spring.entity.Resource;
 
 @Mapper
 public interface HistoryMapper {
-    @Select("select resource.* from resource,history where history.uid=#{uid} and history.rid=resource.id")
-    List<Resource> sel_all(int uid);
+    @Select("select * from history where uid=#{uid}")
+    List<History> sel_all(int uid);
 
-    @Select("select * from history where uid=#{uid} and rid=#{rid}")
-    History sel_by_uid_and_rid(int uid, int rid);
+    @Insert("insert into history(uid, rid, time) values(#{uid}, #{rid}, #{time})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    void ins(History history);
 
-    @Insert("insert into history(uid, rid) values(#{uid}, #{rid})")
-    void ins(int uid, int rid);
-
-    @Delete("delete from history where uid=#{uid} and rid=#{rid}")
-    void del(int uid, int rid);
+    @Delete("delete from history where id=#{id}")
+    void del(int id);
 
     @Delete("delete from history where rid=#{rid}")
     void disable(int rid);

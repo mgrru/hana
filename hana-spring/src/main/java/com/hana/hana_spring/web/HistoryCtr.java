@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hana.hana_spring.anno.Validate;
-import com.hana.hana_spring.entity.Resource;
+import com.hana.hana_spring.entity.dto.HistoryRep;
 import com.hana.hana_spring.service.HistoryService;
 import com.hana.hana_spring.utils.JwtUtil;
 import com.hana.hana_spring.utils.Result;
@@ -43,12 +43,12 @@ public class HistoryCtr {
 
     @Operation(summary = "获取观看历史")
     @SecurityRequirement(name = "jwt")
-    @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
+    @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = HistoryRep.class))))
     @GetMapping
     public ResponseEntity<String> get_history(HttpServletRequest req) throws JsonProcessingException {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
-        List<Resource> histories = history_service.get_user_history(uid);
+        List<HistoryRep> histories = history_service.get_user_history(uid);
         String data = new ObjectMapper().writeValueAsString(histories);
         return Result.success(data);
     }
@@ -60,22 +60,17 @@ public class HistoryCtr {
     public ResponseEntity<String> add_history(@PathVariable Integer rid, HttpServletRequest req) {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
-        try {
-            history_service.add_history(uid, rid);
-        } catch (Exception e) {
-            return Result.error();
-        }
+        history_service.add_history(uid, rid);
+
         return Result.success();
     }
 
     @Operation(summary = "删除观看历史")
     @SecurityRequirement(name = "jwt")
-    @Parameters({ @Parameter(name = "rid", description = "要删除的动漫id") })
-    @DeleteMapping("{rid}")
-    public ResponseEntity<String> del_history(@PathVariable Integer rid, HttpServletRequest req) {
-        String token = req.getHeader("Authorization");
-        Integer uid = jwt_util.getLoginUserId(token);
-        history_service.del_history(uid, rid);
+    @Parameters({ @Parameter(name = "id", description = "观看历史的id") })
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> del_history(@PathVariable Integer id, HttpServletRequest req) {
+        history_service.del_history(id);
         return Result.success();
     }
 
