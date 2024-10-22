@@ -144,7 +144,7 @@ public class AnimeCtr {
             MultipartFile cover,
             String type,
             String name,
-            @RequestParam(required = false) String title,
+            String title,
             Integer episode,
             String episode_name,
             Integer sid,
