@@ -67,7 +67,7 @@ public class Oss {
             DefaultPutRet put_ret = objectMapper.readValue(response.bodyString(), DefaultPutRet.class);
 
             // 返回文件的访问URL
-            return domain + "/" + put_ret.key;
+            return "http://" + domain + "/" + put_ret.key;
         } catch (IOException e) {
             log.error("上传失败！");
             return null;
