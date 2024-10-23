@@ -42,27 +42,23 @@
 import { ref, reactive } from 'vue';
 import { useTabsStore } from '@/store/tabs';
 import { usePermissStore } from '@/store/permiss';
+import { fetchUserData, loginRequest } from '@/api';
 import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
-
 interface LoginInfo {
     username: string;
     password: string;
 }
-
+const permissStore = usePermissStore();
 const lgStr = localStorage.getItem('login-param');
 const defParam = lgStr ? JSON.parse(lgStr) : null;
 const checked = ref(lgStr ? true : false);
-
 const router = useRouter();
 const param = reactive<LoginInfo>({
     username: defParam ? defParam.username : '',
     password: defParam ? defParam.password : '',
 });
-
-
-
 const rules: FormRules = {
     username: [
         {
@@ -77,20 +73,45 @@ const permiss = usePermissStore();
 const login = ref<FormInstance>();
 const submitForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return;
-    formEl.validate((valid: boolean) => {
+
+    formEl.validate(async (valid: boolean) => {
         if (valid) {
-            ElMessage.success('登录成功');
+            try {
+                const tableData = {
+                    account: param.username,
+                    pass: param.password
+                };
 
-            //利用role.name实现
-            localStorage.setItem('vuems_name', param.username);
-            const keys = permiss.defaultList[param.username == 'admin' ? 'admin' : 'user'];
-            permiss.handleSet(keys);
+                // 发送登录请求
+                const response = await loginRequest(tableData);
 
-            router.push('/');
-            if (checked.value) {
-                localStorage.setItem('login-param', JSON.stringify(param));
-            } else {
-                localStorage.removeItem('login-param');
+                // 成功处理
+                if (response.status === 200) {
+                    const token = response.data.replace(/^Bearer\s/, ''); // 获取 token
+                    permissStore.setToken(token);  // 保存 token
+                    ElMessage.success('登录成功');
+                    router.push('/');  // 跳转到首页
+
+                    if (checked.value) {
+                        localStorage.setItem('login-param', JSON.stringify(param)); // 记住账号信息
+                    } else {
+                        localStorage.removeItem('login-param'); // 不保存账号信息
+                    }
+                } else {
+                    ElMessage.error('登录请求失败，请重试。');
+                }
+
+            } catch (error) {
+                console.error('登录请求失败:', error);
+
+                if (error.response.status === 477) {
+                    ElMessage.error(`错误 ${error.response.data || '请求失败，请重试。'}`);
+                } else if (error.response.status === 666) {
+                    ElMessage.error(`错误 ${error.response.status}: 用户名或密码错误，请重试！`);
+                } else {
+                    // 其他错误
+                    ElMessage.error('登录请求失败，请检查网络或服务器。');
+                }
             }
         } else {
             ElMessage.error('登录失败');
@@ -98,6 +119,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
         }
     });
 };
+
 
 const tabs = useTabsStore();
 tabs.clearTabs();

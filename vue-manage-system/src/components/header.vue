@@ -2,7 +2,6 @@
     <div class="header">
         <!-- 折叠按钮 -->
         <div class="header-left">
-            <img class="logo" src="../assets/img/logo.svg" alt="" />
             <div class="web-title">后台管理系统</div>
             <div class="collapse-btn" @click="collapseChage">
                 <el-icon v-if="sidebar.collapse">
@@ -21,11 +20,7 @@
                     </el-tooltip>
                 </div>
                 <div class="btn-icon" @click="router.push('/ucenter')">
-                    <el-tooltip
-                        effect="dark"
-                        :content="message ? `有${message}条未读消息` : `消息中心`"
-                        placement="bottom"
-                    >
+                    <el-tooltip effect="dark" :content="message ? `有${message}条未读消息` : `消息中心`" placement="bottom">
                         <i class="el-icon-lx-notice"></i>
                     </el-tooltip>
                     <span class="btn-bell-badge" v-if="message"></span>
@@ -67,7 +62,9 @@ import { onMounted } from 'vue';
 import { useSidebarStore } from '../store/sidebar';
 import { useRouter } from 'vue-router';
 import imgurl from '../assets/img/img.jpg';
+import { usePermissStore } from '@/store/permiss';
 
+const permissStore = usePermissStore();
 const username: string | null = localStorage.getItem('vuems_name');
 const message: number = 2;
 
@@ -88,6 +85,7 @@ const router = useRouter();
 const handleCommand = (command: string) => {
     if (command == 'loginout') {
         localStorage.removeItem('vuems_name');
+        localStorage.removeItem("token"); // 从 localStorage 中移除 token
         router.push('/login');
     } else if (command == 'user') {
         router.push('/ucenter');

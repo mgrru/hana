@@ -1,14 +1,7 @@
 <template>
     <div>
-        <el-tree
-            class="mgb10"
-            ref="tree"
-            :data="data"
-            node-key="id"
-            default-expand-all
-            show-checkbox
-            :default-checked-keys="checkedKeys"
-        />
+        <el-tree class="mgb10" ref="tree" :data="data" node-key="id" default-expand-all show-checkbox
+            :default-checked-keys="checkedKeys" />
         <el-button type="primary" @click="onSubmit">保存权限</el-button>
     </div>
 </template>
@@ -26,22 +19,6 @@ const props = defineProps({
 });
 
 const menuObj = ref({});
-// const data = menuData.map((item) => {
-//     if (item.children) {
-//         menuObj.value[item.id] = item.children.map((sub) => sub.id);
-//     }
-//     return {
-//         id: item.id,
-//         label: item.title,
-//         children: item.children?.map((child) => {
-//             return {
-//                 id: child.id,
-//                 label: child.title,
-//             };
-//         }),
-//     };
-// });
-
 const getTreeData = (data) => {
     return data.map((item) => {
         const obj: any = {

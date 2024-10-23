@@ -68,6 +68,14 @@
                                     下架
                                 </el-button>
                             </template>
+                            <template v-else-if="item.prop == 'userOperator'">
+                                <el-button type="warning" size="small" :icon="View" @click="viewFunc(row)">
+                                    查看
+                                </el-button>
+                                <el-button type="primary" size="small" :icon="Edit" @click="editFunc(row)">
+                                    编辑状态
+                                </el-button>
+                            </template>
                             <span v-else-if="item.formatter">
                                 {{ item.formatter(row[item.prop]) }}
                             </span>
@@ -203,7 +211,7 @@ const handleDeactivate = (row) => {
         type: 'warning'
     })
         .then(async () => {
-            props.delFunc(row);
+            props.deactivateFunc(row);
         })
         .catch(() => { });
 }

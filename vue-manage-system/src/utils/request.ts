@@ -4,7 +4,7 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
-import { useAuthStore } from "../store/auth";
+import { usePermissStore } from "@/store/permiss";
 
 const service: AxiosInstance = axios.create({
   baseURL: "http://localhost:9901",
@@ -13,10 +13,10 @@ const service: AxiosInstance = axios.create({
 
 service.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // const authStore = useAuthStore();
-    // if (authStore.token) {
-    //   config.headers.Authorization = `Bearer ${authStore.token}`;
-    // }
+    const permissStore = usePermissStore();
+    if (permissStore.token) {
+      config.headers.Authorization = `${permissStore.token}`;
+    }
     return config;
   },
   (error: AxiosError) => {

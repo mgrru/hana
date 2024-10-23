@@ -3,33 +3,30 @@
         <!-- <TableSearch :query="query" :options="searchOpt" :search="handleSearch" /> -->
         <div class="container">
             <TableCustom :columns="columns" :tableData="tableData" :total="page.total" :viewFunc="handleView"
-                :delFunc="handleDelete" :page-change="changePage" :editFunc="handleEdit">
-                <template #toolbarBtn>
-                    <el-button type="warning" :icon="CirclePlusFilled" @click="visible = true">新增</el-button>
-                </template>
+                :page-change="changePage" :editFunc="handleEdit">
                 <template #role.name="{ rows }">
                     {{ rows.role.name ? rows.role.name : '暂无角色' }}
                 </template>
                 <template #ban="{ rows }">
-                    <el-tag type="success" v-if="rows.ban">是</el-tag>
-                    <el-tag type="danger" v-else>否</el-tag>
+                    <el-tag type="danger" v-if="rows.ban">禁用</el-tag>
+                    <el-tag type="success" v-else>正常</el-tag>
                 </template>
-                <!-- <template #permissions="{ rows }">
-                    <el-button type="primary" size="small" plain @click="handlePermission(rows)">管理</el-button>
-                </template> -->
             </TableCustom>
 
         </div>
-        <el-dialog :title="isEdit ? '编辑' : '新增'" v-model="visible" width="700px" destroy-on-close
-            :close-on-click-modal="false" @close="closeDialog">
+        <el-dialog title="编辑" v-model="visible" width="700px" destroy-on-close :close-on-click-modal="false"
+            @close="closeDialog">
             <TableEdit :form-data="rowData" :options="options" :edit="isEdit" :update="updateData" />
         </el-dialog>
         <el-dialog title="查看详情" v-model="visible1" width="700px" destroy-on-close>
-            <TableDetail :data="viewData"></TableDetail>
+            <TableDetail :data="viewData">
+                <template #ban="{ rows }">
+                    <el-tag type="danger" v-if="rows.ban">禁用</el-tag>
+                    <el-tag type="success" v-else>正常</el-tag>
+                </template>
+            </TableDetail>
         </el-dialog>
-        <!-- <el-dialog title="权限管理" v-model="visible2" width="500px" destroy-on-close>
-            <RolePermission :permiss-options="permissOptions" />
-        </el-dialog> -->
+        
     </div>
 </template>
 
@@ -38,33 +35,22 @@ import { ref, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 import { CirclePlusFilled } from '@element-plus/icons-vue';
 import { User } from '@/types/user';
-import { fetchUserData } from '@/api';
+import { fetchUserData, unbanUser, banUser, updateUserRole } from '@/api';
 import TableCustom from '@/components/table-custom.vue';
 import TableDetail from '@/components/table-detail.vue';
 import TableSearch from '@/components/table-search.vue';
 import { FormOption, FormOptionList } from '@/types/form-option';
 import RolePermission from './role-permission.vue'
-import axios from 'axios';
-
-// // 查询相关
-// const query = reactive({
-//     name: '',
-// });
-// const searchOpt = ref<FormOptionList[]>([
-//     { type: 'input', label: '用户名：', prop: 'name' }
-// ])
-// const handleSearch = () => {
-//     changePage(1);
-// };
 
 // 表格相关
 let columns = ref([
     { prop: 'id', label: '用户ID' },  // 确保表格中有正确的id
     { prop: 'name', label: '用户名' },  // 确保表格中有正确的id
+    { prop: 'account', label: '用户账号' },
     { prop: 'role.name', label: '角色' },
     { prop: 'ban', label: '状态' },
-    { prop: 'permissions', label: '权限管理' },
-    { prop: 'operator', label: '操作', width: 250 },
+    // { prop: 'permissions', label: '权限管理' },
+    { prop: 'userOperator', label: '操作', width: 250 },
 ])
 const page = reactive({
     index: 1,
@@ -75,7 +61,6 @@ const tableData = ref<User[]>([]);
 const getData = async () => {
     const res = await fetchUserData()
     // 检查是否接收到正确的数据
-    // console.log(res.data);  // 输出返回数据，检查 role 是否包含 name 属性
     tableData.value = JSON.parse(res.data);
     // page.total = res.data.pageTotal;
 };
@@ -91,26 +76,54 @@ let options = ref<FormOption>({
     labelWidth: '100px',
     span: 12,
     list: [
-        { type: 'input', label: '用户名', prop: 'name', required: true },
-        { type: 'input', label: '手机号', prop: 'phone', required: true },
-        // { type: 'input', label: '密码', prop: 'password', required: true },
-        { type: 'input', label: '邮箱', prop: 'email', required: true },
-        { type: 'input', label: '角色', prop: 'role.name', required: true },
-        { type: 'switch', label: '状态', prop: 'status', required: true, activeText: '启用', inactiveText: '禁用' },
+        {
+            type: 'switch', label: '状态', prop: 'ban', required: true, activeText: '禁用', inactiveText: '启用',
+            style: '--el-switch-on-color:#ff4949 ; --el-switch-off-color: #13ce66',
+        },
+        {
+            type: 'roleSelect', label: '用户角色', prop: 'role.id', required: true,
+            opts: [
+                { label: '管理员', value: '1' },
+                { label: '普通用户', value: '2' }
+            ],
+            disabled: false
+        },
     ]
 })
 const visible = ref(false);
 const isEdit = ref(false);
-const rowData = ref({});
+const rowData = ref<Partial<User>>({});
 const handleEdit = (row: User) => {
     rowData.value = { ...row };
     isEdit.value = true;
     visible.value = true;
 };
-const updateData = () => {
+const updateData = async (newForm) => {
+    console.log('New Form Data:', newForm.value); // 添加这一行
     closeDialog();
-    getData();
+    try {
+        // 先执行禁用或解封操作
+        if (newForm.value.ban) {
+            await banUser(newForm.value.id);
+            ElMessage.success('用户已禁用');
+        } else {
+            await unbanUser(newForm.value.id);
+            ElMessage.success('用户已解封');
+        }
+
+        // 更新用户角色
+        await updateUserRole(newForm.value.id, newForm.value.role.id);
+        ElMessage.success('用户角色已更新');
+
+        // 刷新数据
+        getData();
+    } catch (error) {
+        ElMessage.error('操作失败: ' + (error.message || '未知错误'));
+    } finally {
+        closeDialog();
+    }
 };
+
 
 const closeDialog = () => {
     visible.value = false;
@@ -134,10 +147,6 @@ const handleView = (row: User) => {
             prop: 'account',
             label: '用户账号',
         },
-        // {
-        //     prop: 'password',
-        //     label: '密码',
-        // },
         {
             prop: 'age',
             label: '年齡',
@@ -162,29 +171,8 @@ const handleView = (row: User) => {
     visible1.value = true;
 };
 
-// 删除相关
-const handleDelete = async (row: User) => {
-    try {
-        await axios.delete(`/users/${row.id}`);  // 发送删除请求到后端
-        ElMessage.success('删除成功');
-        getData();  // 删除成功后刷新表格数据
-    } catch (error) {
-        ElMessage.error('删除失败');
-        console.error('删除时出错:', error);
-    }
-};
 
 
-// 权限管理弹窗相关
-// const visible2 = ref(false);
-// const permissOptions = ref({})
-// const handlePermission = (row: User) => {
-//     visible2.value = true;
-//     permissOptions.value = {
-//         id: row.id,
-//         permiss: row.permiss
-//     };
-// }
 </script>
 
 <style scoped></style>

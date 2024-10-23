@@ -36,17 +36,6 @@ import { CirclePlusFilled } from '@element-plus/icons-vue';
 import { FormOption, FormOptionList } from '@/types/form-option';
 import axios from 'axios';
 
-// // 查询相关
-// const query = reactive({
-//     name: '',
-// });
-// const searchOpt = ref<FormOptionList[]>([
-//     { type: 'input', label: '公告名称：', prop: 'name' }
-// ])
-// const handleSearch = () => {
-//     changePage(1);
-// };
-
 // 表格相关
 let columns = ref([
     { prop: 'id', label: '公告ID' },  // 确保表格中有正确的id
@@ -66,18 +55,14 @@ const getData = async () => {
     const res = await fetchAnnouncementsData()
     // 假设 res.data 是一个数组，每个对象都有一个 time 字段
     const announcements = JSON.parse(res.data);
-
     announcements.forEach(item => {
         // 将 ISO 时间转换为 Date 对象
         const dateObj = new Date(item.time);
-
         // 将 Date 对象格式化为本地时间字符串
         item.formattedTime = dateObj.toLocaleString(); // 或者使用其他格式化方法
     });
-
     // 将处理过的数据赋值给 tableData
     tableData.value = announcements;
-    // page.total = res.data.pageTotal;
 };
 getData();
 const changePage = (val: number) => {
