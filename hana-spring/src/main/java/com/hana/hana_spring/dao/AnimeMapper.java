@@ -51,11 +51,11 @@ public interface AnimeMapper {
     @ResultMap("resource")
     List<Resource> sel_by_user(int uid);
 
-    @Select("SELECT * FROM resource WHERE id IN (SELECT id FROM (SELECT MAX(id) as id FROM resource GROUP BY name ORDER BY MAX(views) DESC LIMIT 10) AS temp) AND process=true")
+    @Select("SELECT * FROM resource WHERE id IN (SELECT id FROM (SELECT MAX(id) as id FROM resource GROUP BY name ORDER BY MAX(views) DESC LIMIT 5) AS temp) AND process=true")
     @ResultMap("resource")
     List<Resource> sel_popular();
 
-    @Select("SELECT * FROM resource WHERE id IN (SELECT id FROM (SELECT MIN(id) as id FROM resource GROUP BY name ORDER BY RAND() LIMIT 10) AS temp) AND process=true")
+    @Select("SELECT * FROM resource WHERE id IN (SELECT id FROM (SELECT MIN(id) as id FROM resource GROUP BY name ORDER BY RAND() LIMIT 5) AS temp) AND process=true")
     @ResultMap("resource")
     List<Resource> sel_recommend();
 
