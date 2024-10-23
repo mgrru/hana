@@ -5,7 +5,7 @@
                 <HeaderView></HeaderView>
             </el-header>
             <el-main>
-                <AnimeContainer :name="name"></AnimeContainer>
+                <AnimeContainer :name="name" :rid="rid" :key="rid"></AnimeContainer>
             </el-main>
         </el-container>
     </div>
@@ -21,24 +21,24 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const name = ref(route.params.name);
+const animeStore = useAnimeStore();
+const rid = ref(null); // 用于存储视频ID
 
-// 初始加载视频数据
 onMounted(async () => {
-    console.log('当前name:', name.value);
+    await animeStore.fetchAnimeData(name.value);
+    rid.value = animeStore.animesInfo.id; // 从store中获取视频ID
+    console.log('rid:', rid.value);
 });
 
-// 监听 name 变化
 watch(() => route.params, async (newParams) => {
     name.value = newParams.name;
+    await animeStore.fetchAnimeData(name.value);
+    rid.value = animeStore.animesInfo.id; // 更新视频ID
 });
 </script>
 
 
 <style lang="scss">
-.el-main {
-    padding: 0;
-}
-
 .main-container {
     padding: 0 20px;
 }

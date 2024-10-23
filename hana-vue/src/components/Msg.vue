@@ -1,5 +1,4 @@
 <template>
-    <Header />
     <div class="msg-container">
         <div v-if="loading" class="loading">Loading...</div>
         <div v-if="error" class="error">{{ error }}</div>
@@ -16,16 +15,6 @@
         <!-- 发送消息 -->
         <div class="send-message">
             <input v-model="recipientId" type="number" placeholder="接受消息者的ID" />
-
-            <!-- <el-select v-model="recipientId" placeholder="选择接受消息者" style="width: 100%;">
-                <el-option
-                  v-for="user in users"
-                  :key="user.id"
-                  :label="user.name"
-                  :value="user.id">
-                </el-option>
-            </el-select> -->
-
             <textarea v-model="messageContent" placeholder="输入你的消息"></textarea>
             <button @click="sendMessage">发送消息</button>
         </div>

@@ -39,6 +39,7 @@ import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
 import { Register } from '@/types/user';
+import { registerRequest } from '@/api';
 
 const router = useRouter();
 const param = reactive<Register>({
@@ -59,9 +60,14 @@ const rules: FormRules = {
 const register = ref<FormInstance>();
 const submitForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return;
-    formEl.validate((valid: boolean) => {
+    formEl.validate(async (valid: boolean) => {
         if (valid) {
             ElMessage.success('注册成功，请登录');
+            const tableData = {
+                account: param.username,
+                pass: param.password
+            };
+            await registerRequest(tableData);
             router.push('/login');
         } else {
             return false;

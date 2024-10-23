@@ -1,3 +1,11 @@
+/*
+ * @Author: tangzhengtao 1399159010@qq.com
+ * @Date: 2024-10-15 15:03:35
+ * @LastEditors: tangzhengtao 1399159010@qq.com
+ * @LastEditTime: 2024-10-22 21:33:20
+ * @FilePath: \vue3-app1\src\store\msgStore.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 // src/store/msgStore.js
 import { defineStore } from "pinia";
 import { ref, watch } from "vue";
@@ -11,11 +19,6 @@ export const useMsgStore = defineStore("msgStore", () => {
   const error = ref(null);
   const userStore = useUserStore(); // 使用 userStore
   const userId = ref(null);
-
-  // 监听 userStore 的变化，当用户信息加载完成时设置 userId
-  //   if (userStore.userInfo.id) {
-  //     userId.value = userStore.userInfo.id; // 获取当前用户的 userId
-  //   }
 
   // 监听 userStore 的变化，当用户信息加载完成时设置 userId
   watch(
@@ -42,11 +45,9 @@ export const useMsgStore = defineStore("msgStore", () => {
     error.value = null;
     try {
       const response = await axios.get("/msg");
-      //烦死的===不能用
       messages.value = JSON.parse(response.data).filter(
         (msg) => msg.recipient == userId.value
       );
-      // console.log(response.data);
     } catch (err) {
       error.value = err.message;
     } finally {

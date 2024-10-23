@@ -13,12 +13,18 @@
 						<el-option v-for="opt in item.opts" :key="opt.value" :label="opt.label"
 							:value="opt.value"></el-option>
 					</el-select>
+					<el-select v-else-if="item.type === 'roleSelect'" :value="getNestedValue(form, item.prop)"
+						:disabled="item.disabled" :placeholder="item.placeholder" clearable
+						@change="(value) => setNestedValue(form, item.prop, value)">
+						<el-option v-for="opt in item.opts" :key="opt.value" :label="opt.label"
+							:value="opt.value"></el-option>
+					</el-select>
 					<el-date-picker v-else-if="item.type === 'date'" type="datetime" v-model="form[item.prop]"
 						:value-format="item.format"></el-date-picker>
 					<el-switch v-else-if="item.type === 'switch'" v-model="form[item.prop]"
 						:active-value="item.activeValue" :inactive-value="item.inactiveValue"
 						:active-text="item.activeText" :inactive-text="item.inactiveText"
-						@change="handleSwitchChange"></el-switch>
+						:style="item.style"></el-switch>
 					<el-upload v-else-if="item.type === 'upload'" class="avatar-uploader" action="#"
 						:show-file-list="false" :on-success="handleAvatarSuccess">
 						<img v-if="form[item.prop]" :src="form[item.prop]" class="avatar" />
@@ -41,6 +47,23 @@
 import { FormOption } from '@/types/form-option';
 import { FormInstance, FormRules, UploadProps } from 'element-plus';
 import { PropType, ref, watch } from 'vue';
+
+// 定义 getNestedValue 和 setNestedValue 函数
+const getNestedValue = (obj, path) => {
+	return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+};
+
+const setNestedValue = (obj, path, value) => {
+	const keys = path.split('.');
+	let current = obj;
+	for (let i = 0; i < keys.length - 1; i++) {
+		if (!current[keys[i]]) {
+			current[keys[i]] = {};
+		}
+		current = current[keys[i]];
+	}
+	current[keys[keys.length - 1]] = value;
+};
 
 const { options, formData, edit, update, add, animeOperator } = defineProps({
 	options: {
@@ -71,9 +94,6 @@ const { options, formData, edit, update, add, animeOperator } = defineProps({
 
 // 定义 rowData
 const rowData = ref({ ...formData });
-
-// const form = ref({ ...(edit ? formData : {}) });
-
 //使用 watch 监听 edit 的变化，来动态调整表单字段
 // 根据编辑状态初始化表单数据的功能
 const form = ref<Partial<typeof formData>>({ ...(edit || animeOperator ? formData : {}) });
@@ -104,44 +124,23 @@ const formRef = ref<FormInstance>();
 const save = (formEl: FormInstance | undefined) => {
 	console.log(`保存按钮调用`)
 	if (!formEl) return;
-
 	// 验证表单内容
 	formEl.validate((valid: boolean) => {
-		console.log(`验证结果:`, valid);  // 调试日志
-		console.log(`form值:`, form.value);  // 调试日志
-
 		if (!valid) return false;
-
-		// 根据是否是审核页面判断操作
 		if (animeOperator) {
-			// 动漫审核页逻辑
 			update(form);
 		} else {
-			// 编辑页逻辑
-			console.log(`不是动漫页`)
 			if (edit) {
-				// 编辑模式，调用更新接口
-				console.log(`是编辑页`)
 				update(form);
 			} else {
-				// 新增模式，调用新增接口
-				console.log(`是新增页`)
 				add(form);
 			}
 		}
 	});
 };
 
-
-
-
 const handleAvatarSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
 	form.value.thumb = URL.createObjectURL(uploadFile.raw!);
-};
-
-const handleSwitchChange = (value: boolean) => {
-	console.log('开关切换到:', value);
-	// form.value.process = value;  // 同步开关状态
 };
 
 </script>

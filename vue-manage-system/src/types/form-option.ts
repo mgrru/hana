@@ -5,7 +5,7 @@ export interface FormOption {
 }
 
 export interface FormOptionList {
-  prop: string;
+  prop: any;
   label: string;
   type: string;
   placeholder?: string;
@@ -17,4 +17,5 @@ export interface FormOptionList {
   activeText?: string;
   inactiveText?: string;
   required?: boolean;
+  style?: string;
 }

@@ -45,15 +45,15 @@
                                 </div>
                             </router-link>
                             <div class="action-buttons">
-                                <el-button type="text" @click="handleEdit(anime.id)">编辑</el-button>
-                                <el-button type="text" @click="handleAnalytics(anime.id)">数据</el-button>
+                                <el-button type="link" @click="handleEdit(anime.id)">编辑</el-button>
+                                <el-button type="link" @click="handleAnalytics(anime.id)">数据</el-button>
                             </div>
                         </li>
                     </ul>
                 </div>
 
                 <div v-if="currentPage === 'upload'">
-                    <Upload />
+                    <Upload @upload-success="handleUploadSuccess" />
                 </div>
             </el-main>
         </el-container>
@@ -61,58 +61,43 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
+import { useUploadStore } from '../store/uploadStore';
 import Header from './HeaderView.vue';
-import { ElMessage } from 'element-plus';
-import axios from '../utils/axios';
 import Upload from '../components/Upload.vue';
 
-// 当前页面状态
 const currentPage = ref('manuscripts');
 
-// 视频列表数据
-const animes = ref([]);
+// 获取 store 实例
+const uploadStore = useUploadStore();
 
-// 筛选条件
 // 筛选条件
 const selectedArea = ref('');
 const sortOrder = ref('views');
 const process = ref('');
 const sortDirection = ref('desc'); // 默认降序
 
-// 监听 selectedArea 的变化，当选择 "全部板块" 时重置其他选项
+// 监听 selectedArea 的变化
 watch(selectedArea, (newVal) => {
-    if (newVal === '') { // 当选中 "全部板块" 时
-        sortOrder.value = 'views';  // 重置排序方式为播放量
-        process.value = '';         // 重置审核状态为默认值（全部）
-        sortDirection.value = 'desc'; // 重置排序方向为降序
+    if (newVal === '') {
+        sortOrder.value = 'views';
+        process.value = '';
+        sortDirection.value = 'desc';
     }
 });
 
-// 获取用户稿件数据
-const fetchAnimes = async () => {
-    try {
-        const response = await axios.get('/users/animes');
-        animes.value = JSON.parse(response.data);
-    } catch (error) {
-        ElMessage.error('获取视频列表失败');
-    }
-};
-
+// 计算过滤后的动漫列表
 const filteredAnimes = computed(() => {
-    let filtered = animes.value;
+    let filtered = uploadStore.animes;
 
-    // 根据板块筛选
     if (selectedArea.value) {
         filtered = filtered.filter(anime => anime.type === selectedArea.value);
     }
 
-    // 根据审核状态筛选
     if (process.value) {
         filtered = filtered.filter(anime => String(anime.process) === process.value);
     }
 
-    // 根据排序方式和方向排序
     filtered = filtered.sort((a, b) =>
         sortDirection.value === 'asc'
             ? a[sortOrder.value] - b[sortOrder.value]
@@ -122,17 +107,23 @@ const filteredAnimes = computed(() => {
     return filtered;
 });
 
+// 页面加载时获取稿件数据
+onMounted(uploadStore.fetchAnimes);
+
+// 上传成功后跳转到“我的稿件”页面
+const handleUploadSuccess = () => {
+    currentPage.value = 'manuscripts';
+    uploadStore.fetchAnimes();
+};
+
 // 操作按钮点击事件
 const handleEdit = (id) => {
-    ElMessage.info('编辑稿件: ' + id);
+    console.log('编辑稿件: ' + id);
 };
 
 const handleAnalytics = (id) => {
-    ElMessage.info('查看数据: ' + id);
+    console.log('查看数据: ' + id);
 };
-
-// 组件挂载后获取数据
-onMounted(fetchAnimes);
 </script>
 
 <style scoped>

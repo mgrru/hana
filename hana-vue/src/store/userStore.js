@@ -78,8 +78,6 @@ export const useUserStore = defineStore("user", () => {
       // 打印响应数据，查看实际的响应结构
       console.log("更新响应:", response.data);
 
-      // 如果后端没有返回 message 字段，就根据返回的 code 判断是否成功
-
       // 更新成功
       userInfo.value = { ...tempUserInfo.value }; // 更新用户信息
       alert("用户信息更新成功！");

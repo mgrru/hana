@@ -49,6 +49,16 @@ const router = createRouter({
       component: () => import("../views/AnimeList.vue"),
     },
     {
+      path: "/commentList",
+      name: "CommentList",
+      component: () => import("../components/CommentList.vue"),
+    },
+    {
+      path: "/searchList",
+      name: "SearchList",
+      component: () => import("../views/SearchView.vue"),
+    },
+    {
       path: "/animes/:name",
       name: "AnimeView",
       component: () => import("../views/AnimeView.vue"),
@@ -88,21 +98,16 @@ const router = createRouter({
       name: "Episode",
       component: () => import("../components/Episode.vue"),
     },
+    {
+      path: "/reset-pwd",
+      name: "Reset",
+      component: () => import("../views/ResetView.vue"),
+    },
   ],
 });
 
 // 控制访问权限，可以使用 Vue Router 的导航守卫来检查用户是否已登录
-// router.beforeEach((to, from, next) => {
-//   const userStore = useUserStore();
-//   userStore.initializeUser(); // 确保用户状态是最新的
 
-//   // 需要登录的路由
-//   if (to.meta.requiresAuth && !userStore.isLoggedIn) {
-//       next({ name: 'Login' }); // 跳转到登录页面
-//   } else {
-//       next(); // 允许访问
-//   }
-// });
 // router.beforeEach((to, from, next) => {
 //   const authStore = useAuthStore();
 

@@ -12,7 +12,6 @@
                 <div>
                     <AnimeList :animesList="recommendAnimesList" />
                 </div>
-
                 <div>
                     <AnimeList :animesList="animesList" />
                 </div>

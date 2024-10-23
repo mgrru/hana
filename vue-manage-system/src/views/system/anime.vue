@@ -24,7 +24,6 @@
             @close="closeDialog">
             <TableEdit :form-data="rowData" :options="options" :update="updateStatus"
                 :animeOperator="isAnimeOperator" />
-
         </el-dialog>
         <el-dialog title="查看详情" v-model="visible1" width="700px" destroy-on-close>
             <TableDetail :data="viewData">
@@ -119,10 +118,11 @@ const handleEdit = (row: Anime) => {
 };
 
 const updateStatus = async (newForm) => {
-    console.log(`当前动漫id：${newForm.id}`)
+    console.log(`当前动漫id：${newForm.value.id}`)
     try {
-        newForm.process ? approveAnime(newForm.id) : rejectAnime(newForm.id);
-        ElMessage(newForm.process ? '通过审核' : '不通过审核');
+        console.log("当前动漫审核状态:" + newForm.value.process)
+        newForm.value.process ? approveAnime(newForm.value.id) : rejectAnime(newForm.value.id);
+        ElMessage(newForm.value.process ? '通过审核' : '不通过审核');
         getData();
         closeDialog();
     } catch (error) {

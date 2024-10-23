@@ -8,6 +8,7 @@ export const useAnimeStore = defineStore("animeStore", () => {
   const animesList = ref([]); // 用于保存视频列表数据
   const popularAnimesList = ref([]);
   const recommendAnimesList = ref([]);
+  const searchAnimesList = ref([]);
   const animesInfo = ref({}); // 用于保存视频列表数据
 
   const fetchAllAnimes = async () => {
@@ -25,7 +26,7 @@ export const useAnimeStore = defineStore("animeStore", () => {
   const fetchPopularAnimes = async () => {
     try {
       const response = await axios.get("/animes/popular");
-      console.log("popular接口响应数据:", response.data); // 检查接口返回的数据结构
+      // console.log("popular接口响应数据:", response.data); // 检查接口返回的数据结构
       popularAnimesList.value = JSON.parse(response.data);
     } catch (error) {
       console.error("获取热门视频列表失败：", error);
@@ -57,8 +58,8 @@ export const useAnimeStore = defineStore("animeStore", () => {
   const fetchEpisodeUrl = async (name, episode_name) => {
     try {
       const response = await axios.get(`/animes/${name}/${episode_name}`);
-      const data = JSON.parse(response.data); // 假设返回的结构是 { url: "视频链接" }
-      animeUrl.value = data.url;
+      console.error("获取选集视频链接：" + response.data);
+      animesInfo.value.url = response; // 假设返回的结构是 { url: "视频链接" }
     } catch (error) {
       console.error("获取选集视频链接失败：", error);
     }
@@ -82,16 +83,28 @@ export const useAnimeStore = defineStore("animeStore", () => {
       ElMessage.error("上传失败，请稍后重试");
     }
   };
+  //
+  const fetchSearchAnimes = async () => {
+    try {
+      const response = await axios.get("/search");
+
+      searchAnimesList.value = JSON.parse(response.data);
+    } catch (error) {
+      console.error("获取推荐视频列表失败：", error);
+    }
+  };
 
   return {
     animesList,
     popularAnimesList,
     recommendAnimesList,
+    searchAnimesList,
     animesInfo,
     fetchAllAnimes,
     fetchAnimeData,
     fetchPopularAnimes,
     fetchRecommendAnimes,
+    fetchSearchAnimes,
     fetchEpisodeUrl,
     uploadAnime,
   };
