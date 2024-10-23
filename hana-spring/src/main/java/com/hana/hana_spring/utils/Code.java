@@ -12,7 +12,8 @@ public enum Code {
     CODEERR(333, "验证码错误"),
     RESULTERR(455, "结果出错"),
     NOUSER(477, "用户已封禁"),
-    ;
+    PASSERR(255, "密码错误"),
+    NEWPASSERR(266, "密码相同");
 
     private final int code;
     private final String msg;
