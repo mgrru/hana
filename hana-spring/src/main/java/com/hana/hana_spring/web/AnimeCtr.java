@@ -234,7 +234,15 @@ public class AnimeCtr {
     @Parameters({ @Parameter(name = "rid", description = "要下架的动漫id") })
     @Validate(auth = true)
     @DeleteMapping("deactivate/{rid}")
-    public ResponseEntity<String> del_anime(@PathVariable Integer rid) {
+    public ResponseEntity<String> del_anime(@PathVariable Integer rid, HttpServletRequest req) {
+        String token = req.getHeader("Authorization");
+        Integer uid = jwt_util.getLoginUserId(token);
+        MsgReq msg = new MsgReq();
+        msg.setRecipient(anime_service.get_by_id(rid).getUid());
+        msg.setContent("您上传的动漫: \"" + anime_service.get_by_id(rid).getName() + " - "
+                + anime_service.get_by_id(rid).getEpisodeName() + "\" 有违规内容，请修改后重新上传！");
+        msg_service.send_msg(msg.toMsg(uid));
+
         anime_service.del_anime(rid);
         return Result.success();
     }
@@ -258,10 +266,10 @@ public class AnimeCtr {
         String token = req.getHeader("Authorization");
         Integer uid = jwt_util.getLoginUserId(token);
         MsgReq msg = new MsgReq();
-        msg.setRecipient(uid);
+        msg.setRecipient(anime_service.get_by_id(rid).getUid());
         msg.setContent("您上传的动漫: \"" + anime_service.get_by_id(rid).getName() + " - "
                 + anime_service.get_by_id(rid).getEpisodeName() + "\" 有违规内容，请修改后重新上传！");
-        msg_service.send_msg(msg.toMsg(1));
+        msg_service.send_msg(msg.toMsg(uid));
         anime_service.del_anime(rid);
         return Result.success();
     }
