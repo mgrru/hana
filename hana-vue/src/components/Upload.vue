@@ -37,23 +37,25 @@
             </el-form-item>
 
             <el-form-item label="选择视频文件">
-                <el-upload :file-list="videoFileList" :before-upload="handleVideoChange" drag>
-                    <i class="el-icon-upload"></i>
+                <el-upload :show-file-list="false" :before-upload="handleVideoChange" drag auto-upload="false">
+                    <video v-if="videoFileList" :src="videoFileList" />
+                    <i v-else class="el-icon-upload"></i>
                     <div class="el-upload__text">将视频拖到此处，或点击上传</div>
                     <div class="el-upload__tip">只能上传视频文件</div>
                 </el-upload>
             </el-form-item>
 
             <el-form-item label="选择封面">
-                <el-upload :file-list="coverFileList" :before-upload="handleCoverChange" drag>
-                    <i class="el-icon-upload"></i>
+                <el-upload :show-file-list="false" :before-upload="handleCoverChange" drag auto-upload="false">
+                    <img v-if="coverFileList" :src="coverFileList" />
+                    <i v-else class="el-icon-upload"></i>
                     <div class="el-upload__text">将封面拖到此处，或点击上传</div>
                     <div class="el-upload__tip">只能上传图片文件</div>
                 </el-upload>
             </el-form-item>
 
             <el-form-item>
-                <el-button type="primary" @click="submitForm">提交</el-button>
+                <el-button type="primary" @click="submitForm" :loading="uploadStore.uploadStatus">提交</el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -63,7 +65,8 @@
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import axios from '../utils/axios'
-
+import { useUploadStore } from '../store/uploadStore';
+const isSubmitting = ref(false);
 const uploadForm = ref({
     title: '',
     type: '',
@@ -86,9 +89,9 @@ const uploadOptions = [
 
 // 板块选项（sections）
 const sectionOptions = [
-    { value: 1, label: '日漫' },   // 对应 sid=1
-    { value: 2, label: '国漫' },   // 对应 sid=1
-    { value: 3, label: '其他' }, // 对应 sid=3
+    { value: 1, label: '日漫' },
+    { value: 2, label: '国漫' },
+    { value: 3, label: '其他' },
 ]
 
 // 检查并获取视频文件
@@ -99,7 +102,8 @@ const handleVideoChange = (file) => {
         return false
     }
     uploadForm.value.videoFile = file
-    return true
+    videoFileList.value = URL.createObjectURL(file)
+    return false
 }
 
 // 检查并获取封面文件
@@ -110,47 +114,22 @@ const handleCoverChange = (file) => {
         return false
     }
     uploadForm.value.coverFile = file
-    return true
+    coverFileList.value = URL.createObjectURL(file)
+    return false
 }
 
-// 提交表单
+const uploadStore = useUploadStore();
+
 const submitForm = async () => {
-    if (!uploadForm.value.videoFile) {
-        ElMessage.error('请先选择视频文件')
-        return
-    }
-    if (!uploadForm.value.coverFile) {
-        ElMessage.error('请先选择封面文件')
-        return
-    }
-    if (!uploadForm.value.sid) {
-        ElMessage.error('请选择板块')
-        return
+
+
+    await uploadStore.submitForm(uploadForm.value);
+    if (uploadStore.uploadStatus) {
+        // 通知父组件上传成功
+        emit('upload-success');
     }
 
-    // 创建 FormData 对象
-    const formData = new FormData()
-    formData.append('title', uploadForm.value.title)
-    formData.append('type', uploadForm.value.type)
-    formData.append('name', uploadForm.value.name)
-    formData.append('episode', uploadForm.value.episode)
-    formData.append('episode_name', uploadForm.value.episode_name)
-    formData.append('sid', uploadForm.value.sid) // 添加 sid 参数
-    formData.append('resources', uploadForm.value.videoFile)
-    formData.append('cover', uploadForm.value.coverFile)
-
-    try {
-        // 发送 POST 请求
-        await axios.post('/upload', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        })
-
-        ElMessage.success('提交成功')
-
-    } catch (error) {
-        ElMessage.error('上传失败，请稍后重试')
-    }
-}
+};
 </script>
 
 <style scoped>
