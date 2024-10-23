@@ -58,6 +58,9 @@ public class SysCtr {
             throws Exception {
         LoginReq login = new ObjectMapper().readValue(entity, LoginReq.class);
         User user = user_service.get_user_by_account(login.getAccount());
+        if (user.isBan()) {
+            return Result.no_user();
+        }
         Role role = user.getRole();
         if (user != null && user_service.verify_pass(user.getPass(), login.getPass())) {
             if (role.getName().equals("管理员")) {

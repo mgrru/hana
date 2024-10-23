@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @RequestMapping("announcements")
@@ -50,6 +51,7 @@ public class AnnouncementCtr {
     }
 
     @Operation(summary = "添加公告")
+    @SecurityRequirement(name = "jwt")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = Announcement.class)), description = "id属性不需要")
     @PostMapping
     public ResponseEntity<String> add_announcement(@RequestBody String entity)
@@ -62,6 +64,7 @@ public class AnnouncementCtr {
     }
 
     @Operation(summary = "修改公告")
+    @SecurityRequirement(name = "jwt")
     @Parameters({ @Parameter(name = "id", description = "要修改的公告id") })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = Announcement.class)), description = "id属性不用")
     @PutMapping("{id}")
@@ -75,6 +78,7 @@ public class AnnouncementCtr {
     }
 
     @Operation(summary = "删除公告")
+    @SecurityRequirement(name = "jwt")
     @Parameters({ @Parameter(name = "id", description = "要删除的公告id") })
     @DeleteMapping("{id}")
     public ResponseEntity<String> del_section(@PathVariable Integer id) {

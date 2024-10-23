@@ -24,6 +24,8 @@ import com.hana.hana_spring.entity.dto.UpdUserReq;
 import com.hana.hana_spring.service.UserService;
 import com.hana.hana_spring.utils.JwtUtil;
 import com.hana.hana_spring.utils.Result;
+import com.hana.hana_spring.utils.exception.NewPassException;
+import com.hana.hana_spring.utils.exception.PassException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -137,12 +139,23 @@ public class UserCtr {
         UpdPassReq pass_req = new ObjectMapper().readValue(entity, UpdPassReq.class);
 
         String email = user_service.get_user_by_id(uid).getEmail();
-        if (user_service.verify_code(email, pass_req.getCode())) {
-            user_service.upd_pass(uid, pass_req.getPass(), pass_req.getNewPass());
-            return Result.success();
-        } else {
-            return Result.email_err();
+
+        try {
+            user_service.verify_code(email, pass_req.getCode());
+        } catch (Exception e) {
+            return Result.code_err();
         }
+        
+        try {
+            user_service.upd_pass(uid, pass_req.getPass(), pass_req.getNewPass());
+        } catch (PassException e) {
+            return Result.pass_err();
+        } catch (NewPassException e) {
+            return Result.new_pass_err();
+        } catch (Exception e) {
+            return Result.exception();
+        }
+        return Result.success();
     }
 
     @Operation(summary = "发送邮箱验证码")

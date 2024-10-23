@@ -48,8 +48,26 @@ public class Result {
         return ResponseEntity.status(c.code()).body(c.msg());
     }
 
-    public static ResponseEntity<String> email_err() {
-        Code c = Code.NOEMAIL;
+    public static ResponseEntity<String> code_err() {
+        Code c = Code.CODEERR;
+
+        return ResponseEntity.status(c.code()).body(c.msg());
+    }
+
+    public static ResponseEntity<String> no_user() {
+        Code c = Code.NOUSER;
+
+        return ResponseEntity.status(c.code()).body(c.msg());
+    }
+
+    public static ResponseEntity<String> pass_err() {
+        Code c = Code.PASSERR;
+
+        return ResponseEntity.status(c.code()).body(c.msg());
+    }
+
+    public static ResponseEntity<String> new_pass_err() {
+        Code c = Code.NEWPASSERR;
 
         return ResponseEntity.status(c.code()).body(c.msg());
     }

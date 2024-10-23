@@ -106,6 +106,7 @@ public class AnimeCtr {
     }
 
     @Operation(summary = "获取所有动漫信息(管理员用)")
+    @SecurityRequirement(name = "jwt")
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
     @Validate(auth = true)
     @GetMapping("animes/all")
@@ -128,6 +129,7 @@ public class AnimeCtr {
     }
 
     @Operation(summary = "上传动漫")
+    @SecurityRequirement(name = "jwt")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "multipart/form-data", schemaProperties = {
             @SchemaProperty(name = "resources", schema = @Schema(type = "string", format = "binary", name = "resources")),
             @SchemaProperty(name = "cover", schema = @Schema(type = "string", format = "binary", name = "cover")),
@@ -144,7 +146,7 @@ public class AnimeCtr {
             MultipartFile cover,
             String type,
             String name,
-            @RequestParam(required = false) String title,
+            String title,
             Integer episode,
             String episode_name,
             Integer sid,
@@ -228,6 +230,7 @@ public class AnimeCtr {
     }
 
     @Operation(summary = "下架动漫")
+    @SecurityRequirement(name = "jwt")
     @Parameters({ @Parameter(name = "rid", description = "要下架的动漫id") })
     @Validate(auth = true)
     @DeleteMapping("deactivate/{rid}")
@@ -237,6 +240,7 @@ public class AnimeCtr {
     }
 
     @Operation(summary = "通过审核")
+    @SecurityRequirement(name = "jwt")
     @Parameters({ @Parameter(name = "rid", description = "要审核的动漫id") })
     @Validate(auth = true)
     @PutMapping("approve/{rid}")
@@ -263,6 +267,7 @@ public class AnimeCtr {
     }
 
     @Operation(summary = "用户获取自己上传动漫")
+    @SecurityRequirement(name = "jwt")
     @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class))))
     @GetMapping("users/animes")
     public ResponseEntity<String> get_user_anime(HttpServletRequest req) throws JsonProcessingException {
@@ -274,6 +279,7 @@ public class AnimeCtr {
     }
 
     @Operation(summary = "用户删除自己上传的动漫")
+    @SecurityRequirement(name = "jwt")
     @Parameters({ @Parameter(name = "rid", description = "要删除的动漫id") })
     @DeleteMapping("resource/{rid}")
     public ResponseEntity<String> del_user_anime(@PathVariable Integer rid, HttpServletRequest req) {

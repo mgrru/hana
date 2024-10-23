@@ -14,6 +14,8 @@ import com.hana.hana_spring.dao.UserMapper;
 import com.hana.hana_spring.entity.User;
 import com.hana.hana_spring.utils.EmailSender;
 import com.hana.hana_spring.utils.EncryUtil;
+import com.hana.hana_spring.utils.exception.NewPassException;
+import com.hana.hana_spring.utils.exception.PassException;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -118,23 +120,30 @@ public class UserService {
         return code.toString();
     }
 
-    public boolean verify_code(String email, String input) {
-        String code = redis.opsForValue().get(email);
-        if (code.equals(input)) {
-            redis.delete(email);
-            return true;
+    public void verify_code(String email, String input) throws Exception {
+        try {
+            String code = redis.opsForValue().get(email);
+            if (input.equals(code)) {
+                redis.delete(email);
+            }
+        } catch (Exception e) {
+            throw new Exception();
         }
-        return false;
     }
 
-    public void upd_pass(Integer uid, String pass, String new_pass) throws Exception {
+    public void upd_pass(Integer uid, String pass, String new_pass) throws PassException, NewPassException {
         User user = user_mapper.sel_by_id(uid);
         String hash_pass = encry_util.hash(pass);
         String hash_new_pass = encry_util.hash(new_pass);
-        if (user.getPass().equals(hash_pass) && !hash_pass.equals(hash_new_pass)) {
-            user.setPass(hash_new_pass);
-            user_mapper.upd_pass(user);
+        if (!user.getPass().equals(hash_pass)) {
+            throw new PassException();
         }
+        if (hash_pass.equals(hash_new_pass)) {
+            throw new NewPassException();
+        }
+        user.setPass(hash_new_pass);
+        user_mapper.upd_pass(user);
+
     }
 
     public boolean verify_pass(String pass, String login_pass) throws Exception {
