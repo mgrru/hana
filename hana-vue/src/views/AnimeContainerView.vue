@@ -2,64 +2,44 @@
     <div class="video-container">
         <div class="left-container">
             <div class="video-player-container">
-                <VideoPlayer :name="props.name"></VideoPlayer>
+                <VideoPlayer :name="props.name" :rid="props.rid" :key="props.rid"></VideoPlayer>
             </div>
             <!-- 评论组件 -->
-
             <div class="comment-section">
-                <!-- <div v-if="visibleComments.length">
-                    <Comment v-for="comment in visibleComments" :key="comment.id" :comment="comment" />
-                </div>
-                <p v-if="!userStore.isLoggedIn && comments.length > maxVisibleComments">
-                    还有更多评论，<a @click="commentToLogin">登录以查看全部</a>
-                </p>
-                <p v-if="comments.length === 0">还没有评论，快来抢沙发吧！</p> -->
-
-                <!-- 遮罩层 -->
-                <!-- <div v-if="!userStore.isLoggedIn && comments.length > maxVisibleComments" class="mask">
-                    <button class="login-btn" @click="commentToLogin">登录以查看更多评论</button>
-                </div> -->
-                <!-- <CommentList /> -->
+                <CommentList :rid="props.rid" :key="props.rid" />
             </div>
         </div>
         <div class="right-container">
-            <div class="user-info-container">
-                <!-- 用户信息内容 -->
-                <p>视频发布人信息</p>
-            </div>
+            <!-- 用户信息内容 -->
+            <!-- <div class="user-info-container">
+
+                <p>视频发布者：{{ animesInfo.uid }}</p>
+
+            </div> -->
             <!-- 用户组件 -->
-            <!-- 弹幕组件 -->
+            <!-- 弹幕列表组件 -->
             <div class="danmaku-list">
                 <h3>弹幕列表</h3>
                 <el-scrollbar style="height: 400px;">
                     <div v-for="item in danmakuList" :key="item.id" class="danmaku-item">
                         <el-card :body-style="{ padding: '10px' }">
-                            <div>{{ item.content }}</div>
-                            <!-- <div class="meta">{{ item.timestamp }}</div> -->
+                            <div>{{ item.user_name }}:{{ item.content }}</div>
+                            <button class="delete" @click="deleteDanmu(item.id)">删除</button>
                         </el-card>
+
                     </div>
+                    <p v-if="danmakuList.length === 0">还没有弹幕，快来说些什么吧！</p>
                 </el-scrollbar>
+
+
             </div>
             <!-- 视频选集组件 -->
-            <!-- 视频推荐 -->
 
+            <!-- 视频推荐 -->
             <div>
+                <p>推荐视频</p>
                 <AnimeList :animesList="recommendAnimesList" />
             </div>
-
-            <!-- <div>
-                <div>
-                    <p>推荐</p>
-                    <div v-if="recommendAnimesList && recommendAnimesList.length > 0" class="anime-item"
-                        v-for="recommendAnime in recommendAnimesList" :key="recommendAnime.id">
-                        <router-link :to="'/animes/' + recommendAnime.name">
-                            <img :src="recommendAnime.cover" alt="推荐封面">
-                            <p>{{ recommendAnime.name }}</p>
-                        </router-link>
-                    </div>
-                    <p v-else>没有找到视频。</p> 
-                </div>
-            </div> -->
         </div>
     </div>
 </template>
@@ -69,33 +49,68 @@
 import VideoPlayer from '../components/VideoPlayer.vue';
 import { useDanmakuStore } from '../store/danmaku.js';
 import CommentList from '../components/CommentList.vue';
-import { ref } from 'vue';
-import { useRoute } from 'vue-router';
+
 import { defineProps, onMounted } from 'vue';
 import { useAnimeStore } from '../store/animeStore.js';
-import { useHistoryStore } from '../store/historyStore';
 import { storeToRefs } from 'pinia';
 import AnimeList from './AnimeList.vue';
+import { ElMessage, ElMessageBox } from "element-plus"; // 引入 Element Plus 消息组件
 
 const animeStore = useAnimeStore();
+const { animesInfo } = storeToRefs(animeStore)
 
 const { recommendAnimesList } = storeToRefs(animeStore);
 
-// const route = useRoute();
-
-// const name = ref(route.params.name);
-
 const danmakuStore = useDanmakuStore();
-const danmakuList = danmakuStore.danmakuList;
+// const danmakuList = danmakuStore.danmakuList;
+const { danmakuList } = storeToRefs(danmakuStore)
 
 const props = defineProps({
     name: String,
+    rid: Number,
 });
 
+
+const deleteDanmu = (danmuId) => {
+    console.log(`调用删除按钮`)
+    ElMessageBox.confirm(
+        '此操作将永久删除该弹幕, 是否继续?',
+        '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+    }
+    )
+        .then(async () => {
+            // 确认后执行删除操作
+            await danmakuStore.removeDanmu(danmuId);
+
+            // 删除成功提示
+            ElMessage({
+                message: '评论删除成功',
+                type: 'success',
+                duration: 2000,
+            });
+            await danmakuStore.fetchDanmakuData(props.rid); // 删除成功后重新加载评论
+        })
+        .catch(() => {
+            // 用户取消操作
+            ElMessage({
+                type: 'info',
+                message: '已取消删除',
+                duration: 1500,
+            });
+        });
+};
+
+console.log('AnimeContainer 接收到的 rid:', props.rid);
+
 onMounted(async () => {
+
     try {
         await Promise.all([
             animeStore.fetchRecommendAnimes(),
+            danmakuStore.fetchDanmakuData(props.rid),
         ]);
     } catch (error) {
         console.error("获取视频列表失败：", error);
@@ -200,67 +215,6 @@ onMounted(async () => {
 
     .right-container {
         margin-bottom: 20px;
-    }
-
-    .anime-item {
-        height: 200px;
-    }
-
-    .anime-item img {
-        height: 130px;
-    }
-}
-
-
-.anime-item {
-    background: linear-gradient(to right, #f9f9f9, #e6e9ef);
-    /* 添加渐变背景 */
-    display: flex;
-    flex-direction: column;
-    /* 内容垂直排列 */
-    align-items: center;
-    justify-content: space-between;
-    text-align: center;
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    height: 250px;
-    /* 增加视频项高度 */
-}
-
-.anime-item img {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 10px;
-}
-
-.anime-item p {
-    font-size: 18px;
-    color: #475669;
-    margin-top: 10px;
-    font-weight: bold;
-    /* 增强文字突出 */
-    letter-spacing: 0.5px;
-    /* 增加字间距 */
-}
-
-.anime-item:hover {
-    transform: translateY(-10px) scale(1.05);
-    /* 增加更显著的交互效果 */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-@media (max-width: 1000px) {
-
-    .anime-item {
-        height: 220px;
-        /* 减少高度 */
-    }
-
-    .anime-item img {
-        height: 140px;
     }
 }
 </style>
