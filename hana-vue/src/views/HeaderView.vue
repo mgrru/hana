@@ -25,7 +25,7 @@
                         <router-link to="/history">历史</router-link>
                     </li>
                     <li><router-link to="/upload">投稿</router-link></li>
-                    <li><router-link to="/msg">消息</router-link></li>
+                    <!-- <li><router-link to="/msg">消息</router-link></li> -->
                 </ul>
             </div>
         </div>
