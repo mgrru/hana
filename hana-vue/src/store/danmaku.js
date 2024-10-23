@@ -8,11 +8,12 @@ export const useDanmakuStore = defineStore("danmaku", () => {
   const danmakuList = ref([]);
   const danmakuCount = ref(0);
 
-  const fecthDanmakuData = async () => {
+  const fetchDanmakuData = async (rid) => {
     try {
-      const response = await axios.get("/danmus/{{rid}}");
-      danmakuList.value = response.data;
-      console.log(danmakuList.value);
+      const response = await axios.get(`/danmus/${rid}`);
+
+      danmakuList.value = JSON.parse(response.data);
+      console.log(response.data);
     } catch (error) {
       console.error("获取弹幕列表失败：", error);
     }
@@ -26,17 +27,32 @@ export const useDanmakuStore = defineStore("danmaku", () => {
     isDanmakuVisibility.value = !isDanmakuVisibility.value;
   };
 
-  const addDanmaku = async (danmaku) => {
+  const addDanmaku = async (newDanmaku) => {
     danmakuCount.value = danmakuList.value.length;
-    const danmuData = {
-      rid: danmaku.id,
-      content: danmaku.content,
-    };
+
     // 发送 POST 请求
-    await axios.post("/danmus", danmuData, {
+    await axios.post(`/danmus`, newDanmaku, {
       headers: { "Content-Type": "application/json" },
     });
-    danmakuList.value.push(danmaku);
+    danmakuList.value.push(newDanmaku);
+  };
+
+  const removeDanmu = async (id) => {
+    try {
+      const response = await axios.delete(`/danmus/${id}`);
+      console.log("删除评论响应:", response); // 调试信息
+
+      // 检查状态码
+      if (response.status === 200) {
+        return true; // 返回删除成功的标志
+      } else {
+        throw new Error(response.data.message || "删除评论失败"); // 后端返回非成功的状态
+      }
+    } catch (error) {
+      throw new Error(
+        error.response ? error.response.data.message : error.message
+      ); // 抛出错误让调用方处理
+    }
   };
 
   const clearDanmaku = () => {
@@ -45,7 +61,7 @@ export const useDanmakuStore = defineStore("danmaku", () => {
   };
 
   return {
-    fecthDanmakuData,
+    fetchDanmakuData,
     isPlaying,
     isDanmakuVisibility,
     danmakuList,
@@ -54,5 +70,6 @@ export const useDanmakuStore = defineStore("danmaku", () => {
     toggleDanmakuVisibility,
     addDanmaku,
     clearDanmaku,
+    removeDanmu,
   };
 });
